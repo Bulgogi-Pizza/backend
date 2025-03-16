@@ -6,9 +6,9 @@ import on.logistics.companyservice.application.dtos.request.CreateCompanyRequest
 import on.logistics.companyservice.domain.entity.enums.CompanyType;
 
 
-public record CreateCompanyRequest(@NotBlank String companyName,
+public record CreateCompanyRequest(@NotBlank @Size(max = 100) String companyName,
                                    @NotBlank CompanyType companyType,
-                                   @NotBlank @Size(max = 100) String companyAddress) {
+                                   @NotBlank String companyAddress) {
 
     public static CreateCompanyRequestDto from(CreateCompanyRequest dto) {
         return new CreateCompanyRequestDto(
