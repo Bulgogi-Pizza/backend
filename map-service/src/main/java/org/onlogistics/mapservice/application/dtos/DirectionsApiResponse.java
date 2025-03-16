@@ -21,7 +21,7 @@ public class DirectionsApiResponse {
         private List<RouteInfo> routeInfo;
 
         @JsonAnySetter
-        public void setDynamicRoute(List<RouteInfo> value) {
+        public void setDynamicRoute(String key, List<RouteInfo> value) {
             if (this.routeInfo == null) {
                 this.routeInfo = value;
             }

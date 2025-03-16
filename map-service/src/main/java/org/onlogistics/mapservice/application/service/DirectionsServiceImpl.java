@@ -36,16 +36,16 @@ public class DirectionsServiceImpl implements DirectionsService {
         try {
             DirectionsApiResponse directionsApiResponse = getDirectionResponse(url);
             if (!hasValidRouteInfo(directionsApiResponse)) {
-                log.error("잘못된 경로 응답: url=[{}], response=[{}]", url, directionsApiResponse);
+                log.warn("잘못된 경로 응답: url=[{}], response=[{}]", url, directionsApiResponse);
                 throw new MapException.InvalidResponseException();
             }
-            RouteInfo routeInfo = getRouteInfo(directionsApiResponse);
+            DirectionsApiResponse.RouteInfo routeInfo = getRouteInfo(directionsApiResponse);
             return mapToDto(routeInfo);
         } catch (MapException.InvalidResponseException e) {
-            log.error("경로 응답 오류: url=[{}], error=[{}]", url, e.getMessage());
+            log.warn("경로 응답 오류: url=[{}], error=[{}]", url, e.getMessage());
             throw e;
         } catch (Exception e) {
-            log.error("경로 검색 중 알 수 없는 오류 발생: url=[{}], error=[{}]", url, e.getMessage());
+            log.warn("경로 검색 중 알 수 없는 오류 발생: url=[{}], error=[{}]", url, e.getMessage());
             throw new MapException.ExternalApiCallException();
         }
     }
