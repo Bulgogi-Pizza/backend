@@ -3,7 +3,6 @@ package org.onlogistics.mapservice.application.service;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.onlogistics.mapservice.application.dtos.DirectionsApiResponse;
@@ -95,13 +94,11 @@ public class DirectionsServiceImpl implements DirectionsService {
                 .build())
             .departureTime(summary.getDepartureTime())
             .eta(eta.format(DateTimeFormatter.ISO_DATE_TIME))
+            .tollFare(summary.getTollFare())
             .build();
-
-        List<List<Double>> path = routeInfo.getPath();
 
         return DirectionsResponseDto.builder()
             .summary(routeSummary)
-            .path(path)
             .build();
     }
 }

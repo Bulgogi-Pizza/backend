@@ -1,10 +1,12 @@
 package org.onlogistics.mapservice.application.dtos;
 
 import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.util.List;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 @Data
 @NoArgsConstructor
 public class DirectionsApiResponse {
@@ -33,7 +35,6 @@ public class DirectionsApiResponse {
     public static class RouteInfo {
 
         private Summary summary;
-        private List<List<Double>> path;
     }
 
     @Data
@@ -45,6 +46,7 @@ public class DirectionsApiResponse {
         private Integer distance;
         private Long duration;
         private String departureTime;
+        private Integer tollFare;
     }
 
     @Data

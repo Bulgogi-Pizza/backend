@@ -5,8 +5,7 @@ import lombok.Builder;
 
 @Builder
 public record DirectionsResponseDto(
-    RouteSummary summary,
-    List<List<Double>> path
+    RouteSummary summary
 ) {
 
     @Builder
@@ -16,7 +15,8 @@ public record DirectionsResponseDto(
         Start start,
         End end,
         String departureTime,
-        String eta
+        String eta,
+        Integer tollFare
     ) {
 
     }
