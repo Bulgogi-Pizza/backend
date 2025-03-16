@@ -2,16 +2,20 @@ package on.logistics.companyservice.presentation;
 
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import on.logistics.companyservice.application.dtos.UpdateCompanyHubRequestDto;
 import on.logistics.companyservice.application.dtos.request.CreateCompanyRequestDto;
 import on.logistics.companyservice.application.dtos.request.UpdateCompanyRequestDto;
 import on.logistics.companyservice.application.service.CompanyService;
 import on.logistics.companyservice.global.presentation.dtos.CommonResponse;
 import on.logistics.companyservice.presentation.dtos.request.CreateCompanyRequest;
+import on.logistics.companyservice.presentation.dtos.request.UpdateCompanyHubRequest;
 import on.logistics.companyservice.presentation.dtos.request.UpdateCompanyRequest;
 import on.logistics.companyservice.presentation.dtos.response.CreateCompanyResponse;
+import on.logistics.companyservice.presentation.dtos.response.UpdateCompanyHubResponse;
 import on.logistics.companyservice.presentation.dtos.response.UpdateCompanyResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -47,5 +51,15 @@ public class CompanyController {
     public ResponseEntity<CommonResponse<Void>> deleteCompany(@PathVariable UUID id) {
         companyService.deleteCompany(id);
         return ResponseEntity.ok(CommonResponse.success());
+    }
+
+    @PatchMapping("/hub/{id}")
+    public ResponseEntity<CommonResponse<UpdateCompanyHubResponse>> updateCompanyHub(
+        @PathVariable UUID id,
+        @RequestBody UpdateCompanyHubRequest updateCompanyHubRequest) {
+        final UpdateCompanyHubRequestDto requestDto = UpdateCompanyHubRequest.from(
+            updateCompanyHubRequest);
+        UpdateCompanyHubResponse response = companyService.updateHubCompany(id, requestDto);
+        return ResponseEntity.ok(CommonResponse.success(response));
     }
 }

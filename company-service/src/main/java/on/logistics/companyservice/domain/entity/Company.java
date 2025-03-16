@@ -67,4 +67,8 @@ public class Company extends BaseEntity {
     public void delete() {
         deleteSoftly();
     }
+
+    public void updateHub(UUID managedHubId) {
+        this.managedHubId = managedHubId;
+    }
 }

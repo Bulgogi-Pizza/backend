@@ -3,6 +3,7 @@ package on.logistics.companyservice.application.service;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import on.logistics.companyservice.application.dtos.UpdateCompanyHubRequestDto;
 import on.logistics.companyservice.application.dtos.request.CreateCompanyRequestDto;
 import on.logistics.companyservice.application.dtos.request.UpdateCompanyRequestDto;
 import on.logistics.companyservice.domain.entity.Company;
@@ -10,6 +11,7 @@ import on.logistics.companyservice.domain.repository.CompanyRepository;
 import on.logistics.companyservice.exception.CompanyException;
 import on.logistics.companyservice.exception.CompanyExceptionCode;
 import on.logistics.companyservice.presentation.dtos.response.CreateCompanyResponse;
+import on.logistics.companyservice.presentation.dtos.response.UpdateCompanyHubResponse;
 import on.logistics.companyservice.presentation.dtos.response.UpdateCompanyResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -51,5 +53,15 @@ public class CompanyService {
         Company company = companyRepository.findByIdAndIsDeleted(id, false)
             .orElseThrow(() -> new CompanyException(CompanyExceptionCode.COMPANY_IS_NOT_FOUND));
         company.delete();
+    }
+
+    @Transactional
+    public UpdateCompanyHubResponse updateHubCompany(UUID id,
+        UpdateCompanyHubRequestDto requestDto) {
+        // todo : 유저의 아이디 정보를 받아와서 본인 회사인지 체크하는 로직 필요
+        Company company = companyRepository.findByIdAndIsDeleted(id, false)
+            .orElseThrow(() -> new CompanyException(CompanyExceptionCode.COMPANY_IS_NOT_FOUND));
+        company.updateHub(requestDto.managedHubId());
+        return UpdateCompanyHubResponse.of(company.getId());
     }
 }
