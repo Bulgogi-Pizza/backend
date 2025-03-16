@@ -1,6 +1,8 @@
 package on.logistics.companyservice.global.exception;
 
 import lombok.extern.slf4j.Slf4j;
+import on.logistics.companyservice.global.pageable.PageableException;
+import on.logistics.companyservice.global.presentation.dtos.CommonResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
