@@ -11,6 +11,7 @@ import on.logistics.companyservice.domain.repository.CompanyRepository;
 import on.logistics.companyservice.exception.CompanyException;
 import on.logistics.companyservice.exception.CompanyExceptionCode;
 import on.logistics.companyservice.presentation.dtos.response.CreateCompanyResponse;
+import on.logistics.companyservice.presentation.dtos.response.GetCompanyResponse;
 import on.logistics.companyservice.presentation.dtos.response.UpdateCompanyHubResponse;
 import on.logistics.companyservice.presentation.dtos.response.UpdateCompanyResponse;
 import org.springframework.stereotype.Service;
@@ -36,6 +37,13 @@ public class CompanyService {
         Company company = Company.create(userId, requestDto);
         Company saved = companyRepository.save(company);
         return CreateCompanyResponse.of(saved.getId());
+    }
+
+    public GetCompanyResponse getCompany(UUID id) {
+        Company company = companyRepository.findByIdAndIsDeleted(id, false)
+            .orElseThrow(() -> new CompanyException(CompanyExceptionCode.COMPANY_IS_NOT_FOUND));
+        return GetCompanyResponse.of(company.getId(), company.getName().getValue(),
+            company.getType(), company.getManagedHubId(), company.getAddress().getValue());
     }
 
     @Transactional

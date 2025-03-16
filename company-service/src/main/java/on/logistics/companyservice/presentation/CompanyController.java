@@ -12,10 +12,12 @@ import on.logistics.companyservice.presentation.dtos.request.CreateCompanyReques
 import on.logistics.companyservice.presentation.dtos.request.UpdateCompanyHubRequest;
 import on.logistics.companyservice.presentation.dtos.request.UpdateCompanyRequest;
 import on.logistics.companyservice.presentation.dtos.response.CreateCompanyResponse;
+import on.logistics.companyservice.presentation.dtos.response.GetCompanyResponse;
 import on.logistics.companyservice.presentation.dtos.response.UpdateCompanyHubResponse;
 import on.logistics.companyservice.presentation.dtos.response.UpdateCompanyResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -36,6 +38,13 @@ public class CompanyController {
         @Valid @RequestBody CreateCompanyRequest createCompanyRequest) {
         final CreateCompanyRequestDto requestDto = CreateCompanyRequest.from(createCompanyRequest);
         CreateCompanyResponse response = companyService.createCompany(requestDto);
+        return ResponseEntity.ok(CommonResponse.success(response));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<CommonResponse<GetCompanyResponse>> getCompany(
+        @PathVariable UUID id) {
+        GetCompanyResponse response = companyService.getCompany(id);
         return ResponseEntity.ok(CommonResponse.success(response));
     }
 
