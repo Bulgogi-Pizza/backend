@@ -11,6 +11,7 @@ import on.logistics.companyservice.presentation.dtos.request.UpdateCompanyReques
 import on.logistics.companyservice.presentation.dtos.response.CreateCompanyResponse;
 import on.logistics.companyservice.presentation.dtos.response.UpdateCompanyResponse;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -40,6 +41,11 @@ public class CompanyController {
         final UpdateCompanyRequestDto requestDto = UpdateCompanyRequest.from(updateCompanyRequest);
         UpdateCompanyResponse response = companyService.updateCompany(id, requestDto);
         return ResponseEntity.ok(CommonResponse.success(response));
+    }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<CommonResponse<Void>> deleteCompany(@PathVariable UUID id) {
+        companyService.deleteCompany(id);
+        return ResponseEntity.ok(CommonResponse.success());
     }
 }

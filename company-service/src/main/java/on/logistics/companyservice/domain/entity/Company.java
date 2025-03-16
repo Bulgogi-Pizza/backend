@@ -63,4 +63,8 @@ public class Company extends BaseEntity {
         this.name = name.update(newCompany.companyName());
         this.address = address.update(newCompany.companyAddress());
     }
+
+    public void delete() {
+        deleteSoftly();
+    }
 }

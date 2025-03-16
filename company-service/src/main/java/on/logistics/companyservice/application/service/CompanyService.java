@@ -45,4 +45,11 @@ public class CompanyService {
         return UpdateCompanyResponse.of(company.getId());
     }
 
+    @Transactional
+    public void deleteCompany(UUID id) {
+        // todo : 유저의 아이디 정보를 받아와서 본인 회사인지 체크하는 로직 필요
+        Company company = companyRepository.findByIdAndIsDeleted(id, false)
+            .orElseThrow(() -> new CompanyException(CompanyExceptionCode.COMPANY_IS_NOT_FOUND));
+        company.delete();
+    }
 }
