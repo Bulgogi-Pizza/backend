@@ -34,4 +34,8 @@ public class Name {
             throw new CompanyException(CompanyExceptionCode.COMPANY_NAME_MAX_LENGTH);
         }
     }
+
+    public Name update(final String value) {
+        return new Name(value);
+    }
 }

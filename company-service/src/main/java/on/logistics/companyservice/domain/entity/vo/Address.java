@@ -29,4 +29,8 @@ public class Address {
             throw new CompanyException(CompanyExceptionCode.COMPANY_ADDRESS_IS_NULL);
         }
     }
+
+    public Address update(final String value) {
+        return new Address(value);
+    }
 }

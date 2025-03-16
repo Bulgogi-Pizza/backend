@@ -1,13 +1,19 @@
 package on.logistics.companyservice.presentation;
 
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import on.logistics.companyservice.application.dtos.request.CreateCompanyRequestDto;
+import on.logistics.companyservice.application.dtos.request.UpdateCompanyRequestDto;
 import on.logistics.companyservice.application.service.CompanyService;
 import on.logistics.companyservice.global.presentation.dtos.CommonResponse;
 import on.logistics.companyservice.presentation.dtos.request.CreateCompanyRequest;
+import on.logistics.companyservice.presentation.dtos.request.UpdateCompanyRequest;
 import on.logistics.companyservice.presentation.dtos.response.CreateCompanyResponse;
+import on.logistics.companyservice.presentation.dtos.response.UpdateCompanyResponse;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,5 +31,15 @@ public class CompanyController {
         final CreateCompanyRequestDto requestDto = CreateCompanyRequest.from(createCompanyRequest);
         CreateCompanyResponse response = companyService.createCompany(requestDto);
         return ResponseEntity.ok(CommonResponse.success(response));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<CommonResponse<UpdateCompanyResponse>> updateCompany(
+        @PathVariable UUID id,
+        @RequestBody UpdateCompanyRequest updateCompanyRequest) {
+        final UpdateCompanyRequestDto requestDto = UpdateCompanyRequest.from(updateCompanyRequest);
+        UpdateCompanyResponse response = companyService.updateCompany(id, requestDto);
+        return ResponseEntity.ok(CommonResponse.success(response));
+
     }
 }
