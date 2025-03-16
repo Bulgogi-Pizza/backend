@@ -56,7 +56,7 @@ public class CompanyService {
     }
 
     @Transactional
-    public UpdateCompanyHubResponse updateHubCompany(UUID id,
+    public UpdateCompanyHubResponse updateCompanyHub(UUID id,
         UpdateCompanyHubRequestDto requestDto) {
         // todo : 유저의 아이디 정보를 받아와서 본인 회사인지 체크하는 로직 필요
         Company company = companyRepository.findByIdAndIsDeleted(id, false)

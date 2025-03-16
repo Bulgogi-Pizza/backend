@@ -1,5 +1,6 @@
 package on.logistics.companyservice.presentation;
 
+import jakarta.validation.Valid;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import on.logistics.companyservice.application.dtos.UpdateCompanyHubRequestDto;
@@ -32,7 +33,7 @@ public class CompanyController {
 
     @PostMapping
     public ResponseEntity<CommonResponse<CreateCompanyResponse>> createCompany(
-        @RequestBody CreateCompanyRequest createCompanyRequest) {
+        @Valid @RequestBody CreateCompanyRequest createCompanyRequest) {
         final CreateCompanyRequestDto requestDto = CreateCompanyRequest.from(createCompanyRequest);
         CreateCompanyResponse response = companyService.createCompany(requestDto);
         return ResponseEntity.ok(CommonResponse.success(response));
@@ -41,7 +42,7 @@ public class CompanyController {
     @PutMapping("/{id}")
     public ResponseEntity<CommonResponse<UpdateCompanyResponse>> updateCompany(
         @PathVariable UUID id,
-        @RequestBody UpdateCompanyRequest updateCompanyRequest) {
+        @Valid @RequestBody UpdateCompanyRequest updateCompanyRequest) {
         final UpdateCompanyRequestDto requestDto = UpdateCompanyRequest.from(updateCompanyRequest);
         UpdateCompanyResponse response = companyService.updateCompany(id, requestDto);
         return ResponseEntity.ok(CommonResponse.success(response));
@@ -56,10 +57,10 @@ public class CompanyController {
     @PatchMapping("/hub/{id}")
     public ResponseEntity<CommonResponse<UpdateCompanyHubResponse>> updateCompanyHub(
         @PathVariable UUID id,
-        @RequestBody UpdateCompanyHubRequest updateCompanyHubRequest) {
+        @Valid @RequestBody UpdateCompanyHubRequest updateCompanyHubRequest) {
         final UpdateCompanyHubRequestDto requestDto = UpdateCompanyHubRequest.from(
             updateCompanyHubRequest);
-        UpdateCompanyHubResponse response = companyService.updateHubCompany(id, requestDto);
+        UpdateCompanyHubResponse response = companyService.updateCompanyHub(id, requestDto);
         return ResponseEntity.ok(CommonResponse.success(response));
     }
 }
