@@ -1,0 +1,10 @@
+naver:
+  map:
+    api:
+      key: ${NAVER_API_KEY}
+      secret: ${NAVER_API_SECRET}
+      url: ${NAVER_API_URL}
+
+logging:
+  level:
+    root: DEBUG
