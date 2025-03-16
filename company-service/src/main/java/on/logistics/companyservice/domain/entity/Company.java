@@ -12,6 +12,7 @@ import java.util.UUID;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import on.logistics.companyservice.application.dtos.request.CreateCompanyRequestDto;
 import on.logistics.companyservice.domain.entity.enums.CompanyType;
 import on.logistics.companyservice.domain.entity.vo.Address;
 import on.logistics.companyservice.domain.entity.vo.Name;
@@ -26,7 +27,7 @@ public class Company extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(name = "user_id")
+    @Column(name = "user_id", unique = true, nullable = false)
     private UUID userId;
 
     @Embedded
@@ -35,9 +36,25 @@ public class Company extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private CompanyType type;
 
-    @Column(name = "managed_hub_id")
+    @Column(name = "managed_hub_id", nullable = true)
     private UUID managedHubId;
 
     @Enumerated(EnumType.STRING)
     private Address address;
+
+    private Company(UUID userId, Name name, CompanyType type, Address address) {
+        this.userId = userId;
+        this.name = name;
+        this.type = type;
+        this.address = address;
+    }
+
+    public static Company create(UUID userId, CreateCompanyRequestDto requestDto) {
+        return new Company(
+            userId,
+            new Name(requestDto.companyName()),
+            requestDto.companyType(),
+            new Address(requestDto.companyAddress())
+        );
+    }
 }

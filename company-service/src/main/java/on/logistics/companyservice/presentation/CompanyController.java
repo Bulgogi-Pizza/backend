@@ -1,0 +1,29 @@
+package on.logistics.companyservice.presentation;
+
+import lombok.RequiredArgsConstructor;
+import on.logistics.companyservice.application.dtos.request.CreateCompanyRequestDto;
+import on.logistics.companyservice.application.service.CompanyService;
+import on.logistics.companyservice.global.presentation.dtos.CommonResponse;
+import on.logistics.companyservice.presentation.dtos.request.CreateCompanyRequest;
+import on.logistics.companyservice.presentation.dtos.response.CreateCompanyResponse;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequiredArgsConstructor
+@RequestMapping("/api/v1/company")
+public class CompanyController {
+
+    private final CompanyService companyService;
+
+    @PostMapping
+    public ResponseEntity<CommonResponse<CreateCompanyResponse>> createCompany(
+        @RequestBody CreateCompanyRequest createCompanyRequest) {
+        final CreateCompanyRequestDto requestDto = CreateCompanyRequest.from(createCompanyRequest);
+        CreateCompanyResponse response = companyService.createCompany(requestDto);
+        return ResponseEntity.ok(CommonResponse.success(response));
+    }
+}
