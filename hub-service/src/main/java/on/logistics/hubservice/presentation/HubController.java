@@ -1,0 +1,30 @@
+package on.logistics.hubservice.presentation;
+
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import on.logistics.hubservice.application.service.HubService;
+import on.logistics.hubservice.global.presentation.dtos.CommonResponse;
+import on.logistics.hubservice.presentation.dtos.request.CreateHubRequest;
+import on.logistics.hubservice.presentation.dtos.request.CreateHubRequestDto;
+import on.logistics.hubservice.presentation.dtos.response.CreateHubResponse;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequiredArgsConstructor
+@RequestMapping("/api/v1/hubs")
+public class HubController {
+
+    private final HubService hubService;
+
+    @PostMapping
+    public ResponseEntity<CommonResponse<CreateHubResponse>> createHub(
+        @RequestBody @Valid CreateHubRequest createHubRequest) {
+        final var requestDto = CreateHubRequestDto.of(createHubRequest);
+        final var responseDto = hubService.createHub(requestDto);
+        return ResponseEntity.ok(CommonResponse.success(responseDto));
+    }
+}
