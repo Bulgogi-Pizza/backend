@@ -14,8 +14,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import on.logistics.companyservice.application.dtos.request.CreateCompanyRequestDto;
-import on.logistics.companyservice.application.dtos.request.UpdateCompanyRequestDto;
+import on.logistics.companyservice.domain.entity.dtos.CreateCompanyDto;
 import on.logistics.companyservice.domain.entity.enums.CompanyType;
 import on.logistics.companyservice.domain.entity.vo.Address;
 import on.logistics.companyservice.domain.entity.vo.Name;
@@ -51,18 +50,18 @@ public class Company extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Address address;
 
-    public static Company create(UUID userId, CreateCompanyRequestDto requestDto) {
+    public static Company create(CreateCompanyDto createCompanyDto) {
         return Company.builder()
-            .userId(userId)
-            .name(new Name(requestDto.companyName()))
-            .type(requestDto.companyType())
-            .address(new Address(requestDto.companyAddress()))
+            .userId(createCompanyDto.userId())
+            .name(new Name(createCompanyDto.companyName()))
+            .type(createCompanyDto.type())
+            .address(new Address(createCompanyDto.companyAddress()))
             .build();
     }
 
-    public void update(UpdateCompanyRequestDto newCompany) {
-        this.name = name.update(newCompany.companyName());
-        this.address = address.update(newCompany.companyAddress());
+    public void update(String companyName, String companyAddress) {
+        this.name = name.update(companyName);
+        this.address = address.update(companyAddress);
     }
 
     public void updateHub(UUID managedHubId) {

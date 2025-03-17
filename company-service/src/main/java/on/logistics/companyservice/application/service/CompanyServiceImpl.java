@@ -8,6 +8,7 @@ import on.logistics.companyservice.application.dtos.request.SearchCompanyRequest
 import on.logistics.companyservice.application.dtos.request.UpdateCompanyHubRequestDto;
 import on.logistics.companyservice.application.dtos.request.UpdateCompanyRequestDto;
 import on.logistics.companyservice.domain.entity.Company;
+import on.logistics.companyservice.domain.entity.dtos.CreateCompanyDto;
 import on.logistics.companyservice.domain.repository.CompanyRepository;
 import on.logistics.companyservice.exception.CompanyException;
 import on.logistics.companyservice.exception.CompanyExceptionCode;
@@ -38,7 +39,9 @@ public class CompanyServiceImpl implements CompanyService {
             throw new CompanyException(CompanyExceptionCode.COMPANY_USER_ID_DUPLICATE);
         });
 
-        Company company = Company.create(userId, requestDto);
+        CreateCompanyDto createCompanyDto = CreateCompanyDto.from(userId, requestDto.companyName(),
+            requestDto.companyType(), requestDto.companyAddress());
+        Company company = Company.create(createCompanyDto);
         Company saved = companyRepository.save(company);
         return CreateCompanyResponse.of(saved.getId());
     }
@@ -61,7 +64,7 @@ public class CompanyServiceImpl implements CompanyService {
     public UpdateCompanyResponse updateCompany(UUID id, UpdateCompanyRequestDto requestDto) {
         // todo : 유저의 아이디 정보를 받아와서 본인 회사인지 체크하는 로직 필요
         Company company = getOrElseThrow(id);
-        company.update(requestDto);
+        company.update(requestDto.companyName(), requestDto.companyAddress());
         return UpdateCompanyResponse.of(company.getId());
     }
 
