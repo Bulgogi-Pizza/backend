@@ -30,6 +30,7 @@ public class CompanyServiceImpl implements CompanyService {
 
     private final CompanyRepository companyRepository;
 
+    @Override
     @Transactional
     public CreateCompanyResponse createCompany(CreateCompanyRequestDto requestDto) {
         // todo : 임시 유저 아이디 발급 로직 수정 필요
@@ -54,12 +55,14 @@ public class CompanyServiceImpl implements CompanyService {
         return PageDto.from(responsePage);
     }
 
+    @Override
     public GetCompanyResponse getCompany(UUID id) {
         Company company = getOrElseThrow(id);
         return GetCompanyResponse.of(company.getId(), company.getName().getValue(),
             company.getType(), company.getManagedHubId(), company.getAddress().getValue());
     }
 
+    @Override
     @Transactional
     public UpdateCompanyResponse updateCompany(UUID id, UpdateCompanyRequestDto requestDto) {
         // todo : 유저의 아이디 정보를 받아와서 본인 회사인지 체크하는 로직 필요
@@ -68,6 +71,7 @@ public class CompanyServiceImpl implements CompanyService {
         return UpdateCompanyResponse.of(company.getId());
     }
 
+    @Override
     @Transactional
     public void deleteCompany(UUID id) {
         // todo : 유저의 아이디 정보를 받아와서 본인 회사인지 체크하는 로직 필요
@@ -75,6 +79,7 @@ public class CompanyServiceImpl implements CompanyService {
         companyRepository.delete(company);
     }
 
+    @Override
     @Transactional
     public UpdateCompanyHubResponse updateCompanyHub(UUID id,
         UpdateCompanyHubRequestDto requestDto) {
