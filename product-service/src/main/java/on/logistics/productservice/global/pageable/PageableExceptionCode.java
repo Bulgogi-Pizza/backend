@@ -2,7 +2,7 @@ package on.logistics.productservice.global.pageable;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import on.logistics.companyservice.global.exception.ExceptionCode;
+import on.logistics.productservice.global.exception.ExceptionCode;
 import org.springframework.http.HttpStatus;
 
 @Getter

@@ -2,7 +2,6 @@ package on.logistics.productservice.global.exception;
 
 
 import lombok.Getter;
-import on.logistics.companyservice.global.exception.ExceptionCode;
 
 @Getter
 public class CustomException extends RuntimeException {

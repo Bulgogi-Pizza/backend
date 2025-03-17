@@ -1,11 +1,11 @@
 package on.logistics.productservice.global.resolver;
 
-import on.logistics.companyservice.global.enums.PageNumber;
-import on.logistics.companyservice.global.enums.PageSize;
-import on.logistics.companyservice.global.enums.PageSortBy;
-import on.logistics.companyservice.global.pageable.PageableException.InvalidPageNumberException;
-import on.logistics.companyservice.global.pageable.PageableException.InvalidPageSizeException;
-import on.logistics.companyservice.global.pageable.PageableException.InvalidSortByException;
+import on.logistics.productservice.global.enums.PageNumber;
+import on.logistics.productservice.global.enums.PageSize;
+import on.logistics.productservice.global.enums.PageSortBy;
+import on.logistics.productservice.global.pageable.PageableException.InvalidPageNumberException;
+import on.logistics.productservice.global.pageable.PageableException.InvalidPageSizeException;
+import on.logistics.productservice.global.pageable.PageableException.InvalidSortByException;
 import org.springframework.core.MethodParameter;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;

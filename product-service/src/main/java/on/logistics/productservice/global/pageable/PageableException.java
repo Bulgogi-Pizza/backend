@@ -1,6 +1,6 @@
 package on.logistics.productservice.global.pageable;
 
-import on.logistics.companyservice.global.exception.CustomException;
+import on.logistics.productservice.global.exception.CustomException;
 
 public class PageableException extends CustomException {
 

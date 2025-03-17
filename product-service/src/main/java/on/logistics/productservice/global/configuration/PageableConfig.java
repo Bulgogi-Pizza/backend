@@ -2,10 +2,10 @@ package on.logistics.productservice.global.configuration;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import on.logistics.companyservice.global.enums.PageNumber;
-import on.logistics.companyservice.global.enums.PageSize;
-import on.logistics.companyservice.global.enums.PageSortBy;
-import on.logistics.companyservice.global.resolver.PageableVerificationArgumentResolver;
+import on.logistics.productservice.global.enums.PageNumber;
+import on.logistics.productservice.global.enums.PageSize;
+import on.logistics.productservice.global.enums.PageSortBy;
+import on.logistics.productservice.global.resolver.PageableVerificationArgumentResolver;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
