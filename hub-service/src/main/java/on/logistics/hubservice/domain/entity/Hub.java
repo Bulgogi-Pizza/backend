@@ -18,6 +18,7 @@ import lombok.NoArgsConstructor;
 import on.logistics.hubservice.domain.entity.vo.Address;
 import on.logistics.hubservice.domain.entity.vo.Name;
 import on.logistics.hubservice.global.domain.BaseEntity;
+import on.logistics.hubservice.presentation.dtos.request.CreateHubRequestDto;
 
 @Getter
 @Entity
@@ -52,5 +53,15 @@ public class Hub extends BaseEntity {
         this.address = address;
         this.latitude = latitude;
         this.longitude = longitude;
+    }
+
+    public static Hub createOf(CreateHubRequestDto dto, BigDecimal latitude, BigDecimal longitude) {
+        return Hub.builder()
+            .name(new Name(dto.hubName()))
+            .type(dto.hubType())
+            .address(new Address(dto.hubAddress()))
+            .latitude(latitude)
+            .longitude(longitude)
+            .build();
     }
 }
