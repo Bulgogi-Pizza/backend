@@ -32,7 +32,7 @@ public class GeocodingServiceImpl implements GeocodingService {
         try {
             GeocodingApiResponse apiResponse = getGeocodeResponse(url);
             GeocodingApiResponse.Address address = extractAddress(apiResponse);
-            return convertToResponse(address);
+            return GeocodingResponseDto.from(address);
         } catch (MapException.InvalidResponseException e) {
             log.warn("API 응답 오류. query: {}. 응답: {}", query, e.getMessage());
             throw e;
@@ -69,12 +69,4 @@ public class GeocodingServiceImpl implements GeocodingService {
         return response.getAddresses().get(0);
     }
 
-    private GeocodingResponseDto convertToResponse(GeocodingApiResponse.Address address) {
-        return GeocodingResponseDto.builder()
-            .roadAddress(address.getRoadAddress())
-            .jibunAddress(address.getJibunAddress())
-            .longitude(address.getX())
-            .latitude(address.getY())
-            .build();
-    }
 }

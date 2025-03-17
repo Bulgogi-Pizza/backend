@@ -1,8 +1,5 @@
 package on.logistics.mapservice.application.service;
 
-import java.time.Duration;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import on.logistics.mapservice.application.dtos.DirectionsApiResponse;
@@ -38,8 +35,7 @@ public class DirectionsServiceImpl implements DirectionsService {
                 log.warn("잘못된 경로 응답: url=[{}], response=[{}]", url, directionsApiResponse);
                 throw new MapException.InvalidResponseException();
             }
-            DirectionsApiResponse.RouteInfo routeInfo = getRouteInfo(directionsApiResponse);
-            return mapToDto(routeInfo);
+            return DirectionsResponseDto.fromRouteInfo(getRouteInfo(directionsApiResponse));
         } catch (MapException.InvalidResponseException e) {
             log.warn("경로 응답 오류: url=[{}], error=[{}]", url, e.getMessage());
             throw e;
@@ -76,29 +72,4 @@ public class DirectionsServiceImpl implements DirectionsService {
         return directionsApiResponse.getRoute().getRouteInfo().get(0);
     }
 
-    private DirectionsResponseDto mapToDto(DirectionsApiResponse.RouteInfo routeInfo) {
-        DirectionsApiResponse.Summary summary = routeInfo.getSummary();
-
-        LocalDateTime departure = LocalDateTime.parse(summary.getDepartureTime(),
-            DateTimeFormatter.ISO_DATE_TIME);
-        LocalDateTime eta = departure.plus(Duration.ofMillis(summary.getDuration()));
-
-        DirectionsResponseDto.RouteSummary routeSummary = DirectionsResponseDto.RouteSummary.builder()
-            .distance(summary.getDistance())
-            .duration(summary.getDuration())
-            .start(DirectionsResponseDto.Start.builder()
-                .location(summary.getStart().getLocation())
-                .build())
-            .end(DirectionsResponseDto.End.builder()
-                .location(summary.getGoal().getLocation())
-                .build())
-            .departureTime(summary.getDepartureTime())
-            .eta(eta.format(DateTimeFormatter.ISO_DATE_TIME))
-            .tollFare(summary.getTollFare())
-            .build();
-
-        return DirectionsResponseDto.builder()
-            .summary(routeSummary)
-            .build();
-    }
 }
