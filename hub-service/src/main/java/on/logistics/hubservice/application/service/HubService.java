@@ -1,6 +1,7 @@
 package on.logistics.hubservice.application.service;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import on.logistics.hubservice.application.dtos.request.CreateHubRequestDto;
 import on.logistics.hubservice.application.dtos.request.UpdateHubRequestDto;
@@ -35,5 +36,12 @@ public class HubService {
             .orElseThrow(() -> new HubException(HubExceptionCode.HUB_NOT_FOUND));
         hub.update(requestDto);
         return UpdateHubResponse.of(hub);
+    }
+
+    @Transactional
+    public void deleteHub(final UUID id) {
+        Hub hub = hubRepository.findByIdAndIsDeleted(id, false)
+            .orElseThrow(() -> new HubException(HubExceptionCode.HUB_NOT_FOUND));
+        hub.delete();
     }
 }
