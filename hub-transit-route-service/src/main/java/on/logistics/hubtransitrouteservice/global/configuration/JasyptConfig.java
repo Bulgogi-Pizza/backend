@@ -1,4 +1,4 @@
-package on.logistics.hubtransitrouteservice.global.config;
+package on.logistics.hubtransitrouteservice.global.configuration;
 
 import org.jasypt.encryption.StringEncryptor;
 import org.jasypt.encryption.pbe.PooledPBEStringEncryptor;
