@@ -1,4 +1,4 @@
-package on.logistics.companyservice.presentation.dtos.response;
+package on.logistics.productservice.presentation.dtos.response;
 
 import java.util.UUID;
 
