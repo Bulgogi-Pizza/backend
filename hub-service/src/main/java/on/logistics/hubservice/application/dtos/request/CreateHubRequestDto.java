@@ -1,7 +1,8 @@
-package on.logistics.hubservice.presentation.dtos.request;
+package on.logistics.hubservice.application.dtos.request;
 
 import lombok.Builder;
 import on.logistics.hubservice.domain.entity.HubType;
+import on.logistics.hubservice.presentation.dtos.request.CreateHubRequest;
 
 @Builder
 public record CreateHubRequestDto(
