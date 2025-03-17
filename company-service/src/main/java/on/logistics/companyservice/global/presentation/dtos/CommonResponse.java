@@ -18,4 +18,8 @@ public record CommonResponse<T>(
     public static <T> CommonResponse<T> exception(String message) {
         return new CommonResponse<>(message, null);
     }
+
+    public static <T> CommonResponse<T> exception(String message, T data) {
+        return new CommonResponse<>(message, data);
+    }
 }
