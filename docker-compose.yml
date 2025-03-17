@@ -12,8 +12,6 @@ services:
       SPRING_PROFILES_ACTIVE: dev
     platform: linux/amd64
 
-  # 다른 서비스들도 여기에 추가
-
 networks:
   o-n-logistics:
     driver: bridge
