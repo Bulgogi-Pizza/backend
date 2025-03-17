@@ -10,6 +10,7 @@ import on.logistics.hubservice.domain.repository.HubRepository;
 import on.logistics.hubservice.exception.HubException;
 import on.logistics.hubservice.exception.HubExceptionCode;
 import on.logistics.hubservice.presentation.dtos.response.CreateHubResponse;
+import on.logistics.hubservice.presentation.dtos.response.GetHubResponse;
 import on.logistics.hubservice.presentation.dtos.response.UpdateHubResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +20,13 @@ import org.springframework.transaction.annotation.Transactional;
 public class HubService {
 
     private final HubRepository hubRepository;
+
+    @Transactional(readOnly = true)
+    public GetHubResponse getHub(final UUID id) {
+        Hub hub = hubRepository.findByIdAndIsDeleted(id, false)
+            .orElseThrow(() -> new HubException(HubExceptionCode.HUB_NOT_FOUND));
+        return GetHubResponse.of(hub);
+    }
 
     @Transactional
     public CreateHubResponse createHub(CreateHubRequestDto requestDto) {
