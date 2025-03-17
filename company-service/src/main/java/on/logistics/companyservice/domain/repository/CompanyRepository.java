@@ -8,7 +8,9 @@ public interface CompanyRepository {
 
     Company save(Company company);
 
-    Optional<Company> findByUserId(UUID userId);
+    void delete(Company company);
 
-    Optional<Company> findByIdAndIsDeleted(UUID id, boolean isDeleted);
+    Optional<Company> findById(UUID id);
+
+    Optional<Company> findByUserId(UUID userId);
 }

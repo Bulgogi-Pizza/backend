@@ -40,8 +40,7 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     public GetCompanyResponse getCompany(UUID id) {
-        Company company = companyRepository.findByIdAndIsDeleted(id, false)
-            .orElseThrow(() -> new CompanyException(CompanyExceptionCode.COMPANY_IS_NOT_FOUND));
+        Company company = getOrElseThrow(id);
         return GetCompanyResponse.of(company.getId(), company.getName().getValue(),
             company.getType(), company.getManagedHubId(), company.getAddress().getValue());
     }
@@ -49,8 +48,7 @@ public class CompanyServiceImpl implements CompanyService {
     @Transactional
     public UpdateCompanyResponse updateCompany(UUID id, UpdateCompanyRequestDto requestDto) {
         // todo : 유저의 아이디 정보를 받아와서 본인 회사인지 체크하는 로직 필요
-        Company company = companyRepository.findByIdAndIsDeleted(id, false)
-            .orElseThrow(() -> new CompanyException(CompanyExceptionCode.COMPANY_IS_NOT_FOUND));
+        Company company = getOrElseThrow(id);
         company.update(requestDto);
         return UpdateCompanyResponse.of(company.getId());
     }
@@ -58,18 +56,21 @@ public class CompanyServiceImpl implements CompanyService {
     @Transactional
     public void deleteCompany(UUID id) {
         // todo : 유저의 아이디 정보를 받아와서 본인 회사인지 체크하는 로직 필요
-        Company company = companyRepository.findByIdAndIsDeleted(id, false)
-            .orElseThrow(() -> new CompanyException(CompanyExceptionCode.COMPANY_IS_NOT_FOUND));
-        company.delete();
+        Company company = getOrElseThrow(id);
+        companyRepository.delete(company);
     }
 
     @Transactional
     public UpdateCompanyHubResponse updateCompanyHub(UUID id,
         UpdateCompanyHubRequestDto requestDto) {
         // todo : 유저의 아이디 정보를 받아와서 본인 회사인지 체크하는 로직 필요
-        Company company = companyRepository.findByIdAndIsDeleted(id, false)
-            .orElseThrow(() -> new CompanyException(CompanyExceptionCode.COMPANY_IS_NOT_FOUND));
+        Company company = getOrElseThrow(id);
         company.updateHub(requestDto.managedHubId());
         return UpdateCompanyHubResponse.of(company.getId());
+    }
+
+    private Company getOrElseThrow(UUID id) {
+        return companyRepository.findById(id)
+            .orElseThrow(() -> new CompanyException(CompanyExceptionCode.COMPANY_IS_NOT_FOUND));
     }
 }

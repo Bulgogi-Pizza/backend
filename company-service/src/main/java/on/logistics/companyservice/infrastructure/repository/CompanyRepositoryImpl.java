@@ -20,12 +20,17 @@ public class CompanyRepositoryImpl implements CompanyRepository {
     }
 
     @Override
-    public Optional<Company> findByUserId(UUID userId) {
-        return companyJpaRepository.findByUserId(userId);
+    public void delete(Company company) {
+        companyJpaRepository.delete(company);
     }
 
     @Override
-    public Optional<Company> findByIdAndIsDeleted(UUID id, boolean isDeleted) {
-        return companyJpaRepository.findByIdAndIsDeleted(id, isDeleted);
+    public Optional<Company> findById(UUID id) {
+        return companyJpaRepository.findById(id);
+    }
+
+    @Override
+    public Optional<Company> findByUserId(UUID userId) {
+        return companyJpaRepository.findByUserId(userId);
     }
 }

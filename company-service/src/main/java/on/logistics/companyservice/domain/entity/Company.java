@@ -10,6 +10,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import java.util.UUID;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import on.logistics.companyservice.application.dtos.request.CreateCompanyRequestDto;
@@ -18,10 +20,16 @@ import on.logistics.companyservice.domain.entity.enums.CompanyType;
 import on.logistics.companyservice.domain.entity.vo.Address;
 import on.logistics.companyservice.domain.entity.vo.Name;
 import on.logistics.companyservice.global.domain.BaseEntity;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 
 @Getter
 @Entity
+@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@SQLRestriction("is_deleted = false")
+@SQLDelete(sql = "UPDATE company SET is_deleted = true WHERE id = ?")
 public class Company extends BaseEntity {
 
     @Id
@@ -43,29 +51,18 @@ public class Company extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Address address;
 
-    private Company(UUID userId, Name name, CompanyType type, Address address) {
-        this.userId = userId;
-        this.name = name;
-        this.type = type;
-        this.address = address;
-    }
-
     public static Company create(UUID userId, CreateCompanyRequestDto requestDto) {
-        return new Company(
-            userId,
-            new Name(requestDto.companyName()),
-            requestDto.companyType(),
-            new Address(requestDto.companyAddress())
-        );
+        return Company.builder()
+            .userId(userId)
+            .name(new Name(requestDto.companyName()))
+            .type(requestDto.companyType())
+            .address(new Address(requestDto.companyAddress()))
+            .build();
     }
 
     public void update(UpdateCompanyRequestDto newCompany) {
         this.name = name.update(newCompany.companyName());
         this.address = address.update(newCompany.companyAddress());
-    }
-
-    public void delete() {
-        deleteSoftly();
     }
 
     public void updateHub(UUID managedHubId) {

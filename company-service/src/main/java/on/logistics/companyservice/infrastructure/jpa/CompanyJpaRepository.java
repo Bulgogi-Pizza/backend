@@ -6,8 +6,6 @@ import on.logistics.companyservice.domain.entity.Company;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface CompanyJpaRepository extends JpaRepository<Company, UUID> {
-    
-    Optional<Company> findByUserId(UUID userId);
 
-    Optional<Company> findByIdAndIsDeleted(UUID companyId, Boolean isDeleted);
+    Optional<Company> findByUserId(UUID userId);
 }
