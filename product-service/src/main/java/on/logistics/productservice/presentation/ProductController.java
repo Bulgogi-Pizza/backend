@@ -5,21 +5,25 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import on.logistics.productservice.application.dto.CreateProductRequestDto;
 import on.logistics.productservice.application.dto.SearchProductRequestDto;
+import on.logistics.productservice.application.dto.UpdateProductQuantityRequestDto;
 import on.logistics.productservice.application.dto.UpdateProductRequestDto;
 import on.logistics.productservice.application.service.ProductService;
 import on.logistics.productservice.global.application.dtos.PageDto;
 import on.logistics.productservice.global.presentation.dtos.CommonResponse;
 import on.logistics.productservice.presentation.dtos.request.CreateProductRequest;
+import on.logistics.productservice.presentation.dtos.request.UpdateProductQuantityRequest;
 import on.logistics.productservice.presentation.dtos.request.UpdateProductRequest;
 import on.logistics.productservice.presentation.dtos.response.CreateProductResponse;
 import on.logistics.productservice.presentation.dtos.response.GetProductResponse;
 import on.logistics.productservice.presentation.dtos.response.SearchProductResponse;
+import on.logistics.productservice.presentation.dtos.response.UpdateProductQuantityResponse;
 import on.logistics.productservice.presentation.dtos.response.UpdateProductResponse;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -78,5 +82,16 @@ public class ProductController {
     ) {
         productService.deleteProduct(id);
         return ResponseEntity.ok(CommonResponse.success());
+    }
+
+    @PatchMapping("/quantity/{id}")
+    public ResponseEntity<CommonResponse<UpdateProductQuantityResponse>> updateProductQuantity(
+        @PathVariable UUID id,
+        @Valid @RequestBody UpdateProductQuantityRequest updateProductQuantityRequest
+    ) {
+        UpdateProductQuantityRequestDto requestDto = UpdateProductQuantityRequest.from(id,
+            updateProductQuantityRequest);
+        UpdateProductQuantityResponse response = productService.updateProductQuantity(requestDto);
+        return ResponseEntity.ok(CommonResponse.success(response));
     }
 }

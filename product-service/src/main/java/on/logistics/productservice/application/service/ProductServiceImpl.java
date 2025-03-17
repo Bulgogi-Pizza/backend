@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import on.logistics.productservice.application.dto.CreateProductRequestDto;
 import on.logistics.productservice.application.dto.SearchProductRequestDto;
+import on.logistics.productservice.application.dto.UpdateProductQuantityRequestDto;
 import on.logistics.productservice.application.dto.UpdateProductRequestDto;
 import on.logistics.productservice.domain.Product;
 import on.logistics.productservice.domain.dto.CreateProductDto;
@@ -16,6 +17,7 @@ import on.logistics.productservice.global.application.dtos.PageDto;
 import on.logistics.productservice.presentation.dtos.response.CreateProductResponse;
 import on.logistics.productservice.presentation.dtos.response.GetProductResponse;
 import on.logistics.productservice.presentation.dtos.response.SearchProductResponse;
+import on.logistics.productservice.presentation.dtos.response.UpdateProductQuantityResponse;
 import on.logistics.productservice.presentation.dtos.response.UpdateProductResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
@@ -71,6 +73,20 @@ public class ProductServiceImpl implements ProductService {
         // todo : 유저의 아이디 정보를 받아와서 권한 체크 필요
         Product product = getOrElseThrow(id);
         productRepository.delete(product);
+    }
+
+    @Override
+    @Transactional
+    public UpdateProductQuantityResponse updateProductQuantity(
+        UpdateProductQuantityRequestDto requestDto) {
+        Product product = getOrElseThrow(requestDto.productId());
+
+        if (product.getQuantity().getValue() == 0) {
+            throw new ProductException(ProductExceptionCode.PRODUCT_QUANTITY_LIMIT);
+        }
+
+        product.updateQuantity(requestDto.quantity());
+        return UpdateProductQuantityResponse.from(product.getId());
     }
 
     private Product getOrElseThrow(UUID id) {

@@ -69,4 +69,8 @@ public class Product extends BaseEntity {
         this.price = price.update(updateProductDto.productPrice());
         this.bundleSize = bundleSize.update(updateProductDto.bundleSize());
     }
+
+    public void updateQuantity(Long quantity) {
+        this.quantity = this.quantity.reduceQuantity(quantity);
+    }
 }

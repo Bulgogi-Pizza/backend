@@ -33,4 +33,11 @@ public class Quantity {
         return new Quantity(value);
     }
 
+    public Quantity reduceQuantity(final Long value) {
+        if (this.value - value < 0) {
+            throw new ProductException(ProductExceptionCode.PRODUCT_QUANTITY_MIN);
+        }
+        return new Quantity(this.value - value);
+    }
+
 }
