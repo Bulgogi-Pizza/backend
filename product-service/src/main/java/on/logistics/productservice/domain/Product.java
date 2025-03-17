@@ -33,10 +33,10 @@ public class Product extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(name = "company_id")
+    @Column(name = "company_id", nullable = false)
     private UUID companyId;
 
-    @Column(name = "managed_hub_id")
+    @Column(name = "company_id", nullable = false)
     private UUID managedHubId;
 
     @Embedded
