@@ -4,17 +4,23 @@ import jakarta.validation.Valid;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import on.logistics.companyservice.application.dtos.request.CreateCompanyRequestDto;
+import on.logistics.companyservice.application.dtos.request.SearchCompanyRequestDto;
 import on.logistics.companyservice.application.dtos.request.UpdateCompanyHubRequestDto;
 import on.logistics.companyservice.application.dtos.request.UpdateCompanyRequestDto;
 import on.logistics.companyservice.application.service.CompanyService;
+import on.logistics.companyservice.domain.entity.enums.CompanyType;
+import on.logistics.companyservice.global.application.dtos.PageDto;
 import on.logistics.companyservice.global.presentation.dtos.CommonResponse;
 import on.logistics.companyservice.presentation.dtos.request.CreateCompanyRequest;
 import on.logistics.companyservice.presentation.dtos.request.UpdateCompanyHubRequest;
 import on.logistics.companyservice.presentation.dtos.request.UpdateCompanyRequest;
 import on.logistics.companyservice.presentation.dtos.response.CreateCompanyResponse;
 import on.logistics.companyservice.presentation.dtos.response.GetCompanyResponse;
+import on.logistics.companyservice.presentation.dtos.response.SearchCompanyResponse;
 import on.logistics.companyservice.presentation.dtos.response.UpdateCompanyHubResponse;
 import on.logistics.companyservice.presentation.dtos.response.UpdateCompanyResponse;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,6 +30,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -38,6 +45,18 @@ public class CompanyController {
         @Valid @RequestBody CreateCompanyRequest createCompanyRequest) {
         final CreateCompanyRequestDto requestDto = CreateCompanyRequest.from(createCompanyRequest);
         CreateCompanyResponse response = companyService.createCompany(requestDto);
+        return ResponseEntity.ok(CommonResponse.success(response));
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<CommonResponse<PageDto<SearchCompanyResponse>>> searchCompany(
+        @RequestParam(required = false) String name,
+        @RequestParam(required = false) CompanyType type,
+        @PageableDefault Pageable pageable
+    ) {
+        final SearchCompanyRequestDto requestDto = SearchCompanyRequestDto.from(name, type,
+            pageable);
+        PageDto<SearchCompanyResponse> response = companyService.searchCompany(requestDto);
         return ResponseEntity.ok(CommonResponse.success(response));
     }
 

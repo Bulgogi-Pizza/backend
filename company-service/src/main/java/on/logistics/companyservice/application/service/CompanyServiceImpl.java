@@ -4,16 +4,20 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import on.logistics.companyservice.application.dtos.request.CreateCompanyRequestDto;
+import on.logistics.companyservice.application.dtos.request.SearchCompanyRequestDto;
 import on.logistics.companyservice.application.dtos.request.UpdateCompanyHubRequestDto;
 import on.logistics.companyservice.application.dtos.request.UpdateCompanyRequestDto;
 import on.logistics.companyservice.domain.entity.Company;
 import on.logistics.companyservice.domain.repository.CompanyRepository;
 import on.logistics.companyservice.exception.CompanyException;
 import on.logistics.companyservice.exception.CompanyExceptionCode;
+import on.logistics.companyservice.global.application.dtos.PageDto;
 import on.logistics.companyservice.presentation.dtos.response.CreateCompanyResponse;
 import on.logistics.companyservice.presentation.dtos.response.GetCompanyResponse;
+import on.logistics.companyservice.presentation.dtos.response.SearchCompanyResponse;
 import on.logistics.companyservice.presentation.dtos.response.UpdateCompanyHubResponse;
 import on.logistics.companyservice.presentation.dtos.response.UpdateCompanyResponse;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,6 +41,14 @@ public class CompanyServiceImpl implements CompanyService {
         Company company = Company.create(userId, requestDto);
         Company saved = companyRepository.save(company);
         return CreateCompanyResponse.of(saved.getId());
+    }
+
+    @Override
+    public PageDto<SearchCompanyResponse> searchCompany(SearchCompanyRequestDto requestDto) {
+        Page<Company> companyPage = companyRepository.searchCompany(requestDto);
+        Page<SearchCompanyResponse> responsePage = companyPage.map(
+            SearchCompanyResponse::from);
+        return PageDto.from(responsePage);
     }
 
     public GetCompanyResponse getCompany(UUID id) {
