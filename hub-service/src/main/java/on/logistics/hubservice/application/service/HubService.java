@@ -7,6 +7,7 @@ import on.logistics.hubservice.domain.repository.HubRepository;
 import on.logistics.hubservice.presentation.dtos.request.CreateHubRequestDto;
 import on.logistics.hubservice.presentation.dtos.response.CreateHubResponse;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -14,6 +15,7 @@ public class HubService {
 
     private final HubRepository hubRepository;
 
+    @Transactional
     public CreateHubResponse createHub(CreateHubRequestDto requestDto) {
         // TODO: 추후 네이버 API로 실제 좌표로 수정해야함
         BigDecimal latitude = new BigDecimal("37.5563");
