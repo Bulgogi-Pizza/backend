@@ -20,7 +20,8 @@ public class DirectionsController {
         @RequestParam("start") String start,
         @RequestParam("end") String end,
         @RequestParam(value = "option", required = false, defaultValue = "traoptimal") String option,
-        @RequestParam(value = "cartype", required = false, defaultValue = "2") int cartype) {
+        @RequestParam(value = "cartype", required = false, defaultValue = "2") int cartype
+    ) {
         final var responseDto = directionsService.getRoute(start, end, option, cartype);
         return ResponseEntity.ok().body(CommonResponse.success(responseDto));
     }
