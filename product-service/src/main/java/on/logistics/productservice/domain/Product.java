@@ -12,6 +12,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import on.logistics.productservice.domain.dto.CreateProductDto;
 import on.logistics.productservice.domain.vo.BundleSize;
 import on.logistics.productservice.domain.vo.Name;
 import on.logistics.productservice.domain.vo.Price;
@@ -36,7 +37,7 @@ public class Product extends BaseEntity {
     @Column(name = "company_id", nullable = false)
     private UUID companyId;
 
-    @Column(name = "company_id", nullable = false)
+    @Column(name = "managed_hub_id", nullable = false)
     private UUID managedHubId;
 
     @Embedded
@@ -50,4 +51,14 @@ public class Product extends BaseEntity {
 
     @Embedded
     private BundleSize bundleSize;
+
+    public static Product create(CreateProductDto createProductDto) {
+        return Product.builder()
+            .companyId(createProductDto.companyId())
+            .managedHubId(createProductDto.managedHubId())
+            .name(new Name(createProductDto.productName()))
+            .quantity(new Quantity(createProductDto.productQuantity()))
+            .bundleSize(new BundleSize(createProductDto.bundleSize()))
+            .build();
+    }
 }
