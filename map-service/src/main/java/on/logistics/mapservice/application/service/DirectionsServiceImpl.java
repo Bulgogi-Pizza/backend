@@ -28,27 +28,29 @@ public class DirectionsServiceImpl implements DirectionsService {
 
     @Override
     public DirectionsResponseDto getRoute(String start, String end, String option, int cartype) {
+        log.debug("getRoute() 호출: start={}, end={}, option={}, cartype={}", start, end, option,
+            cartype);
         String url = buildRequestUrl(start, end, option, cartype);
         try {
             DirectionsApiResponse directionsApiResponse = getDirectionResponse(url);
             if (!hasValidRouteInfo(directionsApiResponse)) {
-                log.warn("잘못된 경로 응답: url=[{}], response=[{}]", url, directionsApiResponse);
                 throw new MapException.InvalidResponseException();
             }
+            log.info("경로 API 호출 성공: url={}, 응답코드={}", url, directionsApiResponse.getCode());
             return DirectionsResponseDto.fromRouteInfo(getRouteInfo(directionsApiResponse));
         } catch (MapException.InvalidResponseException e) {
-            log.warn("경로 응답 오류: url=[{}], error=[{}]", url, e.getMessage());
             throw e;
         } catch (Exception e) {
-            log.warn("경로 검색 중 알 수 없는 오류 발생: url=[{}], error=[{}]", url, e.getMessage());
             throw new MapException.ExternalApiCallException();
         }
     }
 
     private String buildRequestUrl(String start, String end, String option, int cartype) {
-        return String.format(
-            "%s/map-direction/v1/driving?start=%s&goal=%s&option=%s&cartype=%d",
-            baseUrl, start, end, option, cartype);
+        String requestUrl = String.format(
+            "%s/map-direction/v1/driving?start=%s&goal=%s&option=%s&cartype=%d", baseUrl, start,
+            end, option, cartype);
+        log.debug("buildRequestUrl(): {}", requestUrl);
+        return requestUrl;
     }
 
     private DirectionsApiResponse getDirectionResponse(String url) {

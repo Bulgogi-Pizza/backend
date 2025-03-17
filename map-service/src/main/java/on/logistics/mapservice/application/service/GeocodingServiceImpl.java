@@ -28,25 +28,24 @@ public class GeocodingServiceImpl implements GeocodingService {
 
     @Override
     public GeocodingResponseDto getCoordinates(String query) {
+        log.debug("getCoordinates() 호출: query={}", query);
         String url = buildRequestUrl(query);
         try {
             GeocodingApiResponse apiResponse = getGeocodeResponse(url);
+            log.info("네이버 geocode API 호출 성공: query={}, 응답코드={}", query, apiResponse.getStatus());
             GeocodingApiResponse.Address address = extractAddress(apiResponse);
             return GeocodingResponseDto.from(address);
-        } catch (MapException.InvalidResponseException e) {
-            log.warn("API 응답 오류. query: {}. 응답: {}", query, e.getMessage());
-            throw e;
-        } catch (MapException.ExternalApiCallException e) {
-            log.warn("외부 API 호출 중 오류 발생. query: {}", query, e);
+        } catch (MapException.InvalidResponseException | MapException.ExternalApiCallException e) {
             throw e;
         } catch (Exception e) {
-            log.warn("좌표 변환 중 오류 발생. query: {}", query, e);
             throw new MapException.ExternalApiCallException();
         }
     }
 
     private String buildRequestUrl(String query) {
-        return baseUrl + "/map-geocode/v2/geocode?query=" + query;
+        String requestUrl = baseUrl + "/map-geocode/v2/geocode?query=" + query;
+        log.debug("buildRequestUrl(): {}", requestUrl);
+        return requestUrl;
     }
 
     private GeocodingApiResponse getGeocodeResponse(String url) {
@@ -63,7 +62,6 @@ public class GeocodingServiceImpl implements GeocodingService {
     private GeocodingApiResponse.Address extractAddress(GeocodingApiResponse response) {
         if (response == null || response.getAddresses() == null || response.getAddresses()
             .isEmpty()) {
-            log.warn("API 응답이 올바르지 않습니다. apiResponse: {}", response);
             throw new MapException.InvalidResponseException();
         }
         return response.getAddresses().get(0);
