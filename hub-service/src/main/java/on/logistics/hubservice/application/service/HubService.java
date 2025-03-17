@@ -2,10 +2,14 @@ package on.logistics.hubservice.application.service;
 
 import java.math.BigDecimal;
 import lombok.RequiredArgsConstructor;
+import on.logistics.hubservice.application.dtos.request.CreateHubRequestDto;
+import on.logistics.hubservice.application.dtos.request.UpdateHubRequestDto;
 import on.logistics.hubservice.domain.entity.Hub;
 import on.logistics.hubservice.domain.repository.HubRepository;
-import on.logistics.hubservice.presentation.dtos.request.CreateHubRequestDto;
+import on.logistics.hubservice.exception.HubException;
+import on.logistics.hubservice.exception.HubExceptionCode;
 import on.logistics.hubservice.presentation.dtos.response.CreateHubResponse;
+import on.logistics.hubservice.presentation.dtos.response.UpdateHubResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,8 +24,16 @@ public class HubService {
         // TODO: 추후 네이버 API로 실제 좌표로 수정해야함
         BigDecimal latitude = new BigDecimal("37.5563");
         BigDecimal longitude = new BigDecimal("126.9707");
-        Hub hub = Hub.createOf(requestDto, latitude, longitude);
+        Hub hub = Hub.create(requestDto, latitude, longitude);
         Hub savedHub = hubRepository.save(hub);
         return CreateHubResponse.of(savedHub.getId());
+    }
+
+    @Transactional
+    public UpdateHubResponse updateHub(UpdateHubRequestDto requestDto) {
+        Hub hub = hubRepository.findByIdAndIsDeleted(requestDto.id(), false)
+            .orElseThrow(() -> new HubException(HubExceptionCode.HUB_NOT_FOUND));
+        hub.update(requestDto);
+        return UpdateHubResponse.of(hub);
     }
 }

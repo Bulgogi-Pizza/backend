@@ -1,14 +1,20 @@
 package on.logistics.hubservice.presentation;
 
 import jakarta.validation.Valid;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import on.logistics.hubservice.application.dtos.request.CreateHubRequestDto;
+import on.logistics.hubservice.application.dtos.request.UpdateHubRequestDto;
 import on.logistics.hubservice.application.service.HubService;
 import on.logistics.hubservice.global.presentation.dtos.CommonResponse;
 import on.logistics.hubservice.presentation.dtos.request.CreateHubRequest;
-import on.logistics.hubservice.presentation.dtos.request.CreateHubRequestDto;
+import on.logistics.hubservice.presentation.dtos.request.UpdateHubRequest;
 import on.logistics.hubservice.presentation.dtos.response.CreateHubResponse;
+import on.logistics.hubservice.presentation.dtos.response.UpdateHubResponse;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,6 +31,14 @@ public class HubController {
         @RequestBody @Valid CreateHubRequest createHubRequest) {
         final var requestDto = CreateHubRequestDto.of(createHubRequest);
         final var responseDto = hubService.createHub(requestDto);
+        return ResponseEntity.ok(CommonResponse.success(responseDto));
+    }
+
+    @PutMapping("{id}")
+    ResponseEntity<CommonResponse<UpdateHubResponse>> updateHub(@PathVariable UUID id,
+        @RequestBody @Valid UpdateHubRequest updateHubRequest) {
+        final var requestDto = UpdateHubRequestDto.of(id, updateHubRequest);
+        final var responseDto = hubService.updateHub(requestDto);
         return ResponseEntity.ok(CommonResponse.success(responseDto));
     }
 }
