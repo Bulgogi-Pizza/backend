@@ -12,6 +12,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import on.logistics.productservice.domain.vo.BundleSize;
 import on.logistics.productservice.domain.vo.Name;
 import on.logistics.productservice.domain.vo.Price;
 import on.logistics.productservice.domain.vo.Quantity;
@@ -46,5 +47,7 @@ public class Product extends BaseEntity {
 
     @Embedded
     private Price price;
-    private Long bundleSize;
+
+    @Embedded
+    private BundleSize bundleSize;
 }
