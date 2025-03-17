@@ -40,10 +40,10 @@ public class Hub extends BaseEntity {
     private Address address;
 
     @Column(nullable = false)
-    private BigDecimal latitude;  // 위도
+    private BigDecimal latitude;
 
     @Column(nullable = false)
-    private BigDecimal longitude; // 경도
+    private BigDecimal longitude;
 
     @Builder
     private Hub(Name name, HubType type, Address address, BigDecimal latitude,
