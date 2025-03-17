@@ -1,8 +1,8 @@
 package on.logistics.companyservice.application.service;
 
 import java.util.UUID;
-import on.logistics.companyservice.application.dtos.UpdateCompanyHubRequestDto;
 import on.logistics.companyservice.application.dtos.request.CreateCompanyRequestDto;
+import on.logistics.companyservice.application.dtos.request.UpdateCompanyHubRequestDto;
 import on.logistics.companyservice.application.dtos.request.UpdateCompanyRequestDto;
 import on.logistics.companyservice.presentation.dtos.response.CreateCompanyResponse;
 import on.logistics.companyservice.presentation.dtos.response.GetCompanyResponse;
