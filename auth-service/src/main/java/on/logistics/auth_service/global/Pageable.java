@@ -1,0 +1,1 @@
+package on.logistics.auth_service.global;
