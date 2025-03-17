@@ -28,7 +28,7 @@ public class ProductServiceImpl implements ProductService {
     @Transactional
     public CreateProductResponse createProduct(CreateProductRequestDto requestDto) {
 
-        // todo : 업체 관리자인지 아닌지 확인하는 로직 필요
+        // todo : 유저의 아이디 정보를 받아와서 권한 체크 필요
         CreateProductDto createProductDto = CreateProductDto.from(requestDto);
 
         Product product = Product.create(createProductDto);
@@ -40,7 +40,7 @@ public class ProductServiceImpl implements ProductService {
     @Transactional
     public UpdateProductResponse updateProduct(UpdateProductRequestDto requestDto) {
 
-        // todo : 업체 관리자인지 아닌지 확인하는 로직 필요
+        // todo : 유저의 아이디 정보를 받아와서 권한 체크 필요
         UpdateProductDto updateProductDto = UpdateProductDto.from(requestDto);
         Product product = getOrElseThrow(updateProductDto.productId());
         product.update(updateProductDto);
@@ -50,7 +50,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional
     public void deleteProduct(UUID id) {
-        // todo : 업체 관리자인지 아닌지 확인하는 로직 필요
+        // todo : 유저의 아이디 정보를 받아와서 권한 체크 필요
         Product product = getOrElseThrow(id);
         productRepository.delete(product);
     }
