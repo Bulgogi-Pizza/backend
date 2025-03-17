@@ -13,6 +13,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import on.logistics.productservice.domain.dto.CreateProductDto;
+import on.logistics.productservice.domain.dto.UpdateProductDto;
 import on.logistics.productservice.domain.vo.BundleSize;
 import on.logistics.productservice.domain.vo.Name;
 import on.logistics.productservice.domain.vo.Price;
@@ -53,12 +54,19 @@ public class Product extends BaseEntity {
     private BundleSize bundleSize;
 
     public static Product create(CreateProductDto createProductDto) {
-        return Product.builder()
+        return on.logistics.productservice.domain.Product.builder()
             .companyId(createProductDto.companyId())
             .managedHubId(createProductDto.managedHubId())
             .name(new Name(createProductDto.productName()))
             .quantity(new Quantity(createProductDto.productQuantity()))
             .bundleSize(new BundleSize(createProductDto.bundleSize()))
             .build();
+    }
+
+    public void update(UpdateProductDto updateProductDto) {
+        this.name = name.update(updateProductDto.productName());
+        this.quantity = quantity.update(updateProductDto.productQuantity());
+        this.price = price.update(updateProductDto.productPrice());
+        this.bundleSize = bundleSize.update(updateProductDto.bundleSize());
     }
 }

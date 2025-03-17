@@ -1,5 +1,7 @@
 package on.logistics.productservice.infrastructure.repository;
 
+import java.util.Optional;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import on.logistics.productservice.domain.Product;
 import on.logistics.productservice.domain.repository.ProductRepository;
@@ -15,5 +17,10 @@ public class ProductRepositoryImpl implements ProductRepository {
     @Override
     public Product save(Product product) {
         return productJpaRepository.save(product);
+    }
+
+    @Override
+    public Optional<Product> findById(UUID id) {
+        return productJpaRepository.findById(id);
     }
 }
