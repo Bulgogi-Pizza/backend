@@ -32,15 +32,10 @@ public class CompanyQueryRepositoryImpl implements CompanyQueryRepository {
         return new PageImpl<>(companyList, requestDto.pageable(), total);
     }
 
-
     private List<Company> searchCompanyList(BooleanBuilder builder, Pageable pageable) {
         OrderSpecifier<?>[] orderSpecifiers = getOrderSpecifiers(pageable);
-        return queryFactory
-            .selectFrom(company)
-            .where(builder)
-            .orderBy(orderSpecifiers)
-            .offset(pageable.getOffset())
-            .limit(pageable.getPageSize())
+        return queryFactory.selectFrom(company).where(company.isDeleted.eq(false), builder)
+            .orderBy(orderSpecifiers).offset(pageable.getOffset()).limit(pageable.getPageSize())
             .fetch();
     }
 
@@ -77,10 +72,6 @@ public class CompanyQueryRepositoryImpl implements CompanyQueryRepository {
     }
 
     private Long totalCount(BooleanBuilder builder) {
-        return queryFactory
-            .select(company.count())
-            .from(company)
-            .where(builder)
-            .fetchOne();
+        return queryFactory.select(company.count()).from(company).where(builder).fetchOne();
     }
 }
