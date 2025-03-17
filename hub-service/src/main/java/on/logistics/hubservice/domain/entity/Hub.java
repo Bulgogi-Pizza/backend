@@ -15,10 +15,11 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import on.logistics.hubservice.application.dtos.request.CreateHubRequestDto;
+import on.logistics.hubservice.application.dtos.request.UpdateHubRequestDto;
 import on.logistics.hubservice.domain.entity.vo.Address;
 import on.logistics.hubservice.domain.entity.vo.Name;
 import on.logistics.hubservice.global.domain.BaseEntity;
-import on.logistics.hubservice.presentation.dtos.request.CreateHubRequestDto;
 
 @Getter
 @Entity
@@ -39,10 +40,10 @@ public class Hub extends BaseEntity {
     @Embedded
     private Address address;
 
-    @Column(nullable = false)
+    @Column(nullable = false, precision = 11, scale = 9)
     private BigDecimal latitude;
 
-    @Column(nullable = false)
+    @Column(nullable = false, precision = 12, scale = 8)
     private BigDecimal longitude;
 
     @Builder
@@ -55,7 +56,7 @@ public class Hub extends BaseEntity {
         this.longitude = longitude;
     }
 
-    public static Hub createOf(CreateHubRequestDto dto, BigDecimal latitude, BigDecimal longitude) {
+    public static Hub create(CreateHubRequestDto dto, BigDecimal latitude, BigDecimal longitude) {
         return Hub.builder()
             .name(new Name(dto.hubName()))
             .type(dto.hubType())
@@ -63,5 +64,11 @@ public class Hub extends BaseEntity {
             .latitude(latitude)
             .longitude(longitude)
             .build();
+    }
+
+    public void update(UpdateHubRequestDto dto) {
+        this.name = new Name(dto.hubName());
+        this.type = dto.hubType();
+        this.address = new Address(dto.hubAddress());
     }
 }

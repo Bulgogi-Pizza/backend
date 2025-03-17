@@ -1,5 +1,7 @@
 package on.logistics.hubservice.infrastructure.repository;
 
+import java.util.Optional;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import on.logistics.hubservice.domain.entity.Hub;
 import on.logistics.hubservice.domain.repository.HubRepository;
@@ -15,5 +17,10 @@ public class HubRepositoryImpl implements HubRepository {
     @Override
     public Hub save(Hub hub) {
         return hubJpaRepository.save(hub);
+    }
+
+    @Override
+    public Optional<Hub> findByIdAndIsDeleted(UUID id, boolean isDeleted) {
+        return hubJpaRepository.findByIdAndIsDeleted(id, isDeleted);
     }
 }
