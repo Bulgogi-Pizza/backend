@@ -10,9 +10,11 @@ import on.logistics.productservice.global.presentation.dtos.CommonResponse;
 import on.logistics.productservice.presentation.dtos.request.CreateProductRequest;
 import on.logistics.productservice.presentation.dtos.request.UpdateProductRequest;
 import on.logistics.productservice.presentation.dtos.response.CreateProductResponse;
+import on.logistics.productservice.presentation.dtos.response.GetProductResponse;
 import on.logistics.productservice.presentation.dtos.response.UpdateProductResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -33,6 +35,14 @@ public class ProductController {
     ) {
         CreateProductRequestDto requestDto = CreateProductRequest.from(createProductRequest);
         CreateProductResponse response = productService.createProduct(requestDto);
+        return ResponseEntity.ok(CommonResponse.success(response));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<CommonResponse<GetProductResponse>> getProduct(
+        @PathVariable UUID id
+    ) {
+        GetProductResponse response = productService.getProduct(id);
         return ResponseEntity.ok(CommonResponse.success(response));
     }
 

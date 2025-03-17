@@ -12,6 +12,7 @@ import on.logistics.productservice.domain.repository.ProductRepository;
 import on.logistics.productservice.exception.ProductException;
 import on.logistics.productservice.exception.ProductExceptionCode;
 import on.logistics.productservice.presentation.dtos.response.CreateProductResponse;
+import on.logistics.productservice.presentation.dtos.response.GetProductResponse;
 import on.logistics.productservice.presentation.dtos.response.UpdateProductResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,6 +35,12 @@ public class ProductServiceImpl implements ProductService {
         Product product = Product.create(createProductDto);
         Product saved = productRepository.save(product);
         return CreateProductResponse.of(saved.getId());
+    }
+
+    @Override
+    public GetProductResponse getProduct(UUID id) {
+        Product product = getOrElseThrow(id);
+        return GetProductResponse.from(product);
     }
 
     @Override
