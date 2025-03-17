@@ -86,7 +86,7 @@ public class ProductServiceImpl implements ProductService {
         }
 
         product.updateQuantity(requestDto.quantity());
-        return UpdateProductQuantityResponse.from(product.getId());
+        return UpdateProductQuantityResponse.of(product.getId());
     }
 
     private Product getOrElseThrow(UUID id) {
