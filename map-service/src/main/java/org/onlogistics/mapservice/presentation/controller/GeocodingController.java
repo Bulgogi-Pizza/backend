@@ -16,10 +16,10 @@ public class GeocodingController {
     private final GeocodingService geocodingService;
 
     @GetMapping("/api/v1/maps/geocode")
-    public ResponseEntity<CommonResponse<?>> getCoordinates(
+    public ResponseEntity<CommonResponse<GeocodingResponseDto>> getCoordinates(
         @RequestParam("query") String query) {
-        GeocodingResponseDto resDTO = geocodingService.getCoordinates(query);
-        return ResponseEntity.ok().body(CommonResponse.success(resDTO));
+        final var responseDto = geocodingService.getCoordinates(query);
+        return ResponseEntity.ok().body(CommonResponse.success(responseDto));
     }
 
 }
