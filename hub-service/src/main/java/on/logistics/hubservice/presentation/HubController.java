@@ -10,9 +10,11 @@ import on.logistics.hubservice.global.presentation.dtos.CommonResponse;
 import on.logistics.hubservice.presentation.dtos.request.CreateHubRequest;
 import on.logistics.hubservice.presentation.dtos.request.UpdateHubRequest;
 import on.logistics.hubservice.presentation.dtos.response.CreateHubResponse;
+import on.logistics.hubservice.presentation.dtos.response.GetHubResponse;
 import on.logistics.hubservice.presentation.dtos.response.UpdateHubResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -27,6 +29,12 @@ public class HubController {
 
     private final HubService hubService;
 
+    @GetMapping("/{id}")
+    public ResponseEntity<CommonResponse<GetHubResponse>> getHub(@PathVariable UUID id) {
+        final var responseDto = hubService.getHub(id);
+        return ResponseEntity.ok(CommonResponse.success(responseDto));
+    }
+
     @PostMapping
     public ResponseEntity<CommonResponse<CreateHubResponse>> createHub(
         @RequestBody @Valid CreateHubRequest createHubRequest) {
@@ -35,7 +43,7 @@ public class HubController {
         return ResponseEntity.ok(CommonResponse.success(responseDto));
     }
 
-    @PutMapping("{id}")
+    @PutMapping("/{id}")
     ResponseEntity<CommonResponse<UpdateHubResponse>> updateHub(@PathVariable UUID id,
         @RequestBody @Valid UpdateHubRequest updateHubRequest) {
         final var requestDto = UpdateHubRequestDto.of(id, updateHubRequest);
@@ -43,7 +51,7 @@ public class HubController {
         return ResponseEntity.ok(CommonResponse.success(responseDto));
     }
 
-    @DeleteMapping("{id}")
+    @DeleteMapping("/{id}")
     ResponseEntity<CommonResponse<Void>> deleteHub(@PathVariable UUID id) {
         hubService.deleteHub(id);
         return ResponseEntity.ok(CommonResponse.success());
