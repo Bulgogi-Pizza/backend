@@ -36,7 +36,7 @@ public class ProductQueryRepositoryImpl implements ProductQueryRepository {
         OrderSpecifier<?>[] orderSpecifiers = getOrderSpecifiers(pageable);
         return queryFactory
             .selectFrom(product)
-            .where(product.isDeleted.eq(false), builder)
+            .where(builder)
             .orderBy(orderSpecifiers)
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize())
@@ -46,7 +46,7 @@ public class ProductQueryRepositoryImpl implements ProductQueryRepository {
     private BooleanBuilder getSearchProductQuery(SearchProductRequestDto cond) {
         BooleanBuilder builder = new BooleanBuilder();
         if (cond.name() != null) {
-            builder.and(product.name.value.eq(cond.name()));
+            builder.and(product.name.value.contains(cond.name()));
         }
         return builder;
     }
