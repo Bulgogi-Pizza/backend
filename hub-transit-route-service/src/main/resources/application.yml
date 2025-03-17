@@ -1,0 +1,28 @@
+server:
+  port: 8903
+
+spring:
+  application:
+    name: hub-transit-route-service
+  cloud:
+    discovery:
+      enabled: true
+  profiles:
+    active: dev
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://eureka-server:8761/eureka/
+  instance:
+    prefer-ip-address: true
+
+logging:
+  level:
+    root: INFO
+
+jasypt:
+  encryptor:
+    password: ${jasypt.encryptor.password}
