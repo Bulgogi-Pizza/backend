@@ -12,6 +12,7 @@ import on.logistics.hubservice.presentation.dtos.request.UpdateHubRequest;
 import on.logistics.hubservice.presentation.dtos.response.CreateHubResponse;
 import on.logistics.hubservice.presentation.dtos.response.UpdateHubResponse;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -40,5 +41,11 @@ public class HubController {
         final var requestDto = UpdateHubRequestDto.of(id, updateHubRequest);
         final var responseDto = hubService.updateHub(requestDto);
         return ResponseEntity.ok(CommonResponse.success(responseDto));
+    }
+
+    @DeleteMapping("{id}")
+    ResponseEntity<CommonResponse<Void>> deleteHub(@PathVariable UUID id) {
+        hubService.deleteHub(id);
+        return ResponseEntity.ok(CommonResponse.success());
     }
 }

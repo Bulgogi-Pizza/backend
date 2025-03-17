@@ -71,4 +71,8 @@ public class Hub extends BaseEntity {
         this.type = dto.hubType();
         this.address = new Address(dto.hubAddress());
     }
+
+    public void delete() {
+        deleteSoftly();
+    }
 }
