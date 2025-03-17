@@ -4,6 +4,7 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import on.logistics.productservice.application.dto.CreateProductRequestDto;
+import on.logistics.productservice.application.dto.SearchProductRequestDto;
 import on.logistics.productservice.application.dto.UpdateProductRequestDto;
 import on.logistics.productservice.domain.Product;
 import on.logistics.productservice.domain.dto.CreateProductDto;
@@ -11,9 +12,12 @@ import on.logistics.productservice.domain.dto.UpdateProductDto;
 import on.logistics.productservice.domain.repository.ProductRepository;
 import on.logistics.productservice.exception.ProductException;
 import on.logistics.productservice.exception.ProductExceptionCode;
+import on.logistics.productservice.global.application.dtos.PageDto;
 import on.logistics.productservice.presentation.dtos.response.CreateProductResponse;
 import on.logistics.productservice.presentation.dtos.response.GetProductResponse;
+import on.logistics.productservice.presentation.dtos.response.SearchProductResponse;
 import on.logistics.productservice.presentation.dtos.response.UpdateProductResponse;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,6 +39,13 @@ public class ProductServiceImpl implements ProductService {
         Product product = Product.create(createProductDto);
         Product saved = productRepository.save(product);
         return CreateProductResponse.of(saved.getId());
+    }
+
+    @Override
+    public PageDto<SearchProductResponse> searchProduct(SearchProductRequestDto requestDto) {
+        Page<Product> products = productRepository.searchProduct(requestDto);
+        Page<SearchProductResponse> responsePage = products.map(SearchProductResponse::from);
+        return PageDto.from(responsePage);
     }
 
     @Override

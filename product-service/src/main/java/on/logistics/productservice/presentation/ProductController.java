@@ -4,14 +4,19 @@ import jakarta.validation.Valid;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import on.logistics.productservice.application.dto.CreateProductRequestDto;
+import on.logistics.productservice.application.dto.SearchProductRequestDto;
 import on.logistics.productservice.application.dto.UpdateProductRequestDto;
 import on.logistics.productservice.application.service.ProductService;
+import on.logistics.productservice.global.application.dtos.PageDto;
 import on.logistics.productservice.global.presentation.dtos.CommonResponse;
 import on.logistics.productservice.presentation.dtos.request.CreateProductRequest;
 import on.logistics.productservice.presentation.dtos.request.UpdateProductRequest;
 import on.logistics.productservice.presentation.dtos.response.CreateProductResponse;
 import on.logistics.productservice.presentation.dtos.response.GetProductResponse;
+import on.logistics.productservice.presentation.dtos.response.SearchProductResponse;
 import on.logistics.productservice.presentation.dtos.response.UpdateProductResponse;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,6 +25,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -35,6 +41,16 @@ public class ProductController {
     ) {
         CreateProductRequestDto requestDto = CreateProductRequest.from(createProductRequest);
         CreateProductResponse response = productService.createProduct(requestDto);
+        return ResponseEntity.ok(CommonResponse.success(response));
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<CommonResponse<PageDto<SearchProductResponse>>> getProduct(
+        @RequestParam String name,
+        @PageableDefault Pageable pageable
+    ) {
+        SearchProductRequestDto requestDto = SearchProductRequestDto.from(name, pageable);
+        PageDto<SearchProductResponse> response = productService.searchProduct(requestDto);
         return ResponseEntity.ok(CommonResponse.success(response));
     }
 
