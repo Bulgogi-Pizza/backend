@@ -20,3 +20,6 @@ logging:
   level:
     root: INFO
 
+jasypt:
+  encryptor:
+    password: ${jasypt.encryptor.password}
