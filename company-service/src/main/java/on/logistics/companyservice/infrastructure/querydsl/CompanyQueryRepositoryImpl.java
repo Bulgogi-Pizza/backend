@@ -42,7 +42,7 @@ public class CompanyQueryRepositoryImpl implements CompanyQueryRepository {
     private BooleanBuilder getSearchCompanyQuery(SearchCompanyRequestDto cond) {
         BooleanBuilder builder = new BooleanBuilder();
         if (cond.name() != null) {
-            builder.and(company.name.value.eq(cond.name()));
+            builder.and(company.name.value.contains(cond.name()));
         }
 
         if (cond.type() != null) {
