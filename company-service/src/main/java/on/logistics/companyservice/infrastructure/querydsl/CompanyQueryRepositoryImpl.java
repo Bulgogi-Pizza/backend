@@ -9,6 +9,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import on.logistics.companyservice.application.dtos.request.SearchCompanyRequestDto;
 import on.logistics.companyservice.domain.entity.Company;
 import on.logistics.companyservice.global.enums.PageSortBy;
@@ -18,6 +19,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 
+@Slf4j(topic = "CompanyQueryRepositoryImpl")
 @Repository
 @RequiredArgsConstructor
 public class CompanyQueryRepositoryImpl implements CompanyQueryRepository {
@@ -34,7 +36,7 @@ public class CompanyQueryRepositoryImpl implements CompanyQueryRepository {
 
     private List<Company> searchCompanyList(BooleanBuilder builder, Pageable pageable) {
         OrderSpecifier<?>[] orderSpecifiers = getOrderSpecifiers(pageable);
-        return queryFactory.selectFrom(company).where(company.isDeleted.eq(false), builder)
+        return queryFactory.selectFrom(company).where(builder)
             .orderBy(orderSpecifiers).offset(pageable.getOffset()).limit(pageable.getPageSize())
             .fetch();
     }
@@ -57,7 +59,7 @@ public class CompanyQueryRepositoryImpl implements CompanyQueryRepository {
 
         sort.forEach(order -> {
             String sortBy = order.getProperty();
-            Order direction = order.isAscending() ? Order.ASC : Order.DESC;
+            Order direction = order.getDirection() == Sort.Direction.ASC ? Order.ASC : Order.DESC;
 
             switch (PageSortBy.valueOf(sortBy.toUpperCase())) {
                 case CREATED_AT ->
