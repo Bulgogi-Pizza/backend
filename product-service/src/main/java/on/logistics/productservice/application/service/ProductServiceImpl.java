@@ -1,5 +1,6 @@
 package on.logistics.productservice.application.service;
 
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import on.logistics.productservice.application.dto.CreateProductRequestDto;
@@ -41,13 +42,21 @@ public class ProductServiceImpl implements ProductService {
 
         // todo : 업체 관리자인지 아닌지 확인하는 로직 필요
         UpdateProductDto updateProductDto = UpdateProductDto.from(requestDto);
-        Product product = getOrElseThrow(updateProductDto);
+        Product product = getOrElseThrow(updateProductDto.productId());
         product.update(updateProductDto);
         return UpdateProductResponse.of(product.getId());
     }
 
-    private Product getOrElseThrow(UpdateProductDto updateProductDto) {
-        return productRepository.findById(updateProductDto.productId())
+    @Override
+    @Transactional
+    public void deleteProduct(UUID id) {
+        // todo : 업체 관리자인지 아닌지 확인하는 로직 필요
+        Product product = getOrElseThrow(id);
+        productRepository.delete(product);
+    }
+
+    private Product getOrElseThrow(UUID id) {
+        return productRepository.findById(id)
             .orElseThrow(() -> new ProductException(
                 ProductExceptionCode.PRODUCT_IS_NOT_FOUND));
     }

@@ -12,6 +12,7 @@ import on.logistics.productservice.presentation.dtos.request.UpdateProductReques
 import on.logistics.productservice.presentation.dtos.response.CreateProductResponse;
 import on.logistics.productservice.presentation.dtos.response.UpdateProductResponse;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -43,5 +44,13 @@ public class ProductController {
         UpdateProductRequestDto requestDto = UpdateProductRequest.from(id, updateProductRequest);
         UpdateProductResponse response = productService.updateProduct(requestDto);
         return ResponseEntity.ok(CommonResponse.success(response));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<CommonResponse<Void>> deleteProduct(
+        @PathVariable UUID id
+    ) {
+        productService.deleteProduct(id);
+        return ResponseEntity.ok(CommonResponse.success());
     }
 }
