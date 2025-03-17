@@ -4,14 +4,20 @@ import jakarta.validation.Valid;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import on.logistics.hubservice.application.dtos.request.CreateHubRequestDto;
+import on.logistics.hubservice.application.dtos.request.SearchHubRequestDto;
 import on.logistics.hubservice.application.dtos.request.UpdateHubRequestDto;
 import on.logistics.hubservice.application.service.HubService;
+import on.logistics.hubservice.domain.entity.HubType;
+import on.logistics.hubservice.global.application.dtos.PageDto;
 import on.logistics.hubservice.global.presentation.dtos.CommonResponse;
 import on.logistics.hubservice.presentation.dtos.request.CreateHubRequest;
 import on.logistics.hubservice.presentation.dtos.request.UpdateHubRequest;
 import on.logistics.hubservice.presentation.dtos.response.CreateHubResponse;
 import on.logistics.hubservice.presentation.dtos.response.GetHubResponse;
+import on.logistics.hubservice.presentation.dtos.response.SearchHubResponse;
 import on.logistics.hubservice.presentation.dtos.response.UpdateHubResponse;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,6 +26,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -32,6 +39,16 @@ public class HubController {
     @GetMapping("/{id}")
     public ResponseEntity<CommonResponse<GetHubResponse>> getHub(@PathVariable UUID id) {
         final var responseDto = hubService.getHub(id);
+        return ResponseEntity.ok(CommonResponse.success(responseDto));
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<CommonResponse<PageDto<SearchHubResponse>>> searchHub(
+        @RequestParam(required = false) String keyword,
+        @RequestParam(required = false) HubType type,
+        @PageableDefault Pageable pageable) {
+        final var requestDto = SearchHubRequestDto.of(keyword, type, pageable);
+        final var responseDto = hubService.searchHub(requestDto);
         return ResponseEntity.ok(CommonResponse.success(responseDto));
     }
 

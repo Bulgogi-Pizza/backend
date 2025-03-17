@@ -1,17 +1,12 @@
-package on.logistics.hubservice.domain.repository;
+package on.logistics.hubservice.infrastructure.jpa.querydsl;
 
-import java.util.Optional;
-import java.util.UUID;
 import on.logistics.hubservice.application.dtos.request.SearchHubRequestDto;
-import on.logistics.hubservice.domain.entity.Hub;
 import on.logistics.hubservice.global.application.dtos.PageDto;
 import on.logistics.hubservice.presentation.dtos.response.SearchHubResponse;
+import org.springframework.stereotype.Repository;
 
-public interface HubRepository {
-
-    Hub save(Hub hub);
-
-    Optional<Hub> findByIdAndIsDeleted(UUID id, boolean isDeleted);
+@Repository
+public interface HubRepositoryCustom {
 
     PageDto<SearchHubResponse> searchHub(SearchHubRequestDto requestDto);
 }
