@@ -12,6 +12,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import on.logistics.deliveryservice.domain.dto.CreateDeliveryDto;
 import on.logistics.deliveryservice.domain.enums.DeliveryStatus;
 import on.logistics.deliveryservice.domain.vo.Destination;
 import on.logistics.deliveryservice.domain.vo.Recipient;
@@ -60,4 +61,15 @@ public class Delivery extends BaseEntity {
     @Column(name = "company_delivery_managed_id")
     private UUID companyDeliveryManagerId;
 
+    public static Delivery create(CreateDeliveryDto entityRequestDto) {
+        return builder()
+            .orderId(entityRequestDto.orderId())
+            .status(DeliveryStatus.HUB_WAITING)
+            .startHubId(entityRequestDto.startHubId())
+            .endHubId(entityRequestDto.endHubId())
+            .destination(new Destination(entityRequestDto.destination()))
+            .recipient(new Recipient(entityRequestDto.recipient()))
+            .recipientSlackEmail(new RecipientSlackEmail(entityRequestDto.recipientSlackEmail()))
+            .build();
+    }
 }
