@@ -82,4 +82,8 @@ public class Product extends BaseEntity {
     public void updateReduceQuantity(Long quantity) {
         this.quantity = this.quantity.reduceQuantity(quantity);
     }
+
+    public void updateIncreaseQuantity(Long quantity) {
+        this.quantity = this.quantity.increaseQuantity(quantity);
+    }
 }

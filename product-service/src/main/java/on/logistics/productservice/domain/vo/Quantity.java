@@ -40,4 +40,7 @@ public class Quantity {
         return new Quantity(this.value - value);
     }
 
+    public Quantity increaseQuantity(Long quantity) {
+        return new Quantity(this.value + quantity);
+    }
 }

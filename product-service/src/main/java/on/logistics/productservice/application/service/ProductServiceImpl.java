@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import on.logistics.productservice.application.dto.CreateProductRequestDto;
 import on.logistics.productservice.application.dto.SearchProductRequestDto;
+import on.logistics.productservice.application.dto.UpdateIncreaseProductQuantityRequestDto;
 import on.logistics.productservice.application.dto.UpdateProductRequestDto;
 import on.logistics.productservice.application.dto.UpdateReduceProductQuantityRequestDto;
 import on.logistics.productservice.domain.Product;
@@ -17,6 +18,7 @@ import on.logistics.productservice.global.application.dtos.PageDto;
 import on.logistics.productservice.presentation.dtos.response.CreateProductResponse;
 import on.logistics.productservice.presentation.dtos.response.GetProductResponse;
 import on.logistics.productservice.presentation.dtos.response.SearchProductResponse;
+import on.logistics.productservice.presentation.dtos.response.UpdateIncreaseProductQuantityResponse;
 import on.logistics.productservice.presentation.dtos.response.UpdateProductResponse;
 import on.logistics.productservice.presentation.dtos.response.UpdateReduceProductQuantityResponse;
 import org.springframework.data.domain.Page;
@@ -87,6 +89,16 @@ public class ProductServiceImpl implements ProductService {
 
         product.updateReduceQuantity(requestDto.productQuantity());
         return UpdateReduceProductQuantityResponse.of(product.getId());
+    }
+
+    @Override
+    @Transactional
+    public UpdateIncreaseProductQuantityResponse updateIncreaseProductQuantity(
+        UpdateIncreaseProductQuantityRequestDto requestDto) {
+        Product product = getOrElseThrow(requestDto.productId());
+
+        product.updateIncreaseQuantity(requestDto.productQuantity());
+        return UpdateIncreaseProductQuantityResponse.of(product.getId());
     }
 
     private Product getOrElseThrow(UUID id) {
