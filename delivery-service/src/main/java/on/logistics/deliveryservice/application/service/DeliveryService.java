@@ -9,11 +9,11 @@ import on.logistics.deliveryservice.presentation.dtos.response.CreateDeliveryRes
 import on.logistics.deliveryservice.presentation.dtos.response.GetDeliveryResponse;
 import on.logistics.deliveryservice.presentation.dtos.response.SearchDeliveryResponse;
 import on.logistics.deliveryservice.presentation.dtos.response.UpdateAssignManagerResponse;
-import on.logistics.deliveryservice.presentation.dtos.response.UpdateDeliveryCompanyArriveResponse;
-import on.logistics.deliveryservice.presentation.dtos.response.UpdateDeliveryCompanyMovingResponse;
-import on.logistics.deliveryservice.presentation.dtos.response.UpdateDeliveryHubArriveResponse;
 import on.logistics.deliveryservice.presentation.dtos.response.UpdateDeliveryResponse;
 import on.logistics.deliveryservice.presentation.dtos.response.UpdateDeliveryStatusCancelResponse;
+import on.logistics.deliveryservice.presentation.dtos.response.UpdateDeliveryStatusCompanyArriveResponse;
+import on.logistics.deliveryservice.presentation.dtos.response.UpdateDeliveryStatusCompanyMovingResponse;
+import on.logistics.deliveryservice.presentation.dtos.response.UpdateDeliveryStatusHubArriveResponse;
 import on.logistics.deliveryservice.presentation.dtos.response.UpdateDeliveryStatusHubMovingResponse;
 
 public interface DeliveryService {
@@ -32,11 +32,11 @@ public interface DeliveryService {
 
     UpdateDeliveryStatusHubMovingResponse updateDeliveryStatusHubMoving(UUID id);
 
-    UpdateDeliveryHubArriveResponse updateDeliveryHubArrive(UUID id);
+    UpdateDeliveryStatusHubArriveResponse updateDeliveryStatusHubArrive(UUID id);
 
-    UpdateDeliveryCompanyMovingResponse updateDeliveryCompanyMoving(UUID id);
+    UpdateDeliveryStatusCompanyMovingResponse updateDeliveryStatusCompanyMoving(UUID id);
 
-    UpdateDeliveryCompanyArriveResponse updateDeliveryCompanyArrive(UUID id);
+    UpdateDeliveryStatusCompanyArriveResponse updateDeliveryStatusCompanyArrive(UUID id);
 
     UpdateDeliveryStatusCancelResponse updateDeliveryStatusCancel(UUID id);
 }

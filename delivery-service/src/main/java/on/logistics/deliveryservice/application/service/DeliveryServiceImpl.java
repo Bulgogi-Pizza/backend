@@ -17,11 +17,11 @@ import on.logistics.deliveryservice.presentation.dtos.response.CreateDeliveryRes
 import on.logistics.deliveryservice.presentation.dtos.response.GetDeliveryResponse;
 import on.logistics.deliveryservice.presentation.dtos.response.SearchDeliveryResponse;
 import on.logistics.deliveryservice.presentation.dtos.response.UpdateAssignManagerResponse;
-import on.logistics.deliveryservice.presentation.dtos.response.UpdateDeliveryCompanyArriveResponse;
-import on.logistics.deliveryservice.presentation.dtos.response.UpdateDeliveryCompanyMovingResponse;
-import on.logistics.deliveryservice.presentation.dtos.response.UpdateDeliveryHubArriveResponse;
 import on.logistics.deliveryservice.presentation.dtos.response.UpdateDeliveryResponse;
 import on.logistics.deliveryservice.presentation.dtos.response.UpdateDeliveryStatusCancelResponse;
+import on.logistics.deliveryservice.presentation.dtos.response.UpdateDeliveryStatusCompanyArriveResponse;
+import on.logistics.deliveryservice.presentation.dtos.response.UpdateDeliveryStatusCompanyMovingResponse;
+import on.logistics.deliveryservice.presentation.dtos.response.UpdateDeliveryStatusHubArriveResponse;
 import on.logistics.deliveryservice.presentation.dtos.response.UpdateDeliveryStatusHubMovingResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
@@ -92,26 +92,26 @@ public class DeliveryServiceImpl implements DeliveryService {
 
     @Override
     @Transactional
-    public UpdateDeliveryHubArriveResponse updateDeliveryHubArrive(UUID id) {
+    public UpdateDeliveryStatusHubArriveResponse updateDeliveryStatusHubArrive(UUID id) {
         Delivery delivery = getOrElseThrow(id);
         delivery.updateDeliveryStatusHubArrive();
-        return UpdateDeliveryHubArriveResponse.of(delivery.getId());
+        return UpdateDeliveryStatusHubArriveResponse.of(delivery.getId());
     }
 
     @Override
     @Transactional
-    public UpdateDeliveryCompanyMovingResponse updateDeliveryCompanyMoving(UUID id) {
+    public UpdateDeliveryStatusCompanyMovingResponse updateDeliveryStatusCompanyMoving(UUID id) {
         Delivery delivery = getOrElseThrow(id);
         delivery.updateDeliveryStatusCompanyMoving();
-        return UpdateDeliveryCompanyMovingResponse.of(delivery.getId());
+        return UpdateDeliveryStatusCompanyMovingResponse.of(delivery.getId());
     }
 
     @Override
     @Transactional
-    public UpdateDeliveryCompanyArriveResponse updateDeliveryCompanyArrive(UUID id) {
+    public UpdateDeliveryStatusCompanyArriveResponse updateDeliveryStatusCompanyArrive(UUID id) {
         Delivery delivery = getOrElseThrow(id);
         delivery.updateDeliveryStatusCompanyArrive();
-        return UpdateDeliveryCompanyArriveResponse.of(delivery.getId());
+        return UpdateDeliveryStatusCompanyArriveResponse.of(delivery.getId());
     }
 
     @Override
