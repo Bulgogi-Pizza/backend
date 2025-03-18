@@ -15,7 +15,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import on.logistics.deliveryservice.application.dtos.DeliveryHubInfoDto;
-import on.logistics.deliveryservice.domain.dto.CreateDeliveryDto;
+import on.logistics.deliveryservice.domain.dtos.CreateDeliveryDto;
 import on.logistics.deliveryservice.domain.enums.DeliveryStatus;
 import on.logistics.deliveryservice.domain.vo.Destination;
 import on.logistics.deliveryservice.domain.vo.Recipient;

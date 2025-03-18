@@ -12,7 +12,7 @@ import on.logistics.deliveryservice.application.dtos.request.SearchDeliveryReque
 import on.logistics.deliveryservice.application.dtos.request.UpdateAssignManagerRequestDto;
 import on.logistics.deliveryservice.application.dtos.request.UpdateDeliveryRequestDto;
 import on.logistics.deliveryservice.domain.Delivery;
-import on.logistics.deliveryservice.domain.dto.CreateDeliveryDto;
+import on.logistics.deliveryservice.domain.dtos.CreateDeliveryDto;
 import on.logistics.deliveryservice.domain.repository.DeliveryRepository;
 import on.logistics.deliveryservice.exception.DeliveryException;
 import on.logistics.deliveryservice.exception.DeliveryExceptionCode;

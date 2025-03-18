@@ -1,4 +1,4 @@
-package on.logistics.deliveryservice.domain.dto;
+package on.logistics.deliveryservice.domain.dtos;
 
 import java.util.UUID;
 import on.logistics.deliveryservice.application.dtos.DeliveryHubInfoDto;
