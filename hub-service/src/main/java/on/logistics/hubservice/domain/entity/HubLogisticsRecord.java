@@ -48,4 +48,8 @@ public class HubLogisticsRecord extends BaseEntity {
             .deliveryId(deliveryId)
             .build();
     }
+
+    public void retrieval() {
+        this.status = LogisticsStatus.RETRIEVAL;
+    }
 }

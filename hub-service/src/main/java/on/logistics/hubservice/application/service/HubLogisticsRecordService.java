@@ -3,6 +3,7 @@ package on.logistics.hubservice.application.service;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import on.logistics.hubservice.application.dtos.request.RetrievalLogisticsRequestDto;
 import on.logistics.hubservice.application.dtos.request.StorageLogisticsRequestDto;
 import on.logistics.hubservice.domain.entity.HubLogisticsRecord;
 import on.logistics.hubservice.domain.repository.HubLogisticsRecordRepository;
@@ -27,6 +28,14 @@ public class HubLogisticsRecordService {
             .stream()
             .map(id -> HubLogisticsRecord.storage(requestDto.hubId(), id))
             .toList();
+        hubLogisticsRecordRepository.saveAll(records);
+    }
+
+    public void retrieval(RetrievalLogisticsRequestDto requestDto) {
+        validateHubExists(requestDto.hubId());
+        List<HubLogisticsRecord> records = hubLogisticsRecordRepository.findAllByDeliveryIdIn(
+            requestDto.retrievalLogisticsIds());
+        records.forEach(HubLogisticsRecord::retrieval);
         hubLogisticsRecordRepository.saveAll(records);
     }
 

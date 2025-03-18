@@ -1,6 +1,7 @@
 package on.logistics.hubservice.domain.repository;
 
 import java.util.List;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import on.logistics.hubservice.domain.entity.HubLogisticsRecord;
 import on.logistics.hubservice.infrastructure.jpa.HubLogisticsRecordJpaRepository;
@@ -15,5 +16,10 @@ public class HubLogisticsRecordRepositoryImpl implements HubLogisticsRecordRepos
     @Override
     public void saveAll(List<HubLogisticsRecord> records) {
         hubLogisticsRecordJpaRepository.saveAll(records);
+    }
+
+    @Override
+    public List<HubLogisticsRecord> findAllByDeliveryIdIn(List<UUID> retrievalLogisticsIds) {
+        return hubLogisticsRecordJpaRepository.findAllByDeliveryIdIn(retrievalLogisticsIds);
     }
 }

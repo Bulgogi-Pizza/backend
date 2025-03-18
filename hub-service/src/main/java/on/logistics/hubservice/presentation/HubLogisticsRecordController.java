@@ -2,9 +2,11 @@ package on.logistics.hubservice.presentation;
 
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import on.logistics.hubservice.application.dtos.request.RetrievalLogisticsRequestDto;
 import on.logistics.hubservice.application.dtos.request.StorageLogisticsRequestDto;
 import on.logistics.hubservice.application.service.HubLogisticsRecordService;
 import on.logistics.hubservice.global.presentation.dtos.CommonResponse;
+import on.logistics.hubservice.presentation.dtos.request.RetrievalLogisticsRequest;
 import on.logistics.hubservice.presentation.dtos.request.StorageLogisticsRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,6 +28,15 @@ public class HubLogisticsRecordController {
         @RequestBody StorageLogisticsRequest storageLogisticsRequest) {
         final var requestDto = StorageLogisticsRequestDto.of(hubId, storageLogisticsRequest);
         hubLogisticsRecordService.storage(requestDto);
+        return ResponseEntity.ok(CommonResponse.success());
+    }
+
+    @PostMapping("/{hubId}/retrieval")
+    ResponseEntity<CommonResponse<Void>> retrieval(
+        @PathVariable UUID hubId,
+        @RequestBody RetrievalLogisticsRequest retrievalLogisticsRequest) {
+        final var reqeustDto = RetrievalLogisticsRequestDto.of(hubId, retrievalLogisticsRequest);
+        hubLogisticsRecordService.retrieval(reqeustDto);
         return ResponseEntity.ok(CommonResponse.success());
     }
 }
