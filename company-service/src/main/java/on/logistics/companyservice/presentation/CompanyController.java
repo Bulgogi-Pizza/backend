@@ -51,9 +51,7 @@ public class CompanyController {
     @GetMapping("/search")
     public ResponseEntity<CommonResponse<PageDto<SearchCompanyResponse>>> searchCompany(
         @RequestParam(required = false) String name,
-        @RequestParam(required = false) CompanyType type,
-        @PageableDefault Pageable pageable
-    ) {
+        @RequestParam(required = false) CompanyType type, @PageableDefault Pageable pageable) {
         final SearchCompanyRequestDto requestDto = SearchCompanyRequestDto.from(name, type,
             pageable);
         PageDto<SearchCompanyResponse> response = companyService.searchCompany(requestDto);
@@ -61,16 +59,14 @@ public class CompanyController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CommonResponse<GetCompanyResponse>> getCompany(
-        @PathVariable UUID id) {
+    public ResponseEntity<CommonResponse<GetCompanyResponse>> getCompany(@PathVariable UUID id) {
         GetCompanyResponse response = companyService.getCompany(id);
         return ResponseEntity.ok(CommonResponse.success(response));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<CommonResponse<UpdateCompanyResponse>> updateCompany(
-        @PathVariable UUID id,
-        @Valid @RequestBody UpdateCompanyRequest updateCompanyRequest) {
+        @PathVariable UUID id, @Valid @RequestBody UpdateCompanyRequest updateCompanyRequest) {
         final UpdateCompanyRequestDto requestDto = UpdateCompanyRequest.from(updateCompanyRequest);
         UpdateCompanyResponse response = companyService.updateCompany(id, requestDto);
         return ResponseEntity.ok(CommonResponse.success(response));
