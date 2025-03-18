@@ -9,6 +9,7 @@ import on.logistics.deliveryservice.presentation.dtos.response.CreateDeliveryRes
 import on.logistics.deliveryservice.presentation.dtos.response.GetDeliveryResponse;
 import on.logistics.deliveryservice.presentation.dtos.response.SearchDeliveryResponse;
 import on.logistics.deliveryservice.presentation.dtos.response.UpdateAssignManagerResponse;
+import on.logistics.deliveryservice.presentation.dtos.response.UpdateDeliveryCompanyArriveResponse;
 import on.logistics.deliveryservice.presentation.dtos.response.UpdateDeliveryCompanyMovingResponse;
 import on.logistics.deliveryservice.presentation.dtos.response.UpdateDeliveryHubArriveResponse;
 import on.logistics.deliveryservice.presentation.dtos.response.UpdateDeliveryResponse;
@@ -32,5 +33,7 @@ public interface DeliveryService {
 
     UpdateDeliveryHubArriveResponse updateDeliveryHubArrive(UUID id);
 
-    UpdateDeliveryCompanyMovingResponse UpdateDeliveryCompanyMoving(UUID id);
+    UpdateDeliveryCompanyMovingResponse updateDeliveryCompanyMoving(UUID id);
+
+    UpdateDeliveryCompanyArriveResponse updateDeliveryCompanyArrive(UUID id);
 }

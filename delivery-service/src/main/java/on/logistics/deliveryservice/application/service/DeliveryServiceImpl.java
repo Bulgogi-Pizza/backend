@@ -17,6 +17,7 @@ import on.logistics.deliveryservice.presentation.dtos.response.CreateDeliveryRes
 import on.logistics.deliveryservice.presentation.dtos.response.GetDeliveryResponse;
 import on.logistics.deliveryservice.presentation.dtos.response.SearchDeliveryResponse;
 import on.logistics.deliveryservice.presentation.dtos.response.UpdateAssignManagerResponse;
+import on.logistics.deliveryservice.presentation.dtos.response.UpdateDeliveryCompanyArriveResponse;
 import on.logistics.deliveryservice.presentation.dtos.response.UpdateDeliveryCompanyMovingResponse;
 import on.logistics.deliveryservice.presentation.dtos.response.UpdateDeliveryHubArriveResponse;
 import on.logistics.deliveryservice.presentation.dtos.response.UpdateDeliveryResponse;
@@ -98,10 +99,17 @@ public class DeliveryServiceImpl implements DeliveryService {
 
     @Override
     @Transactional
-    public UpdateDeliveryCompanyMovingResponse UpdateDeliveryCompanyMoving(UUID id) {
+    public UpdateDeliveryCompanyMovingResponse updateDeliveryCompanyMoving(UUID id) {
         Delivery delivery = getOrElseThrow(id);
         delivery.updateDeliveryStatusCompanyMoving();
         return UpdateDeliveryCompanyMovingResponse.of(delivery.getId());
+    }
+
+    @Override
+    public UpdateDeliveryCompanyArriveResponse updateDeliveryCompanyArrive(UUID id) {
+        Delivery delivery = getOrElseThrow(id);
+        delivery.updateDeliveryStatusCompanyArrive();
+        return UpdateDeliveryCompanyArriveResponse.of(delivery.getId());
     }
 
     public DeliveryHubInfoDto deliveryHubInfo(String description) {

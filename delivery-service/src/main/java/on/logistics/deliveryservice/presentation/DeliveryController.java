@@ -16,6 +16,7 @@ import on.logistics.deliveryservice.presentation.dtos.response.CreateDeliveryRes
 import on.logistics.deliveryservice.presentation.dtos.response.GetDeliveryResponse;
 import on.logistics.deliveryservice.presentation.dtos.response.SearchDeliveryResponse;
 import on.logistics.deliveryservice.presentation.dtos.response.UpdateAssignManagerResponse;
+import on.logistics.deliveryservice.presentation.dtos.response.UpdateDeliveryCompanyArriveResponse;
 import on.logistics.deliveryservice.presentation.dtos.response.UpdateDeliveryCompanyMovingResponse;
 import on.logistics.deliveryservice.presentation.dtos.response.UpdateDeliveryHubArriveResponse;
 import on.logistics.deliveryservice.presentation.dtos.response.UpdateDeliveryResponse;
@@ -122,9 +123,17 @@ public class DeliveryController {
     public ResponseEntity<CommonResponse<UpdateDeliveryCompanyMovingResponse>> updateDeliveryCompanyMoving(
         @PathVariable UUID id
     ) {
-        UpdateDeliveryCompanyMovingResponse response = deliveryService.UpdateDeliveryCompanyMoving(
+        UpdateDeliveryCompanyMovingResponse response = deliveryService.updateDeliveryCompanyMoving(
             id);
         return ResponseEntity.ok(CommonResponse.success(response));
     }
 
+    @PatchMapping("/status/companyArrive/{id}")
+    public ResponseEntity<CommonResponse<UpdateDeliveryCompanyArriveResponse>> updateDeliveryCompanyArrive(
+        @PathVariable UUID id
+    ) {
+        UpdateDeliveryCompanyArriveResponse response = deliveryService.updateDeliveryCompanyArrive(
+            id);
+        return ResponseEntity.ok(CommonResponse.success(response));
+    }
 }

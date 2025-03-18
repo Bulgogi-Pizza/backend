@@ -63,11 +63,8 @@ public class Delivery extends BaseEntity {
     private UUID companyDeliveryManagerId;
 
     public static Delivery create(CreateDeliveryDto entityRequestDto) {
-        return builder()
-            .orderId(entityRequestDto.orderId())
-            .status(DeliveryStatus.HUB_WAITING)
-            .startHubId(entityRequestDto.startHubId())
-            .endHubId(entityRequestDto.endHubId())
+        return builder().orderId(entityRequestDto.orderId()).status(DeliveryStatus.HUB_WAITING)
+            .startHubId(entityRequestDto.startHubId()).endHubId(entityRequestDto.endHubId())
             .destination(new Destination(entityRequestDto.destination()))
             .recipient(new Recipient(entityRequestDto.recipient()))
             .recipientSlackEmail(new RecipientSlackEmail(entityRequestDto.recipientSlackEmail()))
@@ -97,5 +94,9 @@ public class Delivery extends BaseEntity {
 
     public void updateDeliveryStatusCompanyMoving() {
         this.status = DeliveryStatus.COMPANY_MOVING;
+    }
+
+    public void updateDeliveryStatusCompanyArrive() {
+        this.status = DeliveryStatus.COMPANY_ARRIVE;
     }
 }
