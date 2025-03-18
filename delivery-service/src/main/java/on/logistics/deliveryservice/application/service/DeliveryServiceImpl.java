@@ -3,6 +3,7 @@ package on.logistics.deliveryservice.application.service;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import on.logistics.deliveryservice.application.dtos.DeliveryHubInfoDto;
 import on.logistics.deliveryservice.application.dtos.DeliveryUserInfoDto;
 import on.logistics.deliveryservice.application.dtos.TypeHubInfoDto;
@@ -17,6 +18,8 @@ import on.logistics.deliveryservice.domain.repository.DeliveryRepository;
 import on.logistics.deliveryservice.exception.DeliveryException;
 import on.logistics.deliveryservice.exception.DeliveryExceptionCode;
 import on.logistics.deliveryservice.global.application.dtos.PageDto;
+import on.logistics.deliveryservice.infrastructure.client.map.MapServiceClient;
+import on.logistics.deliveryservice.infrastructure.client.map.feign.dtos.GetDestinationInfo;
 import on.logistics.deliveryservice.presentation.dtos.response.CreateDeliveryResponse;
 import on.logistics.deliveryservice.presentation.dtos.response.GetDeliveryResponse;
 import on.logistics.deliveryservice.presentation.dtos.response.SearchDeliveryResponse;
@@ -31,12 +34,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j(topic = "DeliveryServiceImpl")
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class DeliveryServiceImpl implements DeliveryService {
 
     private final DeliveryRepository deliveryRepository;
+    private final MapServiceClient mapServiceClient;
 
     @Override
     @Transactional
@@ -128,7 +133,7 @@ public class DeliveryServiceImpl implements DeliveryService {
     }
 
     public DeliveryHubInfoDto deliveryHubInfo(String description) {
-        // todo: 목적지로 map 호출해서 목적지 위도, 경도 받아오기
+        GetDestinationInfo geocode = mapServiceClient.getGeocode(description);
         typeHubInfo();
         // todo: 목적지 위도, 경도로 중앙 허브 세 개 중 어디가 가까운지 찾기
         typeSpokeInfo();
