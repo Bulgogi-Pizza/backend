@@ -65,10 +65,18 @@ public class Product extends BaseEntity {
     }
 
     public void update(UpdateProductDto updateProductDto) {
-        this.name = name.update(updateProductDto.productName());
-        this.quantity = quantity.update(updateProductDto.productQuantity());
-        this.price = price.update(updateProductDto.productPrice());
-        this.bundleSize = bundleSize.update(updateProductDto.bundleSize());
+        this.name =
+            updateProductDto.productName() != null ?
+                name.update(updateProductDto.productName()) : this.name;
+        this.quantity =
+            updateProductDto.productQuantity() != null ?
+                quantity.update(updateProductDto.productQuantity()) : this.quantity;
+        this.price =
+            updateProductDto.productPrice() != null ?
+                price.update(updateProductDto.productPrice()) : this.price;
+        this.bundleSize =
+            updateProductDto.bundleSize() != null ?
+                bundleSize.update(updateProductDto.bundleSize()) : this.bundleSize;
     }
 
     public void updateQuantity(Long quantity) {
