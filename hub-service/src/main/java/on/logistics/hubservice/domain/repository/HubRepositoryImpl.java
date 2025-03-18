@@ -9,7 +9,9 @@ import on.logistics.hubservice.global.application.dtos.PageDto;
 import on.logistics.hubservice.infrastructure.jpa.HubJpaRepository;
 import on.logistics.hubservice.infrastructure.jpa.querydsl.HubRepositoryCustom;
 import on.logistics.hubservice.presentation.dtos.response.SearchHubResponse;
+import org.springframework.stereotype.Repository;
 
+@Repository
 @RequiredArgsConstructor
 public class HubRepositoryImpl implements HubRepository {
 
@@ -19,6 +21,11 @@ public class HubRepositoryImpl implements HubRepository {
     @Override
     public Hub save(Hub hub) {
         return hubJpaRepository.save(hub);
+    }
+
+    @Override
+    public boolean existsById(UUID id) {
+        return hubJpaRepository.existsById(id);
     }
 
     @Override
