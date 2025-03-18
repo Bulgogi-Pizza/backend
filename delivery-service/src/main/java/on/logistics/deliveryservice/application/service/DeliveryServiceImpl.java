@@ -1,9 +1,12 @@
 package on.logistics.deliveryservice.application.service;
 
+import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import on.logistics.deliveryservice.application.dtos.DeliveryHubInfoDto;
 import on.logistics.deliveryservice.application.dtos.DeliveryUserInfoDto;
+import on.logistics.deliveryservice.application.dtos.TypeHubInfoDto;
+import on.logistics.deliveryservice.application.dtos.TypeSpokeInfoDto;
 import on.logistics.deliveryservice.application.dtos.request.CreateDeliveryRequestDto;
 import on.logistics.deliveryservice.application.dtos.request.SearchDeliveryRequestDto;
 import on.logistics.deliveryservice.application.dtos.request.UpdateAssignManagerRequestDto;
@@ -126,10 +129,22 @@ public class DeliveryServiceImpl implements DeliveryService {
 
     public DeliveryHubInfoDto deliveryHubInfo(String description) {
         // todo: 목적지로 map 호출해서 목적지 위도, 경도 받아오기
+        typeHubInfo();
         // todo: 목적지 위도, 경도로 중앙 허브 세 개 중 어디가 가까운지 찾기
+        typeSpokeInfo();
         // todo: 중앙 허브 근처에 관리되고 있는 곳에서도 어디가 제일 가까운지 찾아서 목적지 허브에 넣기
         UUID endHubId = UUID.randomUUID();
         return DeliveryHubInfoDto.of(endHubId);
+    }
+
+    public List<TypeHubInfoDto> typeHubInfo() {
+        // todo: 허브에게서 중앙 허브들 정보를 받는다.
+        return null;
+    }
+
+    public List<TypeSpokeInfoDto> typeSpokeInfo() {
+        // todo: 목적지에서 가장 가까운 중앙 허브를 기준으로 연결된 허브 정보들을 받는다.
+        return null;
     }
 
     public DeliveryUserInfoDto deliveryUserInfo() {
