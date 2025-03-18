@@ -29,7 +29,8 @@ public class DeliveryController {
 
     @PostMapping
     public ResponseEntity<CommonResponse<CreateDeliveryResponse>> createDelivery(
-        @Valid @RequestBody CreateDeliveryRequest createDeliveryRequest) {
+        @Valid @RequestBody CreateDeliveryRequest createDeliveryRequest
+    ) {
         final CreateDeliveryRequestDto requestDto = CreateDeliveryRequest.from(
             createDeliveryRequest);
         CreateDeliveryResponse response = deliveryService.createDelivery(requestDto);
@@ -39,7 +40,8 @@ public class DeliveryController {
     @PutMapping("/{id}")
     public ResponseEntity<CommonResponse<UpdateDeliveryResponse>> updateDelivery(
         @PathVariable UUID id,
-        @Valid @RequestBody UpdateDeliveryRequest updateDeliveryRequest) {
+        @Valid @RequestBody UpdateDeliveryRequest updateDeliveryRequest
+    ) {
         final UpdateDeliveryRequestDto requestDto = UpdateDeliveryRequest.from(id,
             updateDeliveryRequest);
         UpdateDeliveryResponse response = deliveryService.updateDelivery(requestDto);
