@@ -99,7 +99,7 @@ public class DeliveryController {
         return ResponseEntity.ok(CommonResponse.success(response));
     }
 
-    @PatchMapping("status/hubmoving/{id}")
+    @PatchMapping("/status/hubMoving/{id}")
     public ResponseEntity<CommonResponse<UpdateDeliveryStatusHubMovingResponse>> updateDeliveryStatusHubMoving(
         @PathVariable UUID id
     ) {
@@ -107,4 +107,5 @@ public class DeliveryController {
             id);
         return ResponseEntity.ok(CommonResponse.success(response));
     }
+
 }
