@@ -1,5 +1,6 @@
 package on.logistics.hubtransitrouteservice.global.resolver;
 
+import lombok.extern.slf4j.Slf4j;
 import on.logistics.hubtransitrouteservice.global.enums.PageNumber;
 import on.logistics.hubtransitrouteservice.global.enums.PageSize;
 import on.logistics.hubtransitrouteservice.global.enums.PageSortBy;
@@ -7,6 +8,7 @@ import on.logistics.hubtransitrouteservice.global.exception.pageable.PageableExc
 import on.logistics.hubtransitrouteservice.global.exception.pageable.PageableException.InvalidPageSizeException;
 import on.logistics.hubtransitrouteservice.global.exception.pageable.PageableException.InvalidSortByException;
 import org.springframework.core.MethodParameter;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
@@ -20,6 +22,7 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
 @Component
+@Slf4j
 public class PageableVerificationArgumentResolver extends PageableHandlerMethodArgumentResolver {
 
     private final SortArgumentResolver resolver = new SortHandlerMethodArgumentResolver();
@@ -39,11 +42,30 @@ public class PageableVerificationArgumentResolver extends PageableHandlerMethodA
         Sort sort = resolver.resolveArgument(methodParameter, mavContainer, webRequest,
             binderFactory);
 
+        log.info("pageText: {}", pageText);
+        log.info("sizeText: {}", sizeText);
+        log.info("sort: {}", sort);
+
+        if (pageText == null) {
+            pageText = String.valueOf(PageNumber.MINIMUM_PAGE_NUMBER.getNumber());
+        }
+        if (sizeText == null) {
+            sizeText = String.valueOf(PageSize.DEFAULT.getSize());
+        }
+        if (!sort.isSorted()) {
+            sort = Sort.by(
+                Sort.Direction.DESC,
+                PageSortBy.CREATED_AT.getSortBy(),
+                PageSortBy.UPDATED_AT.getSortBy(),
+                PageSortBy.ID.getSortBy()
+            );
+        }
+
         validatePage(pageText);
         validatePageSize(sizeText);
         validateSort(sort);
 
-        return super.resolveArgument(methodParameter, mavContainer, webRequest, binderFactory);
+        return PageRequest.of(Integer.parseInt(pageText), Integer.parseInt(sizeText), sort);
     }
 
     private void validatePage(String pageText) {
