@@ -10,9 +10,11 @@ import on.logistics.deliveryservice.global.presentation.dtos.CommonResponse;
 import on.logistics.deliveryservice.presentation.dtos.request.CreateDeliveryRequest;
 import on.logistics.deliveryservice.presentation.dtos.request.UpdateDeliveryRequest;
 import on.logistics.deliveryservice.presentation.dtos.response.CreateDeliveryResponse;
+import on.logistics.deliveryservice.presentation.dtos.response.GetDeliveryResponse;
 import on.logistics.deliveryservice.presentation.dtos.response.UpdateDeliveryResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -34,6 +36,14 @@ public class DeliveryController {
         final CreateDeliveryRequestDto requestDto = CreateDeliveryRequest.from(
             createDeliveryRequest);
         CreateDeliveryResponse response = deliveryService.createDelivery(requestDto);
+        return ResponseEntity.ok(CommonResponse.success(response));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<CommonResponse<GetDeliveryResponse>> getDelivery(
+        @PathVariable UUID id
+    ) {
+        GetDeliveryResponse response = deliveryService.getDelivery(id);
         return ResponseEntity.ok(CommonResponse.success(response));
     }
 

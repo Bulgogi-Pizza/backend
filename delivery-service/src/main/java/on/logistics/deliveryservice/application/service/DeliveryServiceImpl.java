@@ -12,6 +12,7 @@ import on.logistics.deliveryservice.domain.repository.DeliveryRepository;
 import on.logistics.deliveryservice.exception.DeliveryException;
 import on.logistics.deliveryservice.exception.DeliveryExceptionCode;
 import on.logistics.deliveryservice.presentation.dtos.response.CreateDeliveryResponse;
+import on.logistics.deliveryservice.presentation.dtos.response.GetDeliveryResponse;
 import on.logistics.deliveryservice.presentation.dtos.response.UpdateDeliveryResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,6 +33,12 @@ public class DeliveryServiceImpl implements DeliveryService {
         Delivery.create(entityRequestDto);
         Delivery saved = Delivery.create(entityRequestDto);
         return CreateDeliveryResponse.of(saved.getId());
+    }
+
+    @Override
+    public GetDeliveryResponse getDelivery(UUID id) {
+        Delivery delivery = getOrElseThrow(id);
+        return GetDeliveryResponse.from(delivery);
     }
 
     @Override
@@ -66,7 +73,6 @@ public class DeliveryServiceImpl implements DeliveryService {
 
     private Delivery getOrElseThrow(UUID deliveryId) {
         return deliveryRepository.findById(deliveryId)
-            .orElseThrow(() -> new DeliveryException(
-                DeliveryExceptionCode.DELIVERY_NOT_FOUND));
+            .orElseThrow(() -> new DeliveryException(DeliveryExceptionCode.DELIVERY_NOT_FOUND));
     }
 }
