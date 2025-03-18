@@ -16,3 +16,7 @@ spring:
         highlight_sql: true
         dialect: org.hibernate.dialect.PostgreSQLDialect
     show-sql: true
+eureka:
+  client:
+    service-url:
+      defaultZone: ENC(8CMG1UOFeRePDmZd8M5MRmqiiwKhV8iGKbaKrOcm1uS4OaEpRRiCdw==)
