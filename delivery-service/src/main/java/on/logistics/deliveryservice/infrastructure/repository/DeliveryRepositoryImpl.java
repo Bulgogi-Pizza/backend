@@ -23,4 +23,9 @@ public class DeliveryRepositoryImpl implements DeliveryRepository {
     public Optional<Delivery> findById(UUID uuid) {
         return deliveryJpaRepository.findById(uuid);
     }
+
+    @Override
+    public void delete(Delivery delivery) {
+        return deliveryJpaRepository.delete(delivery);
+    }
 }

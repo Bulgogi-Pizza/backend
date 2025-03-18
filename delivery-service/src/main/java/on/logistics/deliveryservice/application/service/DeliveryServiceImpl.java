@@ -38,11 +38,15 @@ public class DeliveryServiceImpl implements DeliveryService {
     @Transactional
     public UpdateDeliveryResponse updateDelivery(UpdateDeliveryRequestDto requestDto) {
         DeliveryHubInfoDto hubInfo = deliveryHubInfo(requestDto.description());
-        Delivery delivery = deliveryRepository.findById(requestDto.deliveryId())
-            .orElseThrow(() -> new DeliveryException(
-                DeliveryExceptionCode.DELIVERY_NOT_FOUND));
+        Delivery delivery = getOrElseThrow(requestDto.deliveryId());
         delivery.update(requestDto.description(), hubInfo);
         return UpdateDeliveryResponse.of(delivery.getId());
+    }
+
+    @Override
+    public void deleteDelivery(UUID id) {
+        Delivery delivery = getOrElseThrow(id);
+        deliveryRepository.delete(delivery);
     }
 
     public DeliveryHubInfoDto deliveryHubInfo(String description) {
@@ -58,5 +62,11 @@ public class DeliveryServiceImpl implements DeliveryService {
         String recipient = "임시";
         String recipientSlackEmail = "user@slack.com";
         return DeliveryUserInfoDto.of(recipient, recipientSlackEmail);
+    }
+
+    private Delivery getOrElseThrow(UUID deliveryId) {
+        return deliveryRepository.findById(deliveryId)
+            .orElseThrow(() -> new DeliveryException(
+                DeliveryExceptionCode.DELIVERY_NOT_FOUND));
     }
 }
