@@ -66,12 +66,14 @@ public class DeliveryServiceImpl implements DeliveryService {
     }
 
     @Override
+    @Transactional
     public void deleteDelivery(UUID id) {
         Delivery delivery = getOrElseThrow(id);
         deliveryRepository.delete(delivery);
     }
 
     @Override
+    @Transactional
     public UpdateAssignManagerResponse updateAssignManager(UUID companyDeliveryManagerId) {
         Delivery delivery = getOrElseThrow(companyDeliveryManagerId);
         delivery.updateAssignManager(companyDeliveryManagerId);
@@ -79,6 +81,7 @@ public class DeliveryServiceImpl implements DeliveryService {
     }
 
     @Override
+    @Transactional
     public UpdateDeliveryStatusHubMovingResponse updateDeliveryStatusHubMoving(UUID id) {
         Delivery delivery = getOrElseThrow(id);
         delivery.updateDeliveryStatusHubMoving();
@@ -86,6 +89,7 @@ public class DeliveryServiceImpl implements DeliveryService {
     }
 
     @Override
+    @Transactional
     public UpdateDeliveryHubArriveResponse updateDeliveryHubArrive(UUID id) {
         Delivery delivery = getOrElseThrow(id);
         delivery.updateDeliveryStatusHubArrive();
