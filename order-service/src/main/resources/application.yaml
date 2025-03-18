@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: order-service
+server:
+  port: 8080
+eureka:
+  client:
+    service-url:
+      defaultZone: ENC(0INt2I/CAtE1X08bNkkPEirxAEH+Pz0zP3o9mIU/SX1Cc0tPwgZ9Rw==)
