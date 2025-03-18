@@ -54,11 +54,12 @@ public class Product extends BaseEntity {
     private BundleSize bundleSize;
 
     public static Product create(CreateProductDto createProductDto) {
-        return on.logistics.productservice.domain.Product.builder()
+        return Product.builder()
             .companyId(createProductDto.companyId())
             .managedHubId(createProductDto.managedHubId())
             .name(new Name(createProductDto.productName()))
             .quantity(new Quantity(createProductDto.productQuantity()))
+            .price(new Price(createProductDto.productPrice()))
             .bundleSize(new BundleSize(createProductDto.bundleSize()))
             .build();
     }
