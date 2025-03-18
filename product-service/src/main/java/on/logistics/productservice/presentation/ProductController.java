@@ -50,7 +50,7 @@ public class ProductController {
 
     @GetMapping("/search")
     public ResponseEntity<CommonResponse<PageDto<SearchProductResponse>>> getProduct(
-        @RequestParam String name,
+        @RequestParam(required = false) String name,
         @PageableDefault Pageable pageable
     ) {
         SearchProductRequestDto requestDto = SearchProductRequestDto.from(name, pageable);
