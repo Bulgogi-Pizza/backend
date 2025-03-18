@@ -35,8 +35,17 @@ public class HubLogisticsRecord extends BaseEntity {
     private UUID deliveryId;
 
     @Builder
-    private HubLogisticsRecord(LogisticsStatus status, UUID hubId) {
+    private HubLogisticsRecord(LogisticsStatus status, UUID hubId, UUID deliveryId) {
         this.status = status;
         this.hubId = hubId;
+        this.deliveryId = deliveryId;
+    }
+
+    public static HubLogisticsRecord storage(UUID hubId, UUID deliveryId) {
+        return HubLogisticsRecord.builder()
+            .status(LogisticsStatus.STORAGE)
+            .hubId(hubId)
+            .deliveryId(deliveryId)
+            .build();
     }
 }
