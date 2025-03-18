@@ -60,8 +60,12 @@ public class Company extends BaseEntity {
     }
 
     public void update(String companyName, String companyAddress) {
-        this.name = name.update(companyName);
-        this.address = address.update(companyAddress);
+        if (companyName != null) {
+            this.name = name.update(companyName);
+        }
+        if (companyAddress != null) {
+            this.address = address.update(companyAddress);
+        }
     }
 
     public void updateHub(UUID managedHubId) {
