@@ -1,0 +1,63 @@
+package on.logistics.deliveryservice.domain;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import java.util.UUID;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import on.logistics.deliveryservice.domain.enums.DeliveryStatus;
+import on.logistics.deliveryservice.domain.vo.Destination;
+import on.logistics.deliveryservice.domain.vo.Recipient;
+import on.logistics.deliveryservice.domain.vo.RecipientSlackEmail;
+import on.logistics.deliveryservice.global.domain.BaseEntity;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
+
+@Getter
+@Entity
+@Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@SQLRestriction("is_deleted = false")
+@SQLDelete(sql = "UPDATE product SET is_deleted = true WHERE id = ?")
+public class Delivery extends BaseEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
+
+    @Column(name = "order_id", nullable = false)
+    private UUID orderId;
+
+    @Column(nullable = false)
+    private DeliveryStatus status;
+
+    @Column(name = "start_hub_id", nullable = false)
+    private UUID startHubId;
+
+    @Column(name = "end_hub_id", nullable = false)
+    private UUID endHubId;
+
+    @Embedded
+    @Column(nullable = false)
+    private Destination destination;
+
+    @Embedded
+    @Column(nullable = false)
+    private Recipient recipient;
+
+    @Embedded
+    @Column(nullable = false)
+    private RecipientSlackEmail recipientSlackEmail;
+
+    @Column(name = "company_delivery_managed_id")
+    private UUID companyDeliveryManagerId;
+
+}
