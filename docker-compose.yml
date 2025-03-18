@@ -12,6 +12,22 @@ services:
       SPRING_PROFILES_ACTIVE: dev
     platform: linux/amd64
 
+  map-service:
+    depends_on:
+      - eureka-server
+    build:
+      context: ./map-service
+      dockerfile: Dockerfile
+    container_name: map-service
+    ports:
+      - "19600:19600"
+    networks:
+      - o-n-logistics
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+    platform: linux/amd64
+    restart: always
+
 networks:
   o-n-logistics:
     driver: bridge
