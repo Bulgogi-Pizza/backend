@@ -1,0 +1,22 @@
+server:
+  port: 8902
+spring:
+  application:
+    name: delivery-service
+  datasource:
+    url: ENC(n/bEsHqgCBe4+vHBl23kVtKxLwH0tszw9lR2S4OKeS8nUUQA4ufEOFSg02KK2CJhutXDDkutshE=)
+    username: ENC(IPrLgW77Nu2GzXtK05sgfHlYCM16uz8p)
+    password: ENC(YQZCwLrd5XLlvFS2KbCNegvG9+4oZyLG)
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+        highlight_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
+eureka:
+  client:
+    service-url:
+      defaultZone: ENC(7pjzAHqQCzqeS0H42O2ddRKRJ0zN06XL30GVT+62foOmiP0x9Ms9uQ==)
