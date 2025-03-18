@@ -5,15 +5,19 @@ import lombok.RequiredArgsConstructor;
 import on.logistics.deliveryservice.application.dtos.DeliveryHubInfoDto;
 import on.logistics.deliveryservice.application.dtos.DeliveryUserInfoDto;
 import on.logistics.deliveryservice.application.dtos.request.CreateDeliveryRequestDto;
+import on.logistics.deliveryservice.application.dtos.request.SearchDeliveryRequestDto;
 import on.logistics.deliveryservice.application.dtos.request.UpdateDeliveryRequestDto;
 import on.logistics.deliveryservice.domain.Delivery;
 import on.logistics.deliveryservice.domain.dto.CreateDeliveryDto;
 import on.logistics.deliveryservice.domain.repository.DeliveryRepository;
 import on.logistics.deliveryservice.exception.DeliveryException;
 import on.logistics.deliveryservice.exception.DeliveryExceptionCode;
+import on.logistics.deliveryservice.global.application.dtos.PageDto;
 import on.logistics.deliveryservice.presentation.dtos.response.CreateDeliveryResponse;
 import on.logistics.deliveryservice.presentation.dtos.response.GetDeliveryResponse;
+import on.logistics.deliveryservice.presentation.dtos.response.SearchDeliveryResponse;
 import on.logistics.deliveryservice.presentation.dtos.response.UpdateDeliveryResponse;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,6 +37,13 @@ public class DeliveryServiceImpl implements DeliveryService {
         Delivery.create(entityRequestDto);
         Delivery saved = Delivery.create(entityRequestDto);
         return CreateDeliveryResponse.of(saved.getId());
+    }
+
+    @Override
+    public PageDto<SearchDeliveryResponse> searchDelivery(SearchDeliveryRequestDto requestDto) {
+        Page<Delivery> deliveryPage = deliveryRepository.searchDelivery(requestDto);
+        Page<SearchDeliveryResponse> responsePage = deliveryPage.map(SearchDeliveryResponse::from);
+        return PageDto.from(responsePage);
     }
 
     @Override

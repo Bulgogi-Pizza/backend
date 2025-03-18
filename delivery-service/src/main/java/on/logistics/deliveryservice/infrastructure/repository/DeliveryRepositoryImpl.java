@@ -3,9 +3,12 @@ package on.logistics.deliveryservice.infrastructure.repository;
 import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import on.logistics.deliveryservice.application.dtos.request.SearchDeliveryRequestDto;
 import on.logistics.deliveryservice.domain.Delivery;
 import on.logistics.deliveryservice.domain.repository.DeliveryRepository;
 import on.logistics.deliveryservice.infrastructure.jpa.DeliveryJpaRepository;
+import on.logistics.deliveryservice.infrastructure.querydsl.DeliveryQueryRepository;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -13,6 +16,7 @@ import org.springframework.stereotype.Repository;
 public class DeliveryRepositoryImpl implements DeliveryRepository {
 
     private final DeliveryJpaRepository deliveryJpaRepository;
+    private final DeliveryQueryRepository deliveryQueryRepository;
 
     @Override
     public Delivery save(Delivery delivery) {
@@ -27,5 +31,10 @@ public class DeliveryRepositoryImpl implements DeliveryRepository {
     @Override
     public void delete(Delivery delivery) {
         deliveryJpaRepository.delete(delivery);
+    }
+
+    @Override
+    public Page<Delivery> searchDelivery(SearchDeliveryRequestDto requestDto) {
+        return null;
     }
 }
