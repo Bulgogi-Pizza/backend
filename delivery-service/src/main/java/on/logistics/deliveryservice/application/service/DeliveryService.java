@@ -13,6 +13,7 @@ import on.logistics.deliveryservice.presentation.dtos.response.UpdateDeliveryCom
 import on.logistics.deliveryservice.presentation.dtos.response.UpdateDeliveryCompanyMovingResponse;
 import on.logistics.deliveryservice.presentation.dtos.response.UpdateDeliveryHubArriveResponse;
 import on.logistics.deliveryservice.presentation.dtos.response.UpdateDeliveryResponse;
+import on.logistics.deliveryservice.presentation.dtos.response.UpdateDeliveryStatusCancelResponse;
 import on.logistics.deliveryservice.presentation.dtos.response.UpdateDeliveryStatusHubMovingResponse;
 
 public interface DeliveryService {
@@ -36,4 +37,6 @@ public interface DeliveryService {
     UpdateDeliveryCompanyMovingResponse updateDeliveryCompanyMoving(UUID id);
 
     UpdateDeliveryCompanyArriveResponse updateDeliveryCompanyArrive(UUID id);
+
+    UpdateDeliveryStatusCancelResponse updateDeliveryStatusCancel(UUID id);
 }

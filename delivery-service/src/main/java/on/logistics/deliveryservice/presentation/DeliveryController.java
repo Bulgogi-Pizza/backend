@@ -20,6 +20,7 @@ import on.logistics.deliveryservice.presentation.dtos.response.UpdateDeliveryCom
 import on.logistics.deliveryservice.presentation.dtos.response.UpdateDeliveryCompanyMovingResponse;
 import on.logistics.deliveryservice.presentation.dtos.response.UpdateDeliveryHubArriveResponse;
 import on.logistics.deliveryservice.presentation.dtos.response.UpdateDeliveryResponse;
+import on.logistics.deliveryservice.presentation.dtos.response.UpdateDeliveryStatusCancelResponse;
 import on.logistics.deliveryservice.presentation.dtos.response.UpdateDeliveryStatusHubMovingResponse;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -133,6 +134,15 @@ public class DeliveryController {
         @PathVariable UUID id
     ) {
         UpdateDeliveryCompanyArriveResponse response = deliveryService.updateDeliveryCompanyArrive(
+            id);
+        return ResponseEntity.ok(CommonResponse.success(response));
+    }
+
+    @PatchMapping("/status/cancel/{id}")
+    public ResponseEntity<CommonResponse<UpdateDeliveryStatusCancelResponse>> updateDeliveryStatusCancel(
+        @PathVariable UUID id
+    ) {
+        UpdateDeliveryStatusCancelResponse response = deliveryService.updateDeliveryStatusCancel(
             id);
         return ResponseEntity.ok(CommonResponse.success(response));
     }

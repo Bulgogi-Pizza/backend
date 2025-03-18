@@ -21,6 +21,7 @@ import on.logistics.deliveryservice.presentation.dtos.response.UpdateDeliveryCom
 import on.logistics.deliveryservice.presentation.dtos.response.UpdateDeliveryCompanyMovingResponse;
 import on.logistics.deliveryservice.presentation.dtos.response.UpdateDeliveryHubArriveResponse;
 import on.logistics.deliveryservice.presentation.dtos.response.UpdateDeliveryResponse;
+import on.logistics.deliveryservice.presentation.dtos.response.UpdateDeliveryStatusCancelResponse;
 import on.logistics.deliveryservice.presentation.dtos.response.UpdateDeliveryStatusHubMovingResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
@@ -111,6 +112,14 @@ public class DeliveryServiceImpl implements DeliveryService {
         Delivery delivery = getOrElseThrow(id);
         delivery.updateDeliveryStatusCompanyArrive();
         return UpdateDeliveryCompanyArriveResponse.of(delivery.getId());
+    }
+
+    @Override
+    @Transactional
+    public UpdateDeliveryStatusCancelResponse updateDeliveryStatusCancel(UUID id) {
+        Delivery delivery = getOrElseThrow(id);
+        delivery.updateDeliveryStatusCancel();
+        return UpdateDeliveryStatusCancelResponse.of(delivery.getId());
     }
 
     public DeliveryHubInfoDto deliveryHubInfo(String description) {
