@@ -3,6 +3,8 @@ package on.logistics.deliveryservice.domain;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -39,6 +41,7 @@ public class Delivery extends BaseEntity {
     private UUID orderId;
 
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private DeliveryStatus status;
 
     @Column(name = "start_hub_id", nullable = false)

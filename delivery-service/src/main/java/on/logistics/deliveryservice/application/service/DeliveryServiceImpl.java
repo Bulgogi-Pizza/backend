@@ -40,8 +40,8 @@ public class DeliveryServiceImpl implements DeliveryService {
         DeliveryHubInfoDto hubInfo = deliveryHubInfo(requestDto.description());
         DeliveryUserInfoDto userInfo = deliveryUserInfo();
         CreateDeliveryDto entityRequestDto = CreateDeliveryDto.from(requestDto, hubInfo, userInfo);
-        Delivery.create(entityRequestDto);
         Delivery saved = Delivery.create(entityRequestDto);
+        deliveryRepository.save(saved);
         return CreateDeliveryResponse.of(saved.getId());
     }
 
