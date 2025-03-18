@@ -24,6 +24,7 @@ public class DeliveryServiceImpl implements DeliveryService {
     private final DeliveryRepository deliveryRepository;
 
     @Override
+    @Transactional
     public CreateDeliveryResponse createDelivery(CreateDeliveryRequestDto requestDto) {
         DeliveryHubInfoDto hubInfo = deliveryHubInfo(requestDto.description());
         DeliveryUserInfoDto userInfo = deliveryUserInfo();
