@@ -1,5 +1,8 @@
 package on.logistics.deliveryservice.application.dtos;
 
-public class TypeHubInfoDto {
+import java.util.UUID;
+
+public record TypeHubInfoDto(UUID hubId, String hubName, String hubType, String hubAddress,
+                             String latitude, String longitude) {
 
 }
