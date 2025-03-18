@@ -82,4 +82,12 @@ public class Delivery extends BaseEntity {
             this.endHubId = hubInfo.endHubId();
         }
     }
+
+    public void updateAssignManager(UUID companyDeliveryManagerId) {
+        this.companyDeliveryManagerId = companyDeliveryManagerId;
+    }
+
+    public void updateDeliveryStatusHubMoving() {
+        this.status = DeliveryStatus.HUB_MOVING;
+    }
 }

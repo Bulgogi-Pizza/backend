@@ -15,12 +15,15 @@ import on.logistics.deliveryservice.presentation.dtos.request.UpdateDeliveryRequ
 import on.logistics.deliveryservice.presentation.dtos.response.CreateDeliveryResponse;
 import on.logistics.deliveryservice.presentation.dtos.response.GetDeliveryResponse;
 import on.logistics.deliveryservice.presentation.dtos.response.SearchDeliveryResponse;
+import on.logistics.deliveryservice.presentation.dtos.response.UpdateAssignManagerResponse;
 import on.logistics.deliveryservice.presentation.dtos.response.UpdateDeliveryResponse;
+import on.logistics.deliveryservice.presentation.dtos.response.UpdateDeliveryStatusHubMovingResponse;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -85,5 +88,23 @@ public class DeliveryController {
     ) {
         deliveryService.deleteDelivery(id);
         return ResponseEntity.ok(CommonResponse.success());
+    }
+
+    @PatchMapping("/assignManager/{companyDeliveryManagerId}")
+    public ResponseEntity<CommonResponse<UpdateAssignManagerResponse>> updateAssignManager(
+        @PathVariable UUID companyDeliveryManagerId
+    ) {
+        UpdateAssignManagerResponse response = deliveryService.updateAssignManager(
+            companyDeliveryManagerId);
+        return ResponseEntity.ok(CommonResponse.success(response));
+    }
+
+    @PatchMapping("status/hubmoving/{id}")
+    public ResponseEntity<CommonResponse<UpdateDeliveryStatusHubMovingResponse>> updateDeliveryStatusHubMoving(
+        @PathVariable UUID id
+    ) {
+        UpdateDeliveryStatusHubMovingResponse response = deliveryService.updateDeliveryStatusHubMoving(
+            id);
+        return ResponseEntity.ok(CommonResponse.success(response));
     }
 }

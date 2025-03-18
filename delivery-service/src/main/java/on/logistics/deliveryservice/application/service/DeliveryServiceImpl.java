@@ -16,7 +16,9 @@ import on.logistics.deliveryservice.global.application.dtos.PageDto;
 import on.logistics.deliveryservice.presentation.dtos.response.CreateDeliveryResponse;
 import on.logistics.deliveryservice.presentation.dtos.response.GetDeliveryResponse;
 import on.logistics.deliveryservice.presentation.dtos.response.SearchDeliveryResponse;
+import on.logistics.deliveryservice.presentation.dtos.response.UpdateAssignManagerResponse;
 import on.logistics.deliveryservice.presentation.dtos.response.UpdateDeliveryResponse;
+import on.logistics.deliveryservice.presentation.dtos.response.UpdateDeliveryStatusHubMovingResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -65,6 +67,20 @@ public class DeliveryServiceImpl implements DeliveryService {
     public void deleteDelivery(UUID id) {
         Delivery delivery = getOrElseThrow(id);
         deliveryRepository.delete(delivery);
+    }
+
+    @Override
+    public UpdateAssignManagerResponse updateAssignManager(UUID companyDeliveryManagerId) {
+        Delivery delivery = getOrElseThrow(companyDeliveryManagerId);
+        delivery.updateAssignManager(companyDeliveryManagerId);
+        return UpdateAssignManagerResponse.of(delivery.getId());
+    }
+
+    @Override
+    public UpdateDeliveryStatusHubMovingResponse updateDeliveryStatusHubMoving(UUID id) {
+        Delivery delivery = getOrElseThrow(id);
+        delivery.updateDeliveryStatusHubMoving();
+        return UpdateDeliveryStatusHubMovingResponse.of(delivery.getId());
     }
 
     public DeliveryHubInfoDto deliveryHubInfo(String description) {
