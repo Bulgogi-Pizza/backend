@@ -94,4 +94,8 @@ public class Delivery extends BaseEntity {
     public void updateDeliveryStatusHubArrive() {
         this.status = DeliveryStatus.HUB_ARRIVE;
     }
+
+    public void updateDeliveryStatusCompanyMoving() {
+        this.status = DeliveryStatus.COMPANY_MOVING;
+    }
 }
