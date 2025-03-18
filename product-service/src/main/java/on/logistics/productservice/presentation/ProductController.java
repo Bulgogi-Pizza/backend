@@ -84,7 +84,7 @@ public class ProductController {
         return ResponseEntity.ok(CommonResponse.success());
     }
 
-    @PatchMapping("/quantity/{id}")
+    @PatchMapping("/reduce/quantity/{id}")
     public ResponseEntity<CommonResponse<UpdateProductQuantityResponse>> updateProductQuantity(
         @PathVariable UUID id,
         @Valid @RequestBody UpdateProductQuantityRequest updateProductQuantityRequest

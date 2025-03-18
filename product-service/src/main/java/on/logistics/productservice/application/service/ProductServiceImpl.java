@@ -85,7 +85,7 @@ public class ProductServiceImpl implements ProductService {
             throw new ProductException(ProductExceptionCode.PRODUCT_QUANTITY_LIMIT);
         }
 
-        product.updateQuantity(requestDto.quantity());
+        product.updateQuantity(requestDto.productQuantity());
         return UpdateProductQuantityResponse.of(product.getId());
     }
 
