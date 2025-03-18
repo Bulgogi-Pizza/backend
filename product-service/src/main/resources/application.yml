@@ -17,3 +17,7 @@ spring:
         use_sql_comments: true
         dialect: org.hibernate.dialect.PostgreSQLDialect
     show-sql: true
+eureka:
+  client:
+    service-url:
+      defaultZone: ENC(gkE38Y61OB4CV6PuojhSMTX2dYfYlC5mfZVG+8PeUuueh+Rjc09sYw==)
