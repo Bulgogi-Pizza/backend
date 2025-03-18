@@ -10,4 +10,7 @@ public interface MapServiceFeignClient {
 
     @GetMapping("/api/v1/maps/geocode")
     Response getGeocode(@RequestParam("query") String query);
+
+    @GetMapping("/api/v1/maps/route")
+    Response getRoute(@RequestParam("start") String start, @RequestParam("end") String end);
 }

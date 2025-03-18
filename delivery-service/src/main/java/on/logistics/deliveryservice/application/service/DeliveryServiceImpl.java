@@ -20,6 +20,7 @@ import on.logistics.deliveryservice.exception.DeliveryExceptionCode;
 import on.logistics.deliveryservice.global.application.dtos.PageDto;
 import on.logistics.deliveryservice.infrastructure.client.map.MapServiceClient;
 import on.logistics.deliveryservice.infrastructure.client.map.feign.dtos.GetDestinationInfo;
+import on.logistics.deliveryservice.infrastructure.client.map.feign.dtos.GetHubRouteInfo;
 import on.logistics.deliveryservice.presentation.dtos.response.CreateDeliveryResponse;
 import on.logistics.deliveryservice.presentation.dtos.response.GetDeliveryResponse;
 import on.logistics.deliveryservice.presentation.dtos.response.SearchDeliveryResponse;
@@ -134,12 +135,22 @@ public class DeliveryServiceImpl implements DeliveryService {
 
     public DeliveryHubInfoDto deliveryHubInfo(String description) {
         GetDestinationInfo geocode = mapServiceClient.getGeocode(description);
-        typeHubInfo();
-        // todo: 목적지 위도, 경도로 중앙 허브 세 개 중 어디가 가까운지 찾기
+        log.info(geocode.toString());
+        GetHubRouteInfo middleRoute = middleRouteInfo(geocode);
+        log.info(middleRoute.toString());
         typeSpokeInfo();
         // todo: 중앙 허브 근처에 관리되고 있는 곳에서도 어디가 제일 가까운지 찾아서 목적지 허브에 넣기
         UUID endHubId = UUID.randomUUID();
         return DeliveryHubInfoDto.of(endHubId);
+    }
+
+    public GetHubRouteInfo middleRouteInfo(GetDestinationInfo geocode) {
+        // todo: 목적지 위도, 경도로 중앙 허브 세 개 중 어디가 가까운지 찾기
+        String start = "" + geocode.longitude() + "" + "," + geocode.latitude();
+        // todo: 중앙 허브 받아야 함, 임시 end 적용
+        typeHubInfo();
+        String end = "126.8737955,37.6403771";
+        return mapServiceClient.getRoute(start, end);
     }
 
     public List<TypeHubInfoDto> typeHubInfo() {
