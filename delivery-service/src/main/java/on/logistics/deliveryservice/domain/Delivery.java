@@ -12,6 +12,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import on.logistics.deliveryservice.application.dtos.DeliveryHubInfoDto;
 import on.logistics.deliveryservice.domain.dto.CreateDeliveryDto;
 import on.logistics.deliveryservice.domain.enums.DeliveryStatus;
 import on.logistics.deliveryservice.domain.vo.Destination;
@@ -71,5 +72,14 @@ public class Delivery extends BaseEntity {
             .recipient(new Recipient(entityRequestDto.recipient()))
             .recipientSlackEmail(new RecipientSlackEmail(entityRequestDto.recipientSlackEmail()))
             .build();
+    }
+
+    public void update(String description, DeliveryHubInfoDto hubInfo) {
+        if (description != null) {
+            this.destination = destination.update(description);
+        }
+        if (hubInfo != null) {
+            this.endHubId = hubInfo.endHubId();
+        }
     }
 }

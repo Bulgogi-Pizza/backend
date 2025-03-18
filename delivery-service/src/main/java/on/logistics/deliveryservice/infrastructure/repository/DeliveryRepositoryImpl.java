@@ -1,5 +1,7 @@
 package on.logistics.deliveryservice.infrastructure.repository;
 
+import java.util.Optional;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import on.logistics.deliveryservice.domain.Delivery;
 import on.logistics.deliveryservice.domain.repository.DeliveryRepository;
@@ -15,5 +17,10 @@ public class DeliveryRepositoryImpl implements DeliveryRepository {
     @Override
     public Delivery save(Delivery delivery) {
         return deliveryJpaRepository.save(delivery);
+    }
+
+    @Override
+    public Optional<Delivery> findById(UUID uuid) {
+        return deliveryJpaRepository.findById(uuid);
     }
 }
