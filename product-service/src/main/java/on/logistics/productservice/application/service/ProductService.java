@@ -3,14 +3,14 @@ package on.logistics.productservice.application.service;
 import java.util.UUID;
 import on.logistics.productservice.application.dto.CreateProductRequestDto;
 import on.logistics.productservice.application.dto.SearchProductRequestDto;
-import on.logistics.productservice.application.dto.UpdateProductQuantityRequestDto;
 import on.logistics.productservice.application.dto.UpdateProductRequestDto;
+import on.logistics.productservice.application.dto.UpdateReduceProductQuantityRequestDto;
 import on.logistics.productservice.global.application.dtos.PageDto;
 import on.logistics.productservice.presentation.dtos.response.CreateProductResponse;
 import on.logistics.productservice.presentation.dtos.response.GetProductResponse;
 import on.logistics.productservice.presentation.dtos.response.SearchProductResponse;
-import on.logistics.productservice.presentation.dtos.response.UpdateProductQuantityResponse;
 import on.logistics.productservice.presentation.dtos.response.UpdateProductResponse;
+import on.logistics.productservice.presentation.dtos.response.UpdateReduceProductQuantityResponse;
 
 public interface ProductService {
 
@@ -24,5 +24,6 @@ public interface ProductService {
 
     void deleteProduct(UUID id);
 
-    UpdateProductQuantityResponse updateProductQuantity(UpdateProductQuantityRequestDto requestDto);
+    UpdateReduceProductQuantityResponse updateReduceProductQuantity(
+        UpdateReduceProductQuantityRequestDto requestDto);
 }

@@ -5,19 +5,19 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import on.logistics.productservice.application.dto.CreateProductRequestDto;
 import on.logistics.productservice.application.dto.SearchProductRequestDto;
-import on.logistics.productservice.application.dto.UpdateProductQuantityRequestDto;
 import on.logistics.productservice.application.dto.UpdateProductRequestDto;
+import on.logistics.productservice.application.dto.UpdateReduceProductQuantityRequestDto;
 import on.logistics.productservice.application.service.ProductService;
 import on.logistics.productservice.global.application.dtos.PageDto;
 import on.logistics.productservice.global.presentation.dtos.CommonResponse;
 import on.logistics.productservice.presentation.dtos.request.CreateProductRequest;
-import on.logistics.productservice.presentation.dtos.request.UpdateProductQuantityRequest;
 import on.logistics.productservice.presentation.dtos.request.UpdateProductRequest;
+import on.logistics.productservice.presentation.dtos.request.UpdateReduceProductQuantityRequest;
 import on.logistics.productservice.presentation.dtos.response.CreateProductResponse;
 import on.logistics.productservice.presentation.dtos.response.GetProductResponse;
 import on.logistics.productservice.presentation.dtos.response.SearchProductResponse;
-import on.logistics.productservice.presentation.dtos.response.UpdateProductQuantityResponse;
 import on.logistics.productservice.presentation.dtos.response.UpdateProductResponse;
+import on.logistics.productservice.presentation.dtos.response.UpdateReduceProductQuantityResponse;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
@@ -85,13 +85,15 @@ public class ProductController {
     }
 
     @PatchMapping("/reduce/quantity/{id}")
-    public ResponseEntity<CommonResponse<UpdateProductQuantityResponse>> updateProductQuantity(
+    public ResponseEntity<CommonResponse<UpdateReduceProductQuantityResponse>> updateReduceProductQuantity(
         @PathVariable UUID id,
-        @Valid @RequestBody UpdateProductQuantityRequest updateProductQuantityRequest
+        @Valid @RequestBody UpdateReduceProductQuantityRequest updateReduceProductQuantityRequest
     ) {
-        UpdateProductQuantityRequestDto requestDto = UpdateProductQuantityRequest.from(id,
-            updateProductQuantityRequest);
-        UpdateProductQuantityResponse response = productService.updateProductQuantity(requestDto);
+        UpdateReduceProductQuantityRequestDto requestDto = UpdateReduceProductQuantityRequest.from(
+            id,
+            updateReduceProductQuantityRequest);
+        UpdateReduceProductQuantityResponse response = productService.updateReduceProductQuantity(
+            requestDto);
         return ResponseEntity.ok(CommonResponse.success(response));
     }
 }

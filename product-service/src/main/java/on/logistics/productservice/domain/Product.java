@@ -79,7 +79,7 @@ public class Product extends BaseEntity {
                 bundleSize.update(updateProductDto.bundleSize()) : this.bundleSize;
     }
 
-    public void updateQuantity(Long quantity) {
+    public void updateReduceQuantity(Long quantity) {
         this.quantity = this.quantity.reduceQuantity(quantity);
     }
 }

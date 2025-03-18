@@ -5,8 +5,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import on.logistics.productservice.application.dto.CreateProductRequestDto;
 import on.logistics.productservice.application.dto.SearchProductRequestDto;
-import on.logistics.productservice.application.dto.UpdateProductQuantityRequestDto;
 import on.logistics.productservice.application.dto.UpdateProductRequestDto;
+import on.logistics.productservice.application.dto.UpdateReduceProductQuantityRequestDto;
 import on.logistics.productservice.domain.Product;
 import on.logistics.productservice.domain.dto.CreateProductDto;
 import on.logistics.productservice.domain.dto.UpdateProductDto;
@@ -17,8 +17,8 @@ import on.logistics.productservice.global.application.dtos.PageDto;
 import on.logistics.productservice.presentation.dtos.response.CreateProductResponse;
 import on.logistics.productservice.presentation.dtos.response.GetProductResponse;
 import on.logistics.productservice.presentation.dtos.response.SearchProductResponse;
-import on.logistics.productservice.presentation.dtos.response.UpdateProductQuantityResponse;
 import on.logistics.productservice.presentation.dtos.response.UpdateProductResponse;
+import on.logistics.productservice.presentation.dtos.response.UpdateReduceProductQuantityResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -77,16 +77,16 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional
-    public UpdateProductQuantityResponse updateProductQuantity(
-        UpdateProductQuantityRequestDto requestDto) {
+    public UpdateReduceProductQuantityResponse updateReduceProductQuantity(
+        UpdateReduceProductQuantityRequestDto requestDto) {
         Product product = getOrElseThrow(requestDto.productId());
 
         if (product.getQuantity().getValue() == 0) {
             throw new ProductException(ProductExceptionCode.PRODUCT_QUANTITY_LIMIT);
         }
 
-        product.updateQuantity(requestDto.productQuantity());
-        return UpdateProductQuantityResponse.of(product.getId());
+        product.updateReduceQuantity(requestDto.productQuantity());
+        return UpdateReduceProductQuantityResponse.of(product.getId());
     }
 
     private Product getOrElseThrow(UUID id) {
