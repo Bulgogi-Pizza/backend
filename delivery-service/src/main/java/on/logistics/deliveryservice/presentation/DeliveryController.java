@@ -16,6 +16,7 @@ import on.logistics.deliveryservice.presentation.dtos.response.CreateDeliveryRes
 import on.logistics.deliveryservice.presentation.dtos.response.GetDeliveryResponse;
 import on.logistics.deliveryservice.presentation.dtos.response.SearchDeliveryResponse;
 import on.logistics.deliveryservice.presentation.dtos.response.UpdateAssignManagerResponse;
+import on.logistics.deliveryservice.presentation.dtos.response.UpdateDeliveryHubArriveResponse;
 import on.logistics.deliveryservice.presentation.dtos.response.UpdateDeliveryResponse;
 import on.logistics.deliveryservice.presentation.dtos.response.UpdateDeliveryStatusHubMovingResponse;
 import org.springframework.data.domain.Pageable;
@@ -105,6 +106,14 @@ public class DeliveryController {
     ) {
         UpdateDeliveryStatusHubMovingResponse response = deliveryService.updateDeliveryStatusHubMoving(
             id);
+        return ResponseEntity.ok(CommonResponse.success(response));
+    }
+
+    @PatchMapping("/status/hubArrive/{id}")
+    public ResponseEntity<CommonResponse<UpdateDeliveryHubArriveResponse>> updateDeliveryHubArrive(
+        @PathVariable UUID id
+    ) {
+        UpdateDeliveryHubArriveResponse response = deliveryService.updateDeliveryHubArrive(id);
         return ResponseEntity.ok(CommonResponse.success(response));
     }
 

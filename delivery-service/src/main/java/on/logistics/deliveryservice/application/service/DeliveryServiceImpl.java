@@ -17,6 +17,7 @@ import on.logistics.deliveryservice.presentation.dtos.response.CreateDeliveryRes
 import on.logistics.deliveryservice.presentation.dtos.response.GetDeliveryResponse;
 import on.logistics.deliveryservice.presentation.dtos.response.SearchDeliveryResponse;
 import on.logistics.deliveryservice.presentation.dtos.response.UpdateAssignManagerResponse;
+import on.logistics.deliveryservice.presentation.dtos.response.UpdateDeliveryHubArriveResponse;
 import on.logistics.deliveryservice.presentation.dtos.response.UpdateDeliveryResponse;
 import on.logistics.deliveryservice.presentation.dtos.response.UpdateDeliveryStatusHubMovingResponse;
 import org.springframework.data.domain.Page;
@@ -81,6 +82,13 @@ public class DeliveryServiceImpl implements DeliveryService {
         Delivery delivery = getOrElseThrow(id);
         delivery.updateDeliveryStatusHubMoving();
         return UpdateDeliveryStatusHubMovingResponse.of(delivery.getId());
+    }
+
+    @Override
+    public UpdateDeliveryHubArriveResponse updateDeliveryHubArrive(UUID id) {
+        Delivery delivery = getOrElseThrow(id);
+        delivery.updateDeliveryStatusHubArrive();
+        return UpdateDeliveryHubArriveResponse.of(delivery.getId());
     }
 
     public DeliveryHubInfoDto deliveryHubInfo(String description) {
