@@ -22,6 +22,8 @@ public class ProductQuantity {
   }
 
   private void validate(final Long value) {
-    throw new UnsupportedOperationException("Unsupported validate");
+    if (value == null || value <= 0) {
+      throw new IllegalArgumentException("Product quantity must be greater than 0");
+    }
   }
 }

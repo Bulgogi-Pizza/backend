@@ -22,6 +22,8 @@ public class ProductPrice {
   }
 
   private void validate(final Long value) {
-    throw new UnsupportedOperationException("Unsupported validate");
+    if (value == null || value < 0) {
+      throw new IllegalArgumentException("Product price must be greater than zero");
+    }
   }
 }

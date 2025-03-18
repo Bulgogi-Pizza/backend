@@ -24,7 +24,12 @@ public class CompanyName {
   }
 
   private void validate(final String value) {
-    throw new UnsupportedOperationException("Unsupported validate");
+    if (value == null || value.isBlank()) {
+      throw new IllegalArgumentException("Company name must not be empty");
+    }
+    if (value.length() > MAX_LENGTH) {
+      throw new IllegalArgumentException("Company name must not be longer than " + MAX_LENGTH + " characters");
+    }
   }
 
 }
