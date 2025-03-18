@@ -1,5 +1,6 @@
 package on.logistics.hubservice.domain.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -27,7 +28,11 @@ public class HubLogisticsRecord extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private LogisticsStatus status;
 
+    @Column(nullable = false)
     private UUID hubId;
+
+    @Column(nullable = false)
+    private UUID deliveryId;
 
     @Builder
     private HubLogisticsRecord(LogisticsStatus status, UUID hubId) {
