@@ -5,12 +5,14 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import on.logistics.deliveryservice.application.dtos.request.CreateDeliveryRequestDto;
 import on.logistics.deliveryservice.application.dtos.request.SearchDeliveryRequestDto;
+import on.logistics.deliveryservice.application.dtos.request.UpdateAssignManagerRequestDto;
 import on.logistics.deliveryservice.application.dtos.request.UpdateDeliveryRequestDto;
 import on.logistics.deliveryservice.application.service.DeliveryService;
 import on.logistics.deliveryservice.domain.enums.DeliveryStatus;
 import on.logistics.deliveryservice.global.application.dtos.PageDto;
 import on.logistics.deliveryservice.global.presentation.dtos.CommonResponse;
 import on.logistics.deliveryservice.presentation.dtos.request.CreateDeliveryRequest;
+import on.logistics.deliveryservice.presentation.dtos.request.UpdateAssignManagerRequest;
 import on.logistics.deliveryservice.presentation.dtos.request.UpdateDeliveryRequest;
 import on.logistics.deliveryservice.presentation.dtos.response.CreateDeliveryResponse;
 import on.logistics.deliveryservice.presentation.dtos.response.GetDeliveryResponse;
@@ -86,11 +88,13 @@ public class DeliveryController {
         return ResponseEntity.ok(CommonResponse.success());
     }
 
-    @PatchMapping("/assignManager/{companyDeliveryManagerId}")
+    @PatchMapping("/assignManager/{id}")
     public ResponseEntity<CommonResponse<UpdateAssignManagerResponse>> updateAssignManager(
-        @PathVariable UUID companyDeliveryManagerId) {
-        UpdateAssignManagerResponse response = deliveryService.updateAssignManager(
-            companyDeliveryManagerId);
+        @PathVariable UUID id,
+        @Valid @RequestBody UpdateAssignManagerRequest updateAssignManagerRequest) {
+        UpdateAssignManagerRequestDto requestDto = UpdateAssignManagerRequest.from(id,
+            updateAssignManagerRequest);
+        UpdateAssignManagerResponse response = deliveryService.updateAssignManager(requestDto);
         return ResponseEntity.ok(CommonResponse.success(response));
     }
 

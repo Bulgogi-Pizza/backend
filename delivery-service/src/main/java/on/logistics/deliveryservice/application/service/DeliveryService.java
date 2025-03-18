@@ -3,6 +3,7 @@ package on.logistics.deliveryservice.application.service;
 import java.util.UUID;
 import on.logistics.deliveryservice.application.dtos.request.CreateDeliveryRequestDto;
 import on.logistics.deliveryservice.application.dtos.request.SearchDeliveryRequestDto;
+import on.logistics.deliveryservice.application.dtos.request.UpdateAssignManagerRequestDto;
 import on.logistics.deliveryservice.application.dtos.request.UpdateDeliveryRequestDto;
 import on.logistics.deliveryservice.global.application.dtos.PageDto;
 import on.logistics.deliveryservice.presentation.dtos.response.CreateDeliveryResponse;
@@ -28,7 +29,8 @@ public interface DeliveryService {
 
     void deleteDelivery(UUID id);
 
-    UpdateAssignManagerResponse updateAssignManager(UUID companyDeliveryManagerId);
+    UpdateAssignManagerResponse updateAssignManager(
+        UpdateAssignManagerRequestDto updateAssignManagerRequestDto);
 
     UpdateDeliveryStatusHubMovingResponse updateDeliveryStatusHubMoving(UUID id);
 

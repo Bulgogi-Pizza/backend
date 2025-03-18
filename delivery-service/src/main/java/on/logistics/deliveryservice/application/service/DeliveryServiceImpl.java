@@ -6,6 +6,7 @@ import on.logistics.deliveryservice.application.dtos.DeliveryHubInfoDto;
 import on.logistics.deliveryservice.application.dtos.DeliveryUserInfoDto;
 import on.logistics.deliveryservice.application.dtos.request.CreateDeliveryRequestDto;
 import on.logistics.deliveryservice.application.dtos.request.SearchDeliveryRequestDto;
+import on.logistics.deliveryservice.application.dtos.request.UpdateAssignManagerRequestDto;
 import on.logistics.deliveryservice.application.dtos.request.UpdateDeliveryRequestDto;
 import on.logistics.deliveryservice.domain.Delivery;
 import on.logistics.deliveryservice.domain.dto.CreateDeliveryDto;
@@ -76,9 +77,10 @@ public class DeliveryServiceImpl implements DeliveryService {
 
     @Override
     @Transactional
-    public UpdateAssignManagerResponse updateAssignManager(UUID companyDeliveryManagerId) {
-        Delivery delivery = getOrElseThrow(companyDeliveryManagerId);
-        delivery.updateAssignManager(companyDeliveryManagerId);
+    public UpdateAssignManagerResponse updateAssignManager(
+        UpdateAssignManagerRequestDto updateAssignManagerRequestDto) {
+        Delivery delivery = getOrElseThrow(updateAssignManagerRequestDto.deliveryId());
+        delivery.updateAssignManager(updateAssignManagerRequestDto.companyDeliveryManagerId());
         return UpdateAssignManagerResponse.of(delivery.getId());
     }
 
