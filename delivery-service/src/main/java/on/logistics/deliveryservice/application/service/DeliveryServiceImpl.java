@@ -106,6 +106,7 @@ public class DeliveryServiceImpl implements DeliveryService {
     }
 
     @Override
+    @Transactional
     public UpdateDeliveryCompanyArriveResponse updateDeliveryCompanyArrive(UUID id) {
         Delivery delivery = getOrElseThrow(id);
         delivery.updateDeliveryStatusCompanyArrive();
