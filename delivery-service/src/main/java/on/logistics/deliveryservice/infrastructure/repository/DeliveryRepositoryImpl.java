@@ -35,6 +35,6 @@ public class DeliveryRepositoryImpl implements DeliveryRepository {
 
     @Override
     public Page<Delivery> searchDelivery(SearchDeliveryRequestDto requestDto) {
-        return null;
+        return deliveryQueryRepository.searchDelivery(requestDto);
     }
 }
