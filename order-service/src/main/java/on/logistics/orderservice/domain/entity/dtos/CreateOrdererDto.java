@@ -1,7 +1,7 @@
 package on.logistics.orderservice.domain.entity.dtos;
 
 import java.util.UUID;
-import on.logistics.orderservice.application.clients.company.feign.dtos.GetCompanyResponse;
+import on.logistics.orderservice.infrastructure.clients.company.feign.dtos.GetCompanyResponse;
 import on.logistics.orderservice.domain.entity.Order;
 
 public record CreateOrdererDto(

@@ -1,11 +1,8 @@
 package on.logistics.orderservice.domain.entity.dtos;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import on.logistics.orderservice.application.dtos.create.CreateOrderRequestDto.OrdersByVendor;
+import on.logistics.orderservice.application.service.dtos.create.CreateOrderRequestDto.OrdersByVendor;
 import on.logistics.orderservice.domain.entity.Order;
-import on.logistics.orderservice.domain.entity.OrderProduct;
-import on.logistics.orderservice.domain.entity.Vendor;
 
 public record CreateVendorOrderDto(
     Order order,

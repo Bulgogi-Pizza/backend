@@ -5,15 +5,12 @@ import feign.Response;
 import java.io.IOException;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import on.logistics.orderservice.application.clients.exception.ExternalApiException.ExternalApiBadRequestException;
-import on.logistics.orderservice.application.clients.exception.ExternalApiException.ExternalApiClientException;
-import on.logistics.orderservice.application.clients.exception.ExternalApiException.ExternalApiNotFoundException;
-import on.logistics.orderservice.application.clients.exception.ExternalApiException.ExternalApiServerException;
-import on.logistics.orderservice.application.clients.exception.ExternalApiException.WrongResponseTypeApiException;
-import on.logistics.orderservice.global.exception.CommonExceptionCode;
-import on.logistics.orderservice.global.exception.CustomException;
+import on.logistics.orderservice.infrastructure.clients.exception.ExternalApiException.ExternalApiBadRequestException;
+import on.logistics.orderservice.infrastructure.clients.exception.ExternalApiException.ExternalApiClientException;
+import on.logistics.orderservice.infrastructure.clients.exception.ExternalApiException.ExternalApiNotFoundException;
+import on.logistics.orderservice.infrastructure.clients.exception.ExternalApiException.ExternalApiServerException;
+import on.logistics.orderservice.infrastructure.clients.exception.ExternalApiException.WrongResponseTypeApiException;
 import on.logistics.orderservice.global.presentation.dtos.CommonResponse;
-import org.springframework.http.ResponseEntity;
 
 @NoArgsConstructor(access = lombok.AccessLevel.PRIVATE)
 @Slf4j

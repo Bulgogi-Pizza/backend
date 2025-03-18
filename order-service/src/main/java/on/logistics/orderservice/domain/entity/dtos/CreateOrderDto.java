@@ -1,9 +1,6 @@
 package on.logistics.orderservice.domain.entity.dtos;
 
-import java.util.List;
-import on.logistics.orderservice.application.dtos.create.CreateOrderRequestDto;
-import on.logistics.orderservice.domain.entity.Orderer;
-import on.logistics.orderservice.domain.entity.VendorOrder;
+import on.logistics.orderservice.application.service.dtos.create.CreateOrderRequestDto;
 
 public record CreateOrderDto(
     String destination,
