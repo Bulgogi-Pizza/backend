@@ -26,8 +26,7 @@ public class HubService {
 
     @Transactional(readOnly = true)
     public GetHubResponse getHub(final UUID id) {
-        Hub hub = hubRepository.findByIdAndIsDeleted(id, false)
-            .orElseThrow(() -> new HubException(HubExceptionCode.HUB_NOT_FOUND));
+        Hub hub = findHubById(id);
         return GetHubResponse.of(hub);
     }
 
@@ -49,16 +48,19 @@ public class HubService {
 
     @Transactional
     public UpdateHubResponse updateHub(UpdateHubRequestDto requestDto) {
-        Hub hub = hubRepository.findByIdAndIsDeleted(requestDto.id(), false)
-            .orElseThrow(() -> new HubException(HubExceptionCode.HUB_NOT_FOUND));
+        Hub hub = findHubById(requestDto.id());
         hub.update(requestDto);
         return UpdateHubResponse.of(hub);
     }
 
     @Transactional
     public void deleteHub(final UUID id) {
-        Hub hub = hubRepository.findByIdAndIsDeleted(id, false)
-            .orElseThrow(() -> new HubException(HubExceptionCode.HUB_NOT_FOUND));
+        Hub hub = findHubById(id);
         hub.delete();
+    }
+
+    private Hub findHubById(UUID id) {
+        return hubRepository.findByIdAndIsDeleted(id, false)
+            .orElseThrow(() -> new HubException(HubExceptionCode.HUB_NOT_FOUND));
     }
 }
