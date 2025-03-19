@@ -10,6 +10,8 @@ import on.logistics.orderservice.application.service.dtos.create.CreateOrderRequ
 import on.logistics.orderservice.application.service.dtos.create.CreateOrderRequestDto.OrdersByVendor;
 import on.logistics.orderservice.application.service.dtos.create.CreateOrderRequestDto.OrdersByVendor.OrderedProduct;
 import on.logistics.orderservice.application.service.dtos.create.CreateOrderResponseDto;
+import on.logistics.orderservice.application.service.dtos.get.all.GetOrderPageByOrdererUserIdResponseDto;
+import on.logistics.orderservice.application.service.dtos.get.all.GetOrdererPageByOrdererUserIdRequestDto;
 import on.logistics.orderservice.domain.entity.Order;
 import on.logistics.orderservice.domain.entity.OrderProduct;
 import on.logistics.orderservice.domain.entity.Orderer;
@@ -21,6 +23,7 @@ import on.logistics.orderservice.domain.entity.dtos.CreateOrdererDto;
 import on.logistics.orderservice.domain.entity.dtos.CreateVendorDto;
 import on.logistics.orderservice.domain.entity.dtos.CreateVendorOrderDto;
 import on.logistics.orderservice.domain.repository.OrderRepository;
+import on.logistics.orderservice.global.application.dtos.PageDto;
 import on.logistics.orderservice.infrastructure.clients.ai.dtos.GenerateShippingDeadlineRequestDto;
 import on.logistics.orderservice.infrastructure.clients.ai.feign.dtos.GenerateShippingDeadlineResponse;
 import on.logistics.orderservice.infrastructure.clients.delivery.dtos.DeliveryRequestDto;
@@ -28,6 +31,7 @@ import on.logistics.orderservice.infrastructure.clients.exception.ExternalApiExc
 import on.logistics.orderservice.infrastructure.clients.exception.ExternalApiException.ExternalApiBadRequestException;
 import on.logistics.orderservice.infrastructure.clients.product.dtos.DecreaseProductStockRequestDto;
 import on.logistics.orderservice.infrastructure.clients.product.dtos.RollbackDecreaseProductStockRequestDto;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -45,7 +49,7 @@ public class OrderServiceImpl implements OrderService {
 
   @Transactional
   public CreateOrderResponseDto createOrder(final CreateOrderRequestDto requestDto) {
-    log.info("주문 생성 요청");
+    log.info("주문 생성 요청: {}", requestDto);
 
     var createOrderDto = CreateOrderDto.of(requestDto);
     Order createdOrder = Order.create(createOrderDto);
@@ -59,6 +63,19 @@ public class OrderServiceImpl implements OrderService {
     Order savedOrder = orderRepository.save(createdOrder);
 
     return CreateOrderResponseDto.from(savedOrder);
+  }
+
+  @Override
+  public PageDto<GetOrderPageByOrdererUserIdResponseDto> getOrderPageByOrdererUserId(
+      GetOrdererPageByOrdererUserIdRequestDto requestDto
+  ) {
+    log.info("주문자별 주문 목록 조회 요청: {}", requestDto);
+
+    Page<Order> allByOrdererUserId = orderRepository.findAllByOrdererUserId(
+        requestDto.ordererUserId(), requestDto.pageable());
+    Page<GetOrderPageByOrdererUserIdResponseDto> getOrderPageByOrdererUserIdResponseDtoPage =
+        allByOrdererUserId.map(GetOrderPageByOrdererUserIdResponseDto::from);
+    return PageDto.from(getOrderPageByOrdererUserIdResponseDtoPage);
   }
 
   private Orderer createOrderer(final Order createdOrder, final CreateOrderRequestDto requestDto) {
@@ -196,4 +213,5 @@ public class OrderServiceImpl implements OrderService {
     var requestDto = DeliveryRequestDto.from(vendorOrder);
     deliveryService.deliveryRequest(requestDto);
   }
+
 }
