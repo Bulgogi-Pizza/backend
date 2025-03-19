@@ -9,6 +9,7 @@ import on.logistics.deliveryservice.domain.dtos.CreateDeliveryRecordDto;
 import on.logistics.deliveryservice.domain.entity.Delivery;
 import on.logistics.deliveryservice.domain.entity.DeliveryRecord;
 import on.logistics.deliveryservice.domain.enums.DeliveryRecordStatus;
+import on.logistics.deliveryservice.domain.enums.DeliveryStatus;
 import on.logistics.deliveryservice.domain.repository.DeliveryRecordRepository;
 import on.logistics.deliveryservice.exception.DeliveryRecordException;
 import on.logistics.deliveryservice.exception.DeliveryRecordExceptionCode;
@@ -64,6 +65,10 @@ public class DeliveryRecordServiceImpl implements DeliveryRecordService {
     public UpdateDeliveryRecordStatusResponse updateStatusDeliveryRecord(
         UpdateDeliveryRecordStatusRequestDto requestDto) {
         DeliveryRecord deliveryRecord = getOrElseThrow(requestDto.deliveryRecordId());
+        if (deliveryRecord.getDelivery().getStatus() == DeliveryStatus.CANCEL) {
+            throw new DeliveryRecordException(
+                DeliveryRecordExceptionCode.DELIVERY_RECORD_DELIVERY_STATUS_CANCEL);
+        }
         deliveryRecord.updateStatus(deliveryRecord);
         return UpdateDeliveryRecordStatusResponse.of(deliveryRecord.getId());
     }
