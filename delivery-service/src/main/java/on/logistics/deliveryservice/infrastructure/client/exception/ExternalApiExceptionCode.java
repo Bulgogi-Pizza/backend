@@ -2,11 +2,12 @@ package on.logistics.deliveryservice.infrastructure.client.exception;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import on.logistics.deliveryservice.global.exception.ExceptionCode;
 import org.springframework.http.HttpStatus;
 
 @Getter
 @RequiredArgsConstructor
-public enum ExternalApiExceptionCode {
+public enum ExternalApiExceptionCode implements ExceptionCode {
 
     NOT_FOUND(HttpStatus.NOT_FOUND, "not found"),
     BAD_REQUEST(HttpStatus.BAD_REQUEST, "bad request"),
