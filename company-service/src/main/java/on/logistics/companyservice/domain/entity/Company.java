@@ -71,4 +71,8 @@ public class Company extends BaseEntity {
     public void updateHub(UUID managedHubId) {
         this.managedHubId = managedHubId;
     }
+
+    public void updateCompanyType(CompanyType companyType) {
+        this.type = companyType;
+    }
 }

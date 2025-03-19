@@ -7,6 +7,7 @@ import on.logistics.companyservice.application.dtos.request.CreateCompanyRequest
 import on.logistics.companyservice.application.dtos.request.SearchCompanyRequestDto;
 import on.logistics.companyservice.application.dtos.request.UpdateCompanyHubRequestDto;
 import on.logistics.companyservice.application.dtos.request.UpdateCompanyRequestDto;
+import on.logistics.companyservice.application.dtos.request.UpdateCompanyTypeRequestDto;
 import on.logistics.companyservice.domain.entity.Company;
 import on.logistics.companyservice.domain.entity.dtos.CreateCompanyDto;
 import on.logistics.companyservice.domain.repository.CompanyRepository;
@@ -18,6 +19,7 @@ import on.logistics.companyservice.presentation.dtos.response.GetCompanyResponse
 import on.logistics.companyservice.presentation.dtos.response.SearchCompanyResponse;
 import on.logistics.companyservice.presentation.dtos.response.UpdateCompanyHubResponse;
 import on.logistics.companyservice.presentation.dtos.response.UpdateCompanyResponse;
+import on.logistics.companyservice.presentation.dtos.response.UpdateCompanyTypeResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -50,8 +52,7 @@ public class CompanyServiceImpl implements CompanyService {
     @Override
     public PageDto<SearchCompanyResponse> searchCompany(SearchCompanyRequestDto requestDto) {
         Page<Company> companyPage = companyRepository.searchCompany(requestDto);
-        Page<SearchCompanyResponse> responsePage = companyPage.map(
-            SearchCompanyResponse::from);
+        Page<SearchCompanyResponse> responsePage = companyPage.map(SearchCompanyResponse::from);
         return PageDto.from(responsePage);
     }
 
@@ -87,6 +88,14 @@ public class CompanyServiceImpl implements CompanyService {
         Company company = getOrElseThrow(id);
         company.updateHub(requestDto.managedHubId());
         return UpdateCompanyHubResponse.of(company.getId());
+    }
+
+    @Override
+    @Transactional
+    public UpdateCompanyTypeResponse updateCompanyType(UpdateCompanyTypeRequestDto requestDto) {
+        Company company = getOrElseThrow(requestDto.companyId());
+        company.updateCompanyType(requestDto.companyType());
+        return UpdateCompanyTypeResponse.of(company.getId());
     }
 
     private Company getOrElseThrow(UUID id) {
