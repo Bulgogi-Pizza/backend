@@ -1,13 +1,10 @@
 package on.logistics.deliveryservice.application.service;
 
-import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import on.logistics.deliveryservice.application.dtos.DeliveryHubInfoDto;
 import on.logistics.deliveryservice.application.dtos.DeliveryUserInfoDto;
-import on.logistics.deliveryservice.application.dtos.TypeHubInfoDto;
-import on.logistics.deliveryservice.application.dtos.TypeSpokeInfoDto;
 import on.logistics.deliveryservice.application.dtos.request.CreateDeliveryRequestDto;
 import on.logistics.deliveryservice.application.dtos.request.SearchDeliveryRequestDto;
 import on.logistics.deliveryservice.application.dtos.request.UpdateAssignManagerRequestDto;
@@ -18,9 +15,9 @@ import on.logistics.deliveryservice.domain.repository.DeliveryRepository;
 import on.logistics.deliveryservice.exception.DeliveryException;
 import on.logistics.deliveryservice.exception.DeliveryExceptionCode;
 import on.logistics.deliveryservice.global.application.dtos.PageDto;
+import on.logistics.deliveryservice.infrastructure.client.hub.HubServiceClient;
 import on.logistics.deliveryservice.infrastructure.client.map.MapServiceClient;
 import on.logistics.deliveryservice.infrastructure.client.map.feign.dtos.GetDestinationInfo;
-import on.logistics.deliveryservice.infrastructure.client.map.feign.dtos.GetHubRouteInfo;
 import on.logistics.deliveryservice.presentation.dtos.response.CreateDeliveryResponse;
 import on.logistics.deliveryservice.presentation.dtos.response.GetDeliveryResponse;
 import on.logistics.deliveryservice.presentation.dtos.response.SearchDeliveryResponse;
@@ -43,6 +40,7 @@ public class DeliveryServiceImpl implements DeliveryService {
 
     private final DeliveryRepository deliveryRepository;
     private final MapServiceClient mapServiceClient;
+    private final HubServiceClient hubServiceClient;
 
     @Override
     @Transactional
@@ -135,33 +133,94 @@ public class DeliveryServiceImpl implements DeliveryService {
 
     public DeliveryHubInfoDto deliveryHubInfo(String description) {
         GetDestinationInfo geocode = mapServiceClient.getGeocode(description);
-        log.info(geocode.toString());
-        GetHubRouteInfo middleRoute = middleRouteInfo(geocode);
-        log.info(middleRoute.toString());
-        typeSpokeInfo();
-        // todo: 중앙 허브 근처에 관리되고 있는 곳에서도 어디가 제일 가까운지 찾아서 목적지 허브에 넣기
-        UUID endHubId = UUID.randomUUID();
-        return DeliveryHubInfoDto.of(endHubId);
+        String start = "" + geocode.longitude() + "" + "," + geocode.latitude();
+        /*
+        GetMiddleHubPageInfo getMiddleHubPageInfo = typeHubInfoList();
+        GetHubRouteInfo middleRoute = middleRouteInfo(start, getMiddleHubPageInfo);
+
+        UUID middleRouteHubId = middleRouteHubId(getMiddleHubPageInfo, middleRoute);
+        GetSpokeHubInfo getSpokeHubInfo = typeSpokeInfoList(middleRouteHubId);
+        GetHubRouteInfo endRoute = endRouteInfo(start, getSpokeHubInfo);
+        UUID endHubId = endRouteHubId(getSpokeHubInfo, endRoute);
+         */
+        UUID tmp = UUID.randomUUID();
+        return DeliveryHubInfoDto.of(tmp);
     }
 
-    public GetHubRouteInfo middleRouteInfo(GetDestinationInfo geocode) {
-        // todo: 목적지 위도, 경도로 중앙 허브 세 개 중 어디가 가까운지 찾기
-        String start = "" + geocode.longitude() + "" + "," + geocode.latitude();
-        // todo: 중앙 허브 받아야 함, 임시 end 적용
-        typeHubInfo();
-        String end = "126.8737955,37.6403771";
+    /*
+    private UUID endRouteHubId(GetSpokeHubInfo getSpokeHubInfo, GetHubRouteInfo endRoute) {
+        List<HubInfo> hubs = getSpokeHubInfo.data();
+        String middleRouteHubLongitude = String.valueOf(
+            endRoute.summary().end().location().get(0));
+        String middleRouteHubLatitude = String.valueOf(
+            endRoute.summary().end().location().get(1));
+        String endHubId = "";
+        for (HubInfo typeHubInfo : hubs) {
+            if (typeHubInfo.longitude().equals(middleRouteHubLongitude) && typeHubInfo.latitude()
+                .equals(middleRouteHubLatitude)) {
+                endHubId = typeHubInfo.id();
+                break;
+            }
+        }
+        return UUID.fromString(endHubId);
+    }
+
+    private GetHubRouteInfo endRouteInfo(String start, GetSpokeHubInfo getSpokeHubInfo) {
+
+        String end = "";
+        List<HubInfo> hubs = getSpokeHubInfo.data();
+        for (HubInfo typeHubInfo : hubs) {
+            end += ("" + typeHubInfo.longitude() + "" + typeHubInfo.latitude() + ":");
+        }
+        if (end.endsWith(":")) {
+            end = end.substring(0, end.length() - 1);
+        }
         return mapServiceClient.getRoute(start, end);
     }
 
-    public List<TypeHubInfoDto> typeHubInfo() {
-        // todo: 허브에게서 중앙 허브들 정보를 받는다.
-        return null;
+    public GetHubRouteInfo middleRouteInfo(String start,
+        GetMiddleHubPageInfo getMiddleHubPageInfo) {
+
+        String end = "";
+        List<HubInfo> hubs = getMiddleHubPageInfo.data();
+        for (HubInfo typeHubInfo : hubs) {
+            end += ("" + typeHubInfo.longitude() + "" + typeHubInfo.latitude() + ":");
+        }
+        if (end.endsWith(":")) {
+            end = end.substring(0, end.length() - 1);
+        }
+
+        return mapServiceClient.getRoute(start, end);
     }
 
-    public List<TypeSpokeInfoDto> typeSpokeInfo() {
-        // todo: 목적지에서 가장 가까운 중앙 허브를 기준으로 연결된 허브 정보들을 받는다.
-        return null;
+    public UUID middleRouteHubId(GetMiddleHubPageInfo getMiddleHubPageInfo,
+        GetHubRouteInfo middleRoute) {
+        List<HubInfo> hubs = getMiddleHubPageInfo.data();
+        String middleRouteHubLongitude = String.valueOf(
+            middleRoute.summary().end().location().get(0));
+        String middleRouteHubLatitude = String.valueOf(
+            middleRoute.summary().end().location().get(1));
+        String middleRouteId = "";
+        for (HubInfo typeHubInfo : hubs) {
+            if (typeHubInfo.longitude().equals(middleRouteHubLongitude) && typeHubInfo.latitude()
+                .equals(middleRouteHubLatitude)) {
+                middleRouteId = typeHubInfo.id();
+                break;
+            }
+        }
+        return UUID.fromString(middleRouteId);
     }
+
+
+    public GetMiddleHubPageInfo typeHubInfoList() {
+        return hubServiceClient.searchHubs(HubType.HUB);
+    }
+
+    public GetSpokeHubInfo typeSpokeInfoList(UUID middleHubId) {
+        return hubServiceClient.getSpokeHubInfo(middleHubId);
+    }
+
+    */
 
     public DeliveryUserInfoDto deliveryUserInfo() {
         // todo: 요청이 들어온 패스포트에서 유저 이름 및 정보 확인
