@@ -1,0 +1,27 @@
+server:
+  port: 8910
+
+spring:
+  application:
+    name: user-service
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/onlogistics
+    username: ENC(SzFNDgC//YBbb9TJ7Bne4Cv1KM24A8WX)
+    password: ENC(SzFNDgC//YBbb9TJ7Bne4Cv1KM24A8WX)
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+
+  data:
+    redis:
+      host: jdbc:redis://localhost
+      port: 6379
+      username: ENC(BFWqJNte+k89HBmq+7Q9nw==)
+      password: ENC(QBL7vn8XxPlqYUlcp2WNCA==)
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
