@@ -8,7 +8,7 @@ public record CreateDeliveryRecordRequestDto(UUID deliveryId, UUID deliveryRecor
 
     public static CreateDeliveryRecordRequestDto from(CreateDeliveryRecordRequest request) {
         return new CreateDeliveryRecordRequestDto(request.deliveryId(),
-            request.deliveryRecordStartHubId(), request.deliveryRecordStartHubId(),
+            request.deliveryRecordStartHubId(), request.deliveryRecordEndHubId(),
             request.deliveryManagerId());
     }
 
