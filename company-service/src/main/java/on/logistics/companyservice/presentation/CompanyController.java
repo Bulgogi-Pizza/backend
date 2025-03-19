@@ -100,5 +100,6 @@ public class CompanyController {
         final UpdateCompanyTypeRequestDto requestDto = UpdateCompanyTypeRequestDto.from(id,
             updateCompanyTypeRequest.companyType());
         UpdateCompanyTypeResponse response = companyService.updateCompanyType(requestDto);
+        return ResponseEntity.ok(CommonResponse.success(response));
     }
 }
