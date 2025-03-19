@@ -35,10 +35,3 @@ out/
 
 ### VS Code ###
 .vscode/
-
-### YAML ###
-*.yml
-*.yaml
-
-### Properties ###
-*.properties
