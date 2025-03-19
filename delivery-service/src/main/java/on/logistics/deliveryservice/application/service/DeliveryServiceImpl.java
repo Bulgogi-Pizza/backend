@@ -16,6 +16,7 @@ import on.logistics.deliveryservice.exception.DeliveryException;
 import on.logistics.deliveryservice.exception.DeliveryExceptionCode;
 import on.logistics.deliveryservice.global.application.dtos.PageDto;
 import on.logistics.deliveryservice.infrastructure.clients.hub.HubServiceClient;
+import on.logistics.deliveryservice.infrastructure.clients.hubTransit.HubTransitServiceClient;
 import on.logistics.deliveryservice.infrastructure.clients.map.MapServiceClient;
 import on.logistics.deliveryservice.infrastructure.clients.map.feign.dtos.GetDestinationInfo;
 import on.logistics.deliveryservice.presentation.dtos.response.CreateDeliveryResponse;
@@ -41,6 +42,7 @@ public class DeliveryServiceImpl implements DeliveryService {
     private final DeliveryRepository deliveryRepository;
     private final MapServiceClient mapServiceClient;
     private final HubServiceClient hubServiceClient;
+    private final HubTransitServiceClient hubTransitServiceClient;
 
     @Override
     @Transactional
@@ -50,8 +52,19 @@ public class DeliveryServiceImpl implements DeliveryService {
         CreateDeliveryDto entityRequestDto = CreateDeliveryDto.from(requestDto, hubInfo, userInfo);
         Delivery saved = Delivery.create(entityRequestDto);
         deliveryRepository.save(saved);
+        // todo : 비동기 고민
+        // createHubTransitRouteRequest(requestDto, hubInfo, saved);
         return CreateDeliveryResponse.of(saved.getId());
     }
+
+    /*
+    private void createHubTransitRouteRequest(CreateDeliveryRequestDto requestDto, DeliveryHubInfoDto hubInfo,
+        Delivery saved) {
+        CreateHubTransitRouteRequest createHubTransitRouteRequest = CreateHubTransitRouteRequest.of(
+            requestDto.startHubId(), hubInfo.endHubId(), saved.getId());
+        hubTransitServiceClient.createHubTransitRoute(createHubTransitRouteRequest);
+    }
+     */
 
     @Override
     public PageDto<SearchDeliveryResponse> searchDelivery(SearchDeliveryRequestDto requestDto) {
