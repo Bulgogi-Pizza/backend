@@ -1,4 +1,4 @@
-package on.logistics.productservice.infrastructure.querydsl;
+package on.logistics.productservice.infrastructure.persistence.querydsl;
 
 import on.logistics.productservice.application.dto.SearchProductRequestDto;
 import on.logistics.productservice.domain.Product;
