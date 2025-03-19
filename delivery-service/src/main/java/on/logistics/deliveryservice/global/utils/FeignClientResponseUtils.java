@@ -7,6 +7,10 @@ import java.io.IOException;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import on.logistics.deliveryservice.global.presentation.dtos.CommonResponse;
+import on.logistics.deliveryservice.infrastructure.client.exception.ExternalApiException.ExternalApiBadRequestException;
+import on.logistics.deliveryservice.infrastructure.client.exception.ExternalApiException.ExternalApiClientException;
+import on.logistics.deliveryservice.infrastructure.client.exception.ExternalApiException.ExternalApiNotFoundException;
+import on.logistics.deliveryservice.infrastructure.client.exception.ExternalApiException.ExternalApiServerException;
 
 @NoArgsConstructor(access = lombok.AccessLevel.PRIVATE)
 @Slf4j
@@ -15,13 +19,14 @@ public class FeignClientResponseUtils {
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
     public static <T> T getBody(Response response, Class<T> responseType) {
-        //validateResponseStatus(response);
+        validateResponseStatus(response);
         return parseResponseBody(response, responseType);
     }
 
-    /*
+
     public static void validateResponseStatus(Response response) {
         int statusCode = response.status();
+
         if (HttpStatusUtils.isResponseNotFound(statusCode)) {
             throw new ExternalApiNotFoundException();
         }
@@ -35,7 +40,7 @@ public class FeignClientResponseUtils {
             throw new ExternalApiServerException();
         }
     }
-     */
+
     public static <T> T parseResponseBody(Response response, Class<T> responseType) {
         log.info("응답 바디 파싱");
         try {
