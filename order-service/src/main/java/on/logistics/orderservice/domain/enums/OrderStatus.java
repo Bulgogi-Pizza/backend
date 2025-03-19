@@ -7,9 +7,14 @@ public enum OrderStatus {
   DELIVERED,
   CANCELLED,
   RETURNED,
+  IN_RETURN
   ;
 
   public static boolean isBeforeShipped(OrderStatus status) {
     return status == ORDER_CREATED;
+  }
+
+  public static boolean isAfterDelivered(OrderStatus status) {
+    return status == DELIVERED || status == RETURNED || status == CANCELLED;
   }
 }

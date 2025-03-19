@@ -46,7 +46,8 @@ public class Order extends BaseEntity {
   @OneToOne(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
   private Orderer orderer;
 
-  @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+  @OneToMany(mappedBy = "order", cascade = CascadeType.ALL,
+      fetch = FetchType.LAZY, orphanRemoval = true)
   private List<VendorOrder> vendorOrders;
 
   public static Order create(CreateOrderDto createOrderDto) {
@@ -59,5 +60,9 @@ public class Order extends BaseEntity {
   public void addDependencies(Orderer orderer, List<VendorOrder> vendorOrders) {
     this.orderer = orderer;
     this.vendorOrders = vendorOrders;
+  }
+
+  public void removeVendorOrder(VendorOrder vendorOrder) {
+    vendorOrders.remove(vendorOrder);
   }
 }

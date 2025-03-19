@@ -11,6 +11,7 @@ import on.logistics.orderservice.application.service.dtos.get.detail.GetOrderDet
 import on.logistics.orderservice.application.service.dtos.update.UpdateOrderRequestDto;
 import on.logistics.orderservice.application.service.dtos.update.UpdateOrderResponseDto;
 import on.logistics.orderservice.global.application.dtos.PageDto;
+import on.logistics.orderservice.presentation.dtos.delete.DeleteOrderRequestDto;
 
 public interface OrderService {
 
@@ -22,5 +23,7 @@ public interface OrderService {
 
   UpdateOrderResponseDto updateOrder(final UpdateOrderRequestDto requestDto);
 
-  CancelOrderResponseDto cancelOrder(final CancelOrderRequestDto requestDto);
+  CancelOrderResponseDto cancelVendorOrder(final CancelOrderRequestDto requestDto);
+
+  void deleteVendorOrder(final DeleteOrderRequestDto requestDto);
 }

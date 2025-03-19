@@ -18,10 +18,12 @@ import on.logistics.orderservice.application.service.dtos.update.UpdateOrderResp
 import on.logistics.orderservice.global.application.dtos.PageDto;
 import on.logistics.orderservice.global.enums.AuthRole;
 import on.logistics.orderservice.global.presentation.dtos.CommonResponse;
+import on.logistics.orderservice.presentation.dtos.delete.DeleteOrderRequestDto;
 import on.logistics.orderservice.presentation.dtos.create.CreateOrderRequest;
 import on.logistics.orderservice.presentation.dtos.update.UpdateOrderRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -92,12 +94,22 @@ public class OrderController {
   }
 
   @PatchMapping("/{orderId}/cancel/{vendorOrderId}")
-  public ResponseEntity<CommonResponse<CancelOrderResponseDto>> cancelOrder(
+  public ResponseEntity<CommonResponse<CancelOrderResponseDto>> cancelVendorOrder(
       @PathVariable final UUID orderId,
       @PathVariable final UUID vendorOrderId
   ) {
     final var requestDto = CancelOrderRequestDto.from(orderId, vendorOrderId);
-    final var responseDto = orderService.cancelOrder(requestDto);
+    final var responseDto = orderService.cancelVendorOrder(requestDto);
     return ResponseEntity.ok(CommonResponse.success(responseDto));
+  }
+
+  @DeleteMapping("/{orderId}/{vendorOrderId}")
+  public ResponseEntity<CommonResponse<Void>> deleteVendorOrder(
+      @PathVariable final UUID orderId,
+      @PathVariable final UUID vendorOrderId
+  ) {
+    final DeleteOrderRequestDto requestDto = DeleteOrderRequestDto.from(orderId, vendorOrderId);
+    orderService.deleteVendorOrder(requestDto);
+    return ResponseEntity.ok(CommonResponse.success());
   }
 }

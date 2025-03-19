@@ -43,6 +43,7 @@ import on.logistics.orderservice.infrastructure.clients.exception.ExternalApiExc
 import on.logistics.orderservice.infrastructure.clients.exception.ExternalApiException.ExternalApiBadRequestException;
 import on.logistics.orderservice.infrastructure.clients.product.dtos.DecreaseProductStockRequestDto;
 import on.logistics.orderservice.infrastructure.clients.product.dtos.RollbackDecreaseProductStockRequestDto;
+import on.logistics.orderservice.presentation.dtos.delete.DeleteOrderRequestDto;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -250,8 +251,10 @@ public class OrderServiceImpl implements OrderService {
     return UpdateOrderResponseDto.from(order);
   }
 
-  private void updateVendorOrders(Order order,
-      List<UpdateOrderRequestDto.OrdersByVendor> ordersByVendor) {
+  private void updateVendorOrders(
+      final Order order,
+      final List<UpdateOrderRequestDto.OrdersByVendor> ordersByVendor
+  ) {
     for (UpdateOrderRequestDto.OrdersByVendor orderByVendor : ordersByVendor) {
       VendorOrder vendorOrder = order.getVendorOrders().stream()
           .filter(vo -> vo.getId().equals(orderByVendor.orderIdByVendor()))
@@ -266,8 +269,8 @@ public class OrderServiceImpl implements OrderService {
   }
 
   private void updateOrderProducts(
-      VendorOrder vendorOrder,
-      List<UpdateOrderRequestDto.OrdersByVendor.OrderedProduct> orderedProducts
+      final VendorOrder vendorOrder,
+      final List<UpdateOrderRequestDto.OrdersByVendor.OrderedProduct> orderedProducts
   ) {
     for (var product : orderedProducts) {
       OrderProduct orderProduct = vendorOrder.getOrderProducts().stream()
@@ -281,18 +284,18 @@ public class OrderServiceImpl implements OrderService {
 
   @Transactional
   @Override
-  public CancelOrderResponseDto cancelOrder(CancelOrderRequestDto requestDto) {
+  public CancelOrderResponseDto cancelVendorOrder(final CancelOrderRequestDto requestDto) {
     log.info("주문 취소 요청: {}", requestDto);
 
     Order order = orderRepository.findOrderById(requestDto.orderId())
         .orElseThrow(OrderNotFoundException::new);
 
-    cancelVendorOrders(order, requestDto.vendorOrderId());
+    cancelVendorOrder(order, requestDto.vendorOrderId());
 
     return CancelOrderResponseDto.from(order);
   }
 
-  private void cancelVendorOrders(Order order, UUID vendorOrderId) {
+  private void cancelVendorOrder(final Order order, final UUID vendorOrderId) {
     VendorOrder vendorOrder = order.getVendorOrders().stream()
         .filter(vo -> vo.getId().equals(vendorOrderId))
         .filter(vo -> OrderStatus.isBeforeShipped(vo.getStatus()))
@@ -300,5 +303,26 @@ public class OrderServiceImpl implements OrderService {
         .orElseThrow(VendorOrderNotFoundException::new);
 
     vendorOrder.cancel();
+  }
+
+  @Transactional
+  @Override
+  public void deleteVendorOrder(final DeleteOrderRequestDto requestDto) {
+    log.info("주문 삭제 요청: {}", requestDto);
+
+    Order order = orderRepository.findOrderById(requestDto.orderId())
+        .orElseThrow(OrderNotFoundException::new);
+
+    deleteVendorOrder(order, requestDto.vendorOrderId());
+  }
+
+  private void deleteVendorOrder(final Order order, final UUID vendorOrderId) {
+    VendorOrder vendorOrder = order.getVendorOrders().stream()
+        .filter(vo -> vo.getId().equals(vendorOrderId))
+        .filter(vo -> OrderStatus.isAfterDelivered(vo.getStatus()))
+        .findFirst()
+        .orElseThrow(VendorOrderNotFoundException::new);
+
+    order.removeVendorOrder(vendorOrder);
   }
 }

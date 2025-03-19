@@ -22,6 +22,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import on.logistics.orderservice.domain.entity.dtos.CreateVendorOrderDto;
 import on.logistics.orderservice.domain.enums.OrderStatus;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 
 @Entity
 @Table(name = "p_vendor_orders")
@@ -29,6 +31,8 @@ import on.logistics.orderservice.domain.enums.OrderStatus;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder(access = AccessLevel.PRIVATE)
 @Getter
+@SQLRestriction("is_deleted = false")
+@SQLDelete(sql = "UPDATE p_vendor_orders SET is_deleted = true WHERE id = ?")
 public class VendorOrder {
 
   @Id
@@ -59,6 +63,9 @@ public class VendorOrder {
 
   @OneToMany(mappedBy = "vendorOrder", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
   private List<OrderProduct> orderProducts;
+
+  @Column(name = "is_deleted")
+  private boolean isDeleted = false;
 
   public static VendorOrder create(CreateVendorOrderDto createVendorOrderDto) {
     return VendorOrder.builder()
