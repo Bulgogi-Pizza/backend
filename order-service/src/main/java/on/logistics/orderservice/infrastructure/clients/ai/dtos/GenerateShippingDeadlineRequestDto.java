@@ -27,7 +27,7 @@ public record GenerateShippingDeadlineRequestDto(
                 orderProduct.getQuantity().getValue()
             )).toList(),
         createdVendorOrder.getArrivalDeadline(),
-        createdVendorOrder.getVendor().getStartHubId(),
+        createdVendorOrder.getVendor().getVendorHubId(),
         createdVendorOrder.getOrder().getDestination()
     );
   }

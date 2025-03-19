@@ -13,7 +13,7 @@ public record DeliveryRequestDto(
     return new DeliveryRequestDto(
         vendorOrder.getId(),
         vendorOrder.getOrder().getDestination(),
-        vendorOrder.getVendor().getStartHubId()
+        vendorOrder.getVendor().getVendorHubId()
     );
   }
 }

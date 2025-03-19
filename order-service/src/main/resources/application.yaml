@@ -1,8 +1,24 @@
+
+server:
+  port: 8088
 spring:
   application:
     name: order-service
-server:
-  port: 8080
+
+  datasource:
+    url: ENC(JxM6QEGqptISeqw84S8doCs2qncQxWQI5VCAAEUI076zH+qnHbixY630ctTDHpU5OjxrjtfeM8d6Sp3WolMsqlwsZ6iVG+sLXiXoEJ8ry/9GDCnys2VLwm4gS1/Nq8fl+97A4Joap1o=)
+    username: ENC(R806XDgVl0uvipypT5G88k3P/C3yp4sW)
+    password: ENC(edPf0aB+iYgH7eo3bTLF5Zq+pwwitlsG)
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        format_sql: true
+        highlight_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        default_batch_fetch_size: 100
+    show-sql: true
 eureka:
   client:
     service-url:

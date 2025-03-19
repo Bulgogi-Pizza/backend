@@ -17,6 +17,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import on.logistics.orderservice.domain.entity.dtos.CreateOrdererDto;
 import on.logistics.orderservice.domain.vo.CompanyName;
+import on.logistics.orderservice.domain.vo.UserNickname;
 
 @Entity
 @Table(name = "p_orderers")
@@ -30,21 +31,29 @@ public class Orderer {
   @GeneratedValue(strategy = GenerationType.UUID)
   private UUID id;
 
-  @OneToOne
-  @JoinColumn(name = "order_id", updatable = false, nullable = false)
-  private Order order;
-
   @Column(name = "company_id", updatable = false, nullable = false)
   private UUID companyId;
 
   @Embedded
-  private CompanyName name;
+  private CompanyName companyName;
+
+  @Column(name = "user_id", updatable = false, nullable = false)
+  private UUID userId;
+
+  @Embedded
+  private UserNickname userNickname;
+
+  @OneToOne
+  @JoinColumn(name = "order_id", updatable = false, nullable = false)
+  private Order order;
 
   public static Orderer create(CreateOrdererDto requestDto) {
     return Orderer.builder()
         .order(requestDto.order())
         .companyId(requestDto.companyId())
-        .name(new CompanyName(requestDto.name()))
+        .userId(requestDto.userId())
+        .companyName(new CompanyName(requestDto.companyName()))
+        .userNickname(new UserNickname(requestDto.userNickname()))
         .build();
   }
 }

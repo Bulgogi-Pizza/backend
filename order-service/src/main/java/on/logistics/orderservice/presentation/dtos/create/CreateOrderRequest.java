@@ -10,6 +10,7 @@ import java.util.UUID;
 
 public record CreateOrderRequest(
     @NotNull UUID ordererId,
+    @NotBlank String ordererName,
     @NotBlank String destination,
     @NotNull @PositiveOrZero Long totalAmount,
     @NotNull List<OrdersByVendor> ordersByVendor
@@ -17,6 +18,9 @@ public record CreateOrderRequest(
 
   public record OrdersByVendor(
       @NotNull UUID vendorId,
+      @NotBlank String vendorName,
+      @NotNull UUID vendorHubId,
+      @NotBlank String vendorHubName,
       @NotNull @PositiveOrZero Long totalAmount,
       @NotNull @Future LocalDateTime arrivalDeadline,
       @NotNull List<OrderedProduct> orderedProducts
@@ -24,6 +28,7 @@ public record CreateOrderRequest(
 
     public record OrderedProduct(
         @NotNull UUID productId,
+        @NotBlank String name,
         @NotNull Long quantity,
         @NotNull Long price
     ) {

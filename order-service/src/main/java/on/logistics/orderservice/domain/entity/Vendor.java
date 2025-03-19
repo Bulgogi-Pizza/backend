@@ -18,6 +18,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import on.logistics.orderservice.domain.entity.dtos.CreateVendorDto;
 import on.logistics.orderservice.domain.vo.CompanyName;
+import on.logistics.orderservice.domain.vo.HubName;
 
 @Entity
 @Table(name = "p_vendors")
@@ -31,9 +32,6 @@ public class Vendor {
   @GeneratedValue(strategy = GenerationType.UUID)
   private UUID id;
 
-  @OneToOne
-  @JoinColumn(name = "vendor_orders_id", nullable = false)
-  private VendorOrder vendorOrder;
 
   @Column(name = "company_id", nullable = false)
   private UUID companyId;
@@ -41,15 +39,23 @@ public class Vendor {
   @Embedded
   private CompanyName name;
 
-  @Column(name = "start_hub_id", nullable = false)
-  private UUID startHubId;
+  @Column(name = "hub_id", nullable = false)
+  private UUID vendorHubId;
+
+  @Embedded
+  private HubName vendorHubName;
+
+  @OneToOne
+  @JoinColumn(name = "vendor_order_id", nullable = false)
+  private VendorOrder vendorOrder;
 
   public static Vendor create(CreateVendorDto createVendorDto) {
     return Vendor.builder()
         .vendorOrder(createVendorDto.vendorOrder())
         .companyId(createVendorDto.vendorId())
         .name(new CompanyName(createVendorDto.vendorName()))
-        .startHubId(createVendorDto.vendorHubId())
+        .vendorHubName(new HubName(createVendorDto.vendorHubName()))
+        .vendorHubId(createVendorDto.vendorHubId())
         .build();
   }
 }

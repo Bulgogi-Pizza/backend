@@ -11,14 +11,14 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class CompanyName {
+public class UserNickname {
 
   private static final int MAX_LENGTH = 100;
 
-  @Column(name = "company_name", nullable = false, length = MAX_LENGTH)
+  @Column(name = "user_nickname", nullable = false, length = MAX_LENGTH)
   private String value;
 
-  public CompanyName(final String value) {
+  public UserNickname(final String value) {
     validate(value);
     this.value = value;
   }

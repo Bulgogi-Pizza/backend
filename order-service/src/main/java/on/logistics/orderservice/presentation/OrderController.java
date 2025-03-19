@@ -1,6 +1,7 @@
 package on.logistics.orderservice.presentation;
 
 import jakarta.validation.Valid;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import on.logistics.orderservice.application.service.OrderService;
@@ -26,7 +27,10 @@ public class OrderController {
   public ResponseEntity<CommonResponse<CreateOrderResponseDto>> createOrder(
       @RequestBody @Valid final CreateOrderRequest request
   ) {
-    final var requestDto = CreateOrderRequestDto.from(request);
+    log.warn("패스포트 토큰을 사용하도록 해야합니다!!");
+    final UUID ordererUserId = UUID.randomUUID();
+    final String ordererUserNickname = "userNickname";
+    final var requestDto = CreateOrderRequestDto.from(request, ordererUserId, ordererUserNickname);
     final var responseDto = orderService.createOrder(requestDto);
     return ResponseEntity.ok(CommonResponse.success(responseDto));
   }

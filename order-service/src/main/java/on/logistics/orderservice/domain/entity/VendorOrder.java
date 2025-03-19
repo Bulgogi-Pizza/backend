@@ -34,10 +34,6 @@ public class VendorOrder {
   @GeneratedValue(strategy = GenerationType.UUID)
   private UUID id;
 
-  @ManyToOne
-  @JoinColumn(name = "order_id", nullable = false)
-  private Order order;
-
   @Column(name = "total_amount", nullable = false)
   private Long totalAmount;
 
@@ -52,6 +48,10 @@ public class VendorOrder {
 
   @Column(name = "shipped_at")
   private LocalDateTime shippedAt;
+
+  @ManyToOne
+  @JoinColumn(name = "order_id", nullable = false)
+  private Order order;
 
   @OneToOne(mappedBy = "vendorOrder", cascade = CascadeType.ALL)
   private Vendor vendor;
@@ -75,5 +75,11 @@ public class VendorOrder {
 
   public void updateShippingDeadline(LocalDateTime shippingDeadline) {
     this.shippingDeadline = shippingDeadline;
+  }
+
+  public Long getAmountByVendor() {
+    return orderProducts.stream()
+        .mapToLong(orderProduct -> orderProduct.getPrice().getValue())
+        .sum();
   }
 }

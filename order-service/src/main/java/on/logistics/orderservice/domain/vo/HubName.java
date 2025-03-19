@@ -11,14 +11,14 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class CompanyName {
+public class HubName {
 
   private static final int MAX_LENGTH = 100;
 
-  @Column(name = "company_name", nullable = false, length = MAX_LENGTH)
+  @Column(name = "hub_name", nullable = false, length = MAX_LENGTH)
   private String value;
 
-  public CompanyName(final String value) {
+  public HubName(final String value) {
     validate(value);
     this.value = value;
   }
@@ -31,5 +31,4 @@ public class CompanyName {
       throw new IllegalArgumentException("Company companyName must not be longer than " + MAX_LENGTH + " characters");
     }
   }
-
 }

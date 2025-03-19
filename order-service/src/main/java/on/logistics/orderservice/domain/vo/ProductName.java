@@ -25,11 +25,11 @@ public class ProductName {
 
   private void validate(final String value) {
     if (value == null || value.isBlank()) {
-      throw new IllegalArgumentException("Product name must not be empty");
+      throw new IllegalArgumentException("Product companyName must not be empty");
     }
     if (value.length() > MAX_LENGTH) {
       throw new IllegalArgumentException(
-          "Product name must not be longer than " + MAX_LENGTH + " characters");
+          "Product companyName must not be longer than " + MAX_LENGTH + " characters");
     }
   }
 }

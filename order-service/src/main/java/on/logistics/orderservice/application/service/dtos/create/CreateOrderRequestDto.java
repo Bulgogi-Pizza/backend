@@ -7,6 +7,9 @@ import on.logistics.orderservice.presentation.dtos.create.CreateOrderRequest;
 
 public record CreateOrderRequestDto(
     UUID OrdererId,
+    String ordererName,
+    UUID ordererUserId,
+    String ordererUserNickname,
     String destination,
     Long totalAmount,
     List<OrdersByVendor> ordersByVendor
@@ -14,6 +17,9 @@ public record CreateOrderRequestDto(
 
   public record OrdersByVendor(
       UUID vendorId,
+      String vendorName,
+      UUID vendorHubId,
+      String vendorHubName,
       Long totalAmount,
       LocalDateTime arrivalDeadline,
       List<OrderedProduct> orderItems
@@ -21,6 +27,7 @@ public record CreateOrderRequestDto(
 
     public record OrderedProduct(
         UUID productId,
+        String name,
         Long quantity,
         Long price
     ) {
@@ -28,19 +35,30 @@ public record CreateOrderRequestDto(
     }
   }
 
-  public static CreateOrderRequestDto from(CreateOrderRequest createOrderRequest) {
+  public static CreateOrderRequestDto from(
+      CreateOrderRequest createOrderRequest,
+      UUID ordererUserId,
+      String ordererUserNickname
+  ) {
     return new CreateOrderRequestDto(
         createOrderRequest.ordererId(),
+        createOrderRequest.ordererName(),
+        ordererUserId,
+        ordererUserNickname,
         createOrderRequest.destination(),
         createOrderRequest.totalAmount(),
         createOrderRequest.ordersByVendor().stream()
             .map(ordersByVendor -> new OrdersByVendor(
                 ordersByVendor.vendorId(),
+                ordersByVendor.vendorName(),
+                ordersByVendor.vendorHubId(),
+                ordersByVendor.vendorHubName(),
                 ordersByVendor.totalAmount(),
                 ordersByVendor.arrivalDeadline(),
                 ordersByVendor.orderedProducts().stream()
                     .map(orderedProduct -> new OrdersByVendor.OrderedProduct(
                         orderedProduct.productId(),
+                        orderedProduct.name(),
                         orderedProduct.quantity(),
                         orderedProduct.price()
                     ))

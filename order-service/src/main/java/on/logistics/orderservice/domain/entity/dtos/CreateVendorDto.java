@@ -1,7 +1,6 @@
 package on.logistics.orderservice.domain.entity.dtos;
 
 import java.util.UUID;
-import on.logistics.orderservice.infrastructure.clients.company.feign.dtos.GetCompanyResponse;
 import on.logistics.orderservice.application.service.dtos.create.CreateOrderRequestDto.OrdersByVendor;
 import on.logistics.orderservice.domain.entity.VendorOrder;
 
@@ -9,18 +8,19 @@ public record CreateVendorDto(
     UUID vendorId,
     String vendorName,
     UUID vendorHubId,
+    String vendorHubName,
     VendorOrder vendorOrder
 ) {
 
   public static CreateVendorDto of(
-      OrdersByVendor ordersByVendor,
-      GetCompanyResponse companyResponseDto,
-      VendorOrder vendorOrder
+      VendorOrder vendorOrder,
+      OrdersByVendor ordersByVendor
   ) {
     return new CreateVendorDto(
         ordersByVendor.vendorId(),
-        companyResponseDto.companyName(),
-        companyResponseDto.manageHubId(),
+        ordersByVendor.vendorName(),
+        ordersByVendor.vendorHubId(),
+        ordersByVendor.vendorHubName(),
         vendorOrder
     );
   }
