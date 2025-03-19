@@ -12,6 +12,8 @@ import on.logistics.orderservice.application.service.dtos.create.CreateOrderRequ
 import on.logistics.orderservice.application.service.dtos.create.CreateOrderResponseDto;
 import on.logistics.orderservice.application.service.dtos.get.all.SearchOrderPageRequestDto;
 import on.logistics.orderservice.application.service.dtos.get.all.SearchOrderPageResponseDto;
+import on.logistics.orderservice.application.service.dtos.get.detail.GetOrderDetailRequestDto;
+import on.logistics.orderservice.application.service.dtos.get.detail.GetOrderDetailResponseDto;
 import on.logistics.orderservice.domain.entity.Order;
 import on.logistics.orderservice.domain.entity.OrderProduct;
 import on.logistics.orderservice.domain.entity.Orderer;
@@ -24,6 +26,7 @@ import on.logistics.orderservice.domain.entity.dtos.CreateVendorDto;
 import on.logistics.orderservice.domain.entity.dtos.CreateVendorOrderDto;
 import on.logistics.orderservice.domain.repository.OrderRepository;
 import on.logistics.orderservice.domain.repository.dtos.SearchOrderPageDto;
+import on.logistics.orderservice.exception.OrderException.OrderNotFoundException;
 import on.logistics.orderservice.global.application.dtos.PageDto;
 import on.logistics.orderservice.infrastructure.clients.ai.dtos.GenerateShippingDeadlineRequestDto;
 import on.logistics.orderservice.infrastructure.clients.ai.feign.dtos.GenerateShippingDeadlineResponse;
@@ -68,7 +71,7 @@ public class OrderServiceImpl implements OrderService {
 
   @Override
   public PageDto<SearchOrderPageResponseDto> searchOrderPage(
-      SearchOrderPageRequestDto requestDto
+      final SearchOrderPageRequestDto requestDto
   ) {
     log.info("주문자별 주문 목록 조회 요청: {}", requestDto);
 
@@ -77,6 +80,16 @@ public class OrderServiceImpl implements OrderService {
     Page<SearchOrderPageResponseDto> getOrderPageByOrdererUserIdResponseDtoPage =
         allByOrdererUserId.map(SearchOrderPageResponseDto::from);
     return PageDto.from(getOrderPageByOrdererUserIdResponseDtoPage);
+  }
+
+  @Override
+  public GetOrderDetailResponseDto getOrderDetail(final GetOrderDetailRequestDto requestDto) {
+    log.info("주문 상세 조회 요청: {}", requestDto);
+
+    Order order = orderRepository.findOrderById(requestDto.orderId())
+        .orElseThrow(OrderNotFoundException::new);
+
+    return GetOrderDetailResponseDto.from(order);
   }
 
   private Orderer createOrderer(final Order createdOrder, final CreateOrderRequestDto requestDto) {

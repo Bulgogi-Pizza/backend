@@ -3,6 +3,7 @@ package on.logistics.orderservice.domain.entity;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -49,14 +50,14 @@ public class VendorOrder {
   @Column(name = "shipped_at")
   private LocalDateTime shippedAt;
 
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "order_id", nullable = false)
   private Order order;
 
-  @OneToOne(mappedBy = "vendorOrder", cascade = CascadeType.ALL)
+  @OneToOne(mappedBy = "vendorOrder", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
   private Vendor vendor;
 
-  @OneToMany(mappedBy = "vendorOrder", cascade = CascadeType.ALL)
+  @OneToMany(mappedBy = "vendorOrder", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
   private List<OrderProduct> orderProducts;
 
   public static VendorOrder create(CreateVendorOrderDto createVendorOrderDto) {

@@ -1,6 +1,9 @@
 package on.logistics.orderservice.infrastructure.persistence.repository;
 
+import java.util.Optional;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import on.logistics.orderservice.domain.entity.Order;
 import on.logistics.orderservice.domain.repository.OrderRepository;
 import on.logistics.orderservice.domain.repository.dtos.SearchOrderPageDto;
@@ -9,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Repository;
 
 @Repository
+@Slf4j
 @RequiredArgsConstructor
 public class OrderRepositoryImpl implements OrderRepository {
 
@@ -22,6 +26,12 @@ public class OrderRepositoryImpl implements OrderRepository {
   @Override
   public Page<Order> searchOrderPage(SearchOrderPageDto searchOrderPageDto) {
     return orderJpaRepository.searchOrderPage(searchOrderPageDto);
+  }
+
+  @Override
+  public Optional<Order> findOrderById(UUID orderId) {
+    log.warn("N+1 문제가 발생할 수 있습니다!");
+    return orderJpaRepository.findById(orderId);
   }
 
 }

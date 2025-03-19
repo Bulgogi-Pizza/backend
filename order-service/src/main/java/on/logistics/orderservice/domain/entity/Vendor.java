@@ -4,6 +4,7 @@ package on.logistics.orderservice.domain.entity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -45,7 +46,7 @@ public class Vendor {
   @Embedded
   private HubName vendorHubName;
 
-  @OneToOne
+  @OneToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "vendor_order_id", nullable = false)
   private VendorOrder vendorOrder;
 
