@@ -8,6 +8,7 @@ import on.logistics.deliveryservice.domain.entity.Delivery;
 import on.logistics.deliveryservice.domain.entity.DeliveryRecord;
 import on.logistics.deliveryservice.domain.enums.DeliveryRecordStatus;
 import on.logistics.deliveryservice.domain.repository.DeliveryRecordRepository;
+import on.logistics.deliveryservice.infrastructure.client.hub.HubServiceClient;
 import on.logistics.deliveryservice.infrastructure.client.map.MapServiceClient;
 import on.logistics.deliveryservice.infrastructure.client.map.feign.dtos.GetEstimateInfo;
 import on.logistics.deliveryservice.presentation.dtos.response.CreateDeliveryRecordResponse;
@@ -22,6 +23,7 @@ public class DeliveryRecordServiceImpl implements DeliveryRecordService {
     private final DeliveryRecordRepository deliveryRecordRepository;
     private final DeliveryService deliveryService;
     private final MapServiceClient mapServiceClient;
+    private final HubServiceClient hubServiceClient;
 
     @Override
     @Transactional
@@ -56,7 +58,13 @@ public class DeliveryRecordServiceImpl implements DeliveryRecordService {
     }
 
     public GetEstimateInfo getEstimateInfo(UUID startHubId, UUID endHubId) {
-        // todo: 허브에 조회 요청. 조회 요청으로 받은 허브 위도, 경도로 예상 시간, 예상 거리 받아옴
+        /*
+        GetHubInfo startHubInfo = hubServiceClient.getHubInfo(startHubId);
+        GetHubInfo endHubInfo = hubServiceClient.getHubInfo(endHubId);
+        String start = "" + startHubInfo.longitude() + "," + startHubInfo.latitude();
+        String end = "" + endHubInfo.longitude() + "," + endHubInfo.latitude();
+        */
+
         String start = "126.8737955,37.6403771";
         String end = "127.12345,37.12345";
 
