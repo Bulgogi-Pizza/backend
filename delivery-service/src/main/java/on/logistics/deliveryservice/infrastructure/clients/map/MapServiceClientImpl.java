@@ -1,12 +1,12 @@
-package on.logistics.deliveryservice.infrastructure.client.map;
+package on.logistics.deliveryservice.infrastructure.clients.map;
 
 import feign.Response;
 import lombok.RequiredArgsConstructor;
 import on.logistics.deliveryservice.global.utils.FeignClientResponseUtils;
-import on.logistics.deliveryservice.infrastructure.client.map.feign.MapServiceFeignClient;
-import on.logistics.deliveryservice.infrastructure.client.map.feign.dtos.GetDestinationInfo;
-import on.logistics.deliveryservice.infrastructure.client.map.feign.dtos.GetEstimateInfo;
-import on.logistics.deliveryservice.infrastructure.client.map.feign.dtos.GetHubRouteInfo;
+import on.logistics.deliveryservice.infrastructure.clients.map.feign.MapServiceFeignClient;
+import on.logistics.deliveryservice.infrastructure.clients.map.feign.dtos.GetDestinationInfo;
+import on.logistics.deliveryservice.infrastructure.clients.map.feign.dtos.GetEstimateInfo;
+import on.logistics.deliveryservice.infrastructure.clients.map.feign.dtos.GetHubRouteInfo;
 import org.springframework.stereotype.Service;
 
 @Service

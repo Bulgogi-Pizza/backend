@@ -3,7 +3,7 @@ package on.logistics.deliveryservice.domain.dtos;
 import java.util.UUID;
 import on.logistics.deliveryservice.application.dtos.request.CreateDeliveryRecordRequestDto;
 import on.logistics.deliveryservice.domain.enums.DeliveryRecordStatus;
-import on.logistics.deliveryservice.infrastructure.client.map.feign.dtos.GetEstimateInfo;
+import on.logistics.deliveryservice.infrastructure.clients.map.feign.dtos.GetEstimateInfo;
 
 public record CreateDeliveryRecordDto(UUID deliveryId, Long sequence, DeliveryRecordStatus status,
                                       UUID startHubId, UUID endHubId, Long estimatedDistance,

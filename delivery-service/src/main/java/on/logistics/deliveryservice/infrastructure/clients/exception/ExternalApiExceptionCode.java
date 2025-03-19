@@ -1,4 +1,4 @@
-package on.logistics.deliveryservice.infrastructure.client.exception;
+package on.logistics.deliveryservice.infrastructure.clients.exception;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -11,7 +11,7 @@ public enum ExternalApiExceptionCode implements ExceptionCode {
 
     NOT_FOUND(HttpStatus.NOT_FOUND, "not found"),
     BAD_REQUEST(HttpStatus.BAD_REQUEST, "bad request"),
-    CLIENT_ERROR(HttpStatus.BAD_REQUEST, "client error"),
+    CLIENT_ERROR(HttpStatus.BAD_REQUEST, "clients error"),
     SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "server error"),
     WRONG_RESPONSE_TYPE(HttpStatus.INTERNAL_SERVER_ERROR, "response type"),
     ;

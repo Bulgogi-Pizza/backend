@@ -1,8 +1,8 @@
-package on.logistics.deliveryservice.infrastructure.client.hub.feign;
+package on.logistics.deliveryservice.infrastructure.clients.hub.feign;
 
 import feign.Response;
 import java.util.UUID;
-import on.logistics.deliveryservice.infrastructure.client.hub.feign.dtos.HubType;
+import on.logistics.deliveryservice.infrastructure.clients.hub.feign.dtos.HubType;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

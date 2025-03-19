@@ -1,4 +1,4 @@
-package on.logistics.deliveryservice.infrastructure.client.map.feign.dtos;
+package on.logistics.deliveryservice.infrastructure.clients.map.feign.dtos;
 
 import java.util.List;
 

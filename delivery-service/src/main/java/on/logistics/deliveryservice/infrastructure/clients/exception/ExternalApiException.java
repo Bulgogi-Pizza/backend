@@ -1,4 +1,4 @@
-package on.logistics.deliveryservice.infrastructure.client.exception;
+package on.logistics.deliveryservice.infrastructure.clients.exception;
 
 import on.logistics.deliveryservice.global.exception.CustomException;
 

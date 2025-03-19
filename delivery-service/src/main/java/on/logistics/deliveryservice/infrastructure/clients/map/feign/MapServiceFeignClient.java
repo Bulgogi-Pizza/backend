@@ -1,4 +1,4 @@
-package on.logistics.deliveryservice.infrastructure.client.map.feign;
+package on.logistics.deliveryservice.infrastructure.clients.map.feign;
 
 import feign.Response;
 import org.springframework.cloud.openfeign.FeignClient;

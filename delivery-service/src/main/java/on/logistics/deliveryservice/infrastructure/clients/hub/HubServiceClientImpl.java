@@ -1,14 +1,14 @@
-package on.logistics.deliveryservice.infrastructure.client.hub;
+package on.logistics.deliveryservice.infrastructure.clients.hub;
 
 import feign.Response;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import on.logistics.deliveryservice.global.utils.FeignClientResponseUtils;
-import on.logistics.deliveryservice.infrastructure.client.hub.feign.HubServiceFeignClient;
-import on.logistics.deliveryservice.infrastructure.client.hub.feign.dtos.GetHubInfo;
-import on.logistics.deliveryservice.infrastructure.client.hub.feign.dtos.GetMiddleHubPageInfo;
-import on.logistics.deliveryservice.infrastructure.client.hub.feign.dtos.GetSpokeHubInfo;
-import on.logistics.deliveryservice.infrastructure.client.hub.feign.dtos.HubType;
+import on.logistics.deliveryservice.infrastructure.clients.hub.feign.HubServiceFeignClient;
+import on.logistics.deliveryservice.infrastructure.clients.hub.feign.dtos.GetHubInfo;
+import on.logistics.deliveryservice.infrastructure.clients.hub.feign.dtos.GetMiddleHubPageInfo;
+import on.logistics.deliveryservice.infrastructure.clients.hub.feign.dtos.GetSpokeHubInfo;
+import on.logistics.deliveryservice.infrastructure.clients.hub.feign.dtos.HubType;
 import org.springframework.stereotype.Service;
 
 @Service

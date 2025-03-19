@@ -7,10 +7,10 @@ import java.io.IOException;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import on.logistics.deliveryservice.global.presentation.dtos.CommonResponse;
-import on.logistics.deliveryservice.infrastructure.client.exception.ExternalApiException.ExternalApiBadRequestException;
-import on.logistics.deliveryservice.infrastructure.client.exception.ExternalApiException.ExternalApiClientException;
-import on.logistics.deliveryservice.infrastructure.client.exception.ExternalApiException.ExternalApiNotFoundException;
-import on.logistics.deliveryservice.infrastructure.client.exception.ExternalApiException.ExternalApiServerException;
+import on.logistics.deliveryservice.infrastructure.clients.exception.ExternalApiException.ExternalApiBadRequestException;
+import on.logistics.deliveryservice.infrastructure.clients.exception.ExternalApiException.ExternalApiClientException;
+import on.logistics.deliveryservice.infrastructure.clients.exception.ExternalApiException.ExternalApiNotFoundException;
+import on.logistics.deliveryservice.infrastructure.clients.exception.ExternalApiException.ExternalApiServerException;
 
 @NoArgsConstructor(access = lombok.AccessLevel.PRIVATE)
 @Slf4j
