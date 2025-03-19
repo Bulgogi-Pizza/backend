@@ -11,13 +11,17 @@ import on.logistics.orderservice.application.service.dtos.get.all.SearchOrderPag
 import on.logistics.orderservice.application.service.dtos.get.all.SearchOrderPageResponseDto;
 import on.logistics.orderservice.application.service.dtos.get.detail.GetOrderDetailRequestDto;
 import on.logistics.orderservice.application.service.dtos.get.detail.GetOrderDetailResponseDto;
+import on.logistics.orderservice.application.service.dtos.update.UpdateOrderRequestDto;
+import on.logistics.orderservice.application.service.dtos.update.UpdateOrderResponseDto;
 import on.logistics.orderservice.global.application.dtos.PageDto;
 import on.logistics.orderservice.global.enums.AuthRole;
 import on.logistics.orderservice.global.presentation.dtos.CommonResponse;
 import on.logistics.orderservice.presentation.dtos.create.CreateOrderRequest;
+import on.logistics.orderservice.presentation.dtos.update.UpdateOrderRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -72,6 +76,16 @@ public class OrderController {
   ) {
     final var requestDto = GetOrderDetailRequestDto.from(orderId);
     final var responseDto = orderService.getOrderDetail(requestDto);
+    return ResponseEntity.ok(CommonResponse.success(responseDto));
+  }
+
+  @PatchMapping("/{orderId}")
+  public ResponseEntity<CommonResponse<UpdateOrderResponseDto>> updateOrder(
+      @PathVariable final UUID orderId,
+      @RequestBody @Valid final UpdateOrderRequest request
+  ) {
+    final var requestDto = UpdateOrderRequestDto.from(request, orderId);
+    final var responseDto = orderService.updateOrder(requestDto);
     return ResponseEntity.ok(CommonResponse.success(responseDto));
   }
 }

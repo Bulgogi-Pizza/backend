@@ -58,4 +58,8 @@ public class OrderProduct {
         .price(new ProductPrice(createOrderProductDto.price()))
         .build();
   }
+
+  public void updateQuantity(Long quantity) {
+    this.quantity = new ProductQuantity(quantity);
+  }
 }

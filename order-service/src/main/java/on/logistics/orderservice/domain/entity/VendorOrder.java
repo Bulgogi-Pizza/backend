@@ -83,4 +83,8 @@ public class VendorOrder {
         .mapToLong(orderProduct -> orderProduct.getPrice().getValue())
         .sum();
   }
+
+  public void updateArrivalDeadline(LocalDateTime arrivalDeadline) {
+    this.arrivalDeadline = arrivalDeadline;
+  }
 }

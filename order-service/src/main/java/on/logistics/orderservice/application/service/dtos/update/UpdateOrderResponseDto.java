@@ -1,4 +1,4 @@
-package on.logistics.orderservice.application.service.dtos.get.detail;
+package on.logistics.orderservice.application.service.dtos.update;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -6,7 +6,7 @@ import java.util.UUID;
 import on.logistics.orderservice.domain.entity.Order;
 import on.logistics.orderservice.domain.enums.OrderStatus;
 
-public record GetOrderDetailResponseDto(
+public record UpdateOrderResponseDto(
     UUID orderId,
     LocalDateTime orderCreatedAt,
     Long totalAmount,
@@ -41,8 +41,8 @@ public record GetOrderDetailResponseDto(
     }
   }
 
-  public static GetOrderDetailResponseDto from(Order order) {
-    return new GetOrderDetailResponseDto(
+  public static UpdateOrderResponseDto from(Order order) {
+    return new UpdateOrderResponseDto(
         order.getId(),
         order.getCreatedAt(),
         order.getTotalAmount(),
@@ -52,7 +52,7 @@ public record GetOrderDetailResponseDto(
         order.getOrderer().getUserNickname().getValue(),
         order.getDestination(),
         order.getVendorOrders().stream()
-            .map(vendorOrder -> new OrdersByVendor(
+            .map(vendorOrder -> new UpdateOrderResponseDto.OrdersByVendor(
                 vendorOrder.getId(),
                 vendorOrder.getTotalAmount(),
                 vendorOrder.getArrivalDeadline(),
@@ -63,12 +63,13 @@ public record GetOrderDetailResponseDto(
                 vendorOrder.getStatus(),
                 vendorOrder.getShippedAt(),
                 vendorOrder.getOrderProducts().stream()
-                    .map(orderedProduct -> new OrdersByVendor.OrderedProducts(
-                        orderedProduct.getProductId(),
-                        orderedProduct.getName().getValue(),
-                        orderedProduct.getPrice().getValue(),
-                        orderedProduct.getQuantity().getValue()
-                    ))
+                    .map(
+                        orderedProduct -> new UpdateOrderResponseDto.OrdersByVendor.OrderedProducts(
+                            orderedProduct.getProductId(),
+                            orderedProduct.getName().getValue(),
+                            orderedProduct.getPrice().getValue(),
+                            orderedProduct.getQuantity().getValue()
+                        ))
                     .toList()
             ))
             .toList()

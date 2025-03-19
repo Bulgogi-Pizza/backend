@@ -14,6 +14,8 @@ import on.logistics.orderservice.application.service.dtos.get.all.SearchOrderPag
 import on.logistics.orderservice.application.service.dtos.get.all.SearchOrderPageResponseDto;
 import on.logistics.orderservice.application.service.dtos.get.detail.GetOrderDetailRequestDto;
 import on.logistics.orderservice.application.service.dtos.get.detail.GetOrderDetailResponseDto;
+import on.logistics.orderservice.application.service.dtos.update.UpdateOrderRequestDto;
+import on.logistics.orderservice.application.service.dtos.update.UpdateOrderResponseDto;
 import on.logistics.orderservice.domain.entity.Order;
 import on.logistics.orderservice.domain.entity.OrderProduct;
 import on.logistics.orderservice.domain.entity.Orderer;
@@ -27,6 +29,8 @@ import on.logistics.orderservice.domain.entity.dtos.CreateVendorOrderDto;
 import on.logistics.orderservice.domain.repository.OrderRepository;
 import on.logistics.orderservice.domain.repository.dtos.SearchOrderPageDto;
 import on.logistics.orderservice.exception.OrderException.OrderNotFoundException;
+import on.logistics.orderservice.exception.OrderException.OrderProductNotFoundException;
+import on.logistics.orderservice.exception.OrderException.VendorOrderNotFoundException;
 import on.logistics.orderservice.global.application.dtos.PageDto;
 import on.logistics.orderservice.infrastructure.clients.ai.dtos.GenerateShippingDeadlineRequestDto;
 import on.logistics.orderservice.infrastructure.clients.ai.feign.dtos.GenerateShippingDeadlineResponse;
@@ -52,6 +56,7 @@ public class OrderServiceImpl implements OrderService {
   private final AIService aiService;
 
   @Transactional
+  @Override
   public CreateOrderResponseDto createOrder(final CreateOrderRequestDto requestDto) {
     log.info("주문 생성 요청: {}", requestDto);
 
@@ -67,29 +72,6 @@ public class OrderServiceImpl implements OrderService {
     Order savedOrder = orderRepository.save(createdOrder);
 
     return CreateOrderResponseDto.from(savedOrder);
-  }
-
-  @Override
-  public PageDto<SearchOrderPageResponseDto> searchOrderPage(
-      final SearchOrderPageRequestDto requestDto
-  ) {
-    log.info("주문자별 주문 목록 조회 요청: {}", requestDto);
-
-    SearchOrderPageDto searchOrderPageDto = SearchOrderPageDto.from(requestDto);
-    Page<Order> allByOrdererUserId = orderRepository.searchOrderPage(searchOrderPageDto);
-    Page<SearchOrderPageResponseDto> getOrderPageByOrdererUserIdResponseDtoPage =
-        allByOrdererUserId.map(SearchOrderPageResponseDto::from);
-    return PageDto.from(getOrderPageByOrdererUserIdResponseDtoPage);
-  }
-
-  @Override
-  public GetOrderDetailResponseDto getOrderDetail(final GetOrderDetailRequestDto requestDto) {
-    log.info("주문 상세 조회 요청: {}", requestDto);
-
-    Order order = orderRepository.findOrderById(requestDto.orderId())
-        .orElseThrow(OrderNotFoundException::new);
-
-    return GetOrderDetailResponseDto.from(order);
   }
 
   private Orderer createOrderer(final Order createdOrder, final CreateOrderRequestDto requestDto) {
@@ -228,4 +210,67 @@ public class OrderServiceImpl implements OrderService {
     deliveryService.deliveryRequest(requestDto);
   }
 
+  @Override
+  public PageDto<SearchOrderPageResponseDto> searchOrderPage(
+      final SearchOrderPageRequestDto requestDto
+  ) {
+    log.info("주문자별 주문 목록 조회 요청: {}", requestDto);
+
+    SearchOrderPageDto searchOrderPageDto = SearchOrderPageDto.from(requestDto);
+    Page<Order> allByOrdererUserId = orderRepository.searchOrderPage(searchOrderPageDto);
+    Page<SearchOrderPageResponseDto> getOrderPageByOrdererUserIdResponseDtoPage =
+        allByOrdererUserId.map(SearchOrderPageResponseDto::from);
+    return PageDto.from(getOrderPageByOrdererUserIdResponseDtoPage);
+  }
+
+  @Override
+  public GetOrderDetailResponseDto getOrderDetail(final GetOrderDetailRequestDto requestDto) {
+    log.info("주문 상세 조회 요청: {}", requestDto);
+
+    Order order = orderRepository.findOrderById(requestDto.orderId())
+        .orElseThrow(OrderNotFoundException::new);
+
+    return GetOrderDetailResponseDto.from(order);
+  }
+
+  @Transactional
+  @Override
+  public UpdateOrderResponseDto updateOrder(final UpdateOrderRequestDto requestDto) {
+    log.info("주문 수정 요청: {}", requestDto);
+
+    Order order = orderRepository.findOrderById(requestDto.orderId())
+        .orElseThrow(OrderNotFoundException::new);
+
+    updateVendorOrders(order, requestDto.ordersByVendor());
+
+    return UpdateOrderResponseDto.from(order);
+  }
+
+  private void updateVendorOrders(Order order,
+      List<UpdateOrderRequestDto.OrdersByVendor> ordersByVendor) {
+    for (UpdateOrderRequestDto.OrdersByVendor orderByVendor : ordersByVendor) {
+      VendorOrder vendorOrder = order.getVendorOrders().stream()
+          .filter(vo -> vo.getId().equals(orderByVendor.orderIdByVendor()))
+          .findFirst()
+          .orElseThrow(VendorOrderNotFoundException::new);
+
+      vendorOrder.updateArrivalDeadline(orderByVendor.arrivalDeadline());
+
+      updateOrderProducts(vendorOrder, orderByVendor.orderedProducts());
+    }
+  }
+
+  private void updateOrderProducts(
+      VendorOrder vendorOrder,
+      List<UpdateOrderRequestDto.OrdersByVendor.OrderedProduct> orderedProducts
+  ) {
+    for (var product : orderedProducts) {
+      OrderProduct orderProduct = vendorOrder.getOrderProducts().stream()
+          .filter(op -> op.getProductId().equals(product.productId()))
+          .findFirst()
+          .orElseThrow(OrderProductNotFoundException::new);
+
+      orderProduct.updateQuantity(product.quantity());
+    }
+  }
 }

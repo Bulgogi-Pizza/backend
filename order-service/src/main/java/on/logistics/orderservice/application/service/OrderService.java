@@ -6,6 +6,8 @@ import on.logistics.orderservice.application.service.dtos.get.all.SearchOrderPag
 import on.logistics.orderservice.application.service.dtos.get.all.SearchOrderPageResponseDto;
 import on.logistics.orderservice.application.service.dtos.get.detail.GetOrderDetailRequestDto;
 import on.logistics.orderservice.application.service.dtos.get.detail.GetOrderDetailResponseDto;
+import on.logistics.orderservice.application.service.dtos.update.UpdateOrderRequestDto;
+import on.logistics.orderservice.application.service.dtos.update.UpdateOrderResponseDto;
 import on.logistics.orderservice.global.application.dtos.PageDto;
 
 public interface OrderService {
@@ -15,4 +17,6 @@ public interface OrderService {
   PageDto<SearchOrderPageResponseDto> searchOrderPage(final SearchOrderPageRequestDto requestDto);
 
   GetOrderDetailResponseDto getOrderDetail(final GetOrderDetailRequestDto requestDto);
+
+  UpdateOrderResponseDto updateOrder(final UpdateOrderRequestDto requestDto);
 }

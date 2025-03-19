@@ -19,4 +19,16 @@ public class OrderException extends CustomException {
       super(OrderExceptionCode.ORDER_NOT_FOUND);
     }
   }
+
+  public static class VendorOrderNotFoundException extends OrderException {
+    public VendorOrderNotFoundException() {
+      super(OrderExceptionCode.VENDOR_ORDER_NOT_FOUND);
+    }
+  }
+
+  public static class OrderProductNotFoundException extends OrderException {
+    public OrderProductNotFoundException() {
+      super(OrderExceptionCode.ORDER_PRODUCT_NOT_FOUND);
+    }
+  }
 }
