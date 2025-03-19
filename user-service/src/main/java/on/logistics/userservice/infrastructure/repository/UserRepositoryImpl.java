@@ -3,10 +3,12 @@ package on.logistics.userservice.infrastructure.repository;
 import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import on.logistics.userservice.application.dtos.SearchUserDto;
 import on.logistics.userservice.domain.entity.User;
 import on.logistics.userservice.domain.repository.UserRepository;
 import on.logistics.userservice.infrastructure.jpa.UserJpaRepository;
 import on.logistics.userservice.infrastructure.querydsl.UserQueryRepository;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -30,5 +32,10 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public Optional<User> findById(UUID id) {
         return userJpaRepository.findById(id);
+    }
+
+    @Override
+    public Page<User> searchUser(SearchUserDto requestDto) {
+        return userQueryRepository.searchUser(requestDto);
     }
 }

@@ -37,7 +37,7 @@ public class PassportUtil {
         String passportId = httpServletRequest.getHeader("X-Passport-Id");
 
         if (passportId == null) {
-            throw new PassportException(PassportExceptionCode.PASSPORT_RETRIEVAL_FAILED);
+            throw new PassportException(PassportExceptionCode.PASSPORT_VALIDATION_FAILED);
         }
 
         return getPassportByKey(passportId);

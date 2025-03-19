@@ -11,7 +11,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import on.logistics.userservice.application.dtos.CreateUserRequestDto;
+import on.logistics.userservice.application.dtos.CreateUserDto;
 import on.logistics.userservice.domain.entity.vo.SlackEmail;
 import on.logistics.userservice.global.domain.BaseEntity;
 import org.hibernate.annotations.SQLRestriction;
@@ -32,7 +32,7 @@ public class User extends BaseEntity {
     private String nickname;
     private SlackEmail slackEmail;
 
-    public static User create(CreateUserRequestDto dto) {
+    public static User create(CreateUserDto dto) {
         return User.builder()
             .nickname(dto.nickname())
             .slackEmail(dto.slackEmail())
@@ -43,4 +43,15 @@ public class User extends BaseEntity {
         return slackEmail.getEmail();
     }
 
+    public void updateNickname(String nickname) {
+        if (this.nickname.equals(nickname) || nickname == null) {
+            this.nickname = nickname;
+        }
+    }
+
+    public void updateSlackEmail(SlackEmail slackEmail) {
+        if (this.slackEmail.equals(slackEmail) || slackEmail.toString() == null) {
+            this.slackEmail = slackEmail;
+        }
+    }
 }

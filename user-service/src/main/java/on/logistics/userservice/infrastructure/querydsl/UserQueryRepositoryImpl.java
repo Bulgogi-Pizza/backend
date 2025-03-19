@@ -1,8 +1,17 @@
 package on.logistics.userservice.infrastructure.querydsl;
 
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import jakarta.annotation.PostConstruct;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import on.logistics.userservice.application.dtos.SearchUserDto;
+import on.logistics.userservice.domain.entity.QUser;
+import on.logistics.userservice.domain.entity.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 @Slf4j(topic = "UserQueryRepositoryImpl")
@@ -11,5 +20,41 @@ import org.springframework.stereotype.Repository;
 public class UserQueryRepositoryImpl implements UserQueryRepository {
 
     private final JPAQueryFactory queryFactory;
+    private QUser user;
+    private BooleanBuilder builder;
 
+    @PostConstruct
+    public void init() {
+        this.user = QUser.user;
+        this.builder = new BooleanBuilder();
+    }
+
+    @Override
+    public Page<User> searchUser(SearchUserDto requestDto) {
+
+        Pageable pageable = requestDto.pageable();
+
+        if (requestDto.nickname() != null && !requestDto.nickname().isEmpty()) {
+            builder.and(user.nickname.containsIgnoreCase(requestDto.nickname()));
+        }
+
+        if (requestDto.slackEmail() != null && !requestDto.slackEmail().isEmpty()) {
+            builder.and(user.slackEmail.email.containsIgnoreCase(requestDto.slackEmail()));
+        }
+
+        List<User> content = queryFactory
+            .selectFrom(user)
+            .where(builder)
+            .offset(pageable.getOffset())
+            .limit(pageable.getPageSize())
+            .fetch();
+
+        long total = queryFactory
+            .select(user.id)
+            .from(user)
+            .where(builder)
+            .fetchCount();
+
+        return new PageImpl<>(content, pageable, total);
+    }
 }
