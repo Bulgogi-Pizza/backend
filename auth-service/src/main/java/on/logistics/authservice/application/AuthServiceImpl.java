@@ -1,5 +1,6 @@
 package on.logistics.authservice.application;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import on.logistics.authservice.application.dtos.AuthSignupRequestDto;
@@ -11,7 +12,10 @@ import on.logistics.authservice.exception.AuthExceptionCode;
 import on.logistics.authservice.infrastructure.feign.UserClientService;
 import on.logistics.authservice.infrastructure.feign.dtos.UserCreateRequest;
 import on.logistics.authservice.infrastructure.feign.dtos.UserCreateResponse;
+import on.logistics.authservice.infrastructure.security.cookie.CookieUtil;
+import on.logistics.authservice.infrastructure.security.jwt.JwtUtil;
 import on.logistics.authservice.presentation.dtos.AuthSignupResponse;
+import on.logistics.authservice.presentation.dtos.AuthValidateResponse;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +28,8 @@ public class AuthServiceImpl implements AuthService {
     private final AuthRepository authRepository;
     private final PasswordEncoder passwordEncoder;
     private final UserClientService userClientService;
+    private final CookieUtil cookieUtil;
+    private final PassportService passportService;
 
     @Transactional
     public AuthSignupResponse signup(AuthSignupRequestDto authRequestDto) {
@@ -46,4 +52,16 @@ public class AuthServiceImpl implements AuthService {
 
         return AuthSignupResponse.from(authResponseDto);
     }
+
+    @Override
+    public AuthValidateResponse validate(
+        HttpServletRequest request
+    ) {
+        String token = cookieUtil.getRefreshTokenFromCookie(request);
+        String passportId = passportService.getPassportIdByToken(token);
+
+        return AuthValidateResponse.of(passportId);
+    }
+
+
 }

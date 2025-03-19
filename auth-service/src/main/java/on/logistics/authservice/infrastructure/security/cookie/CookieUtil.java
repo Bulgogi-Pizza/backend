@@ -20,9 +20,7 @@ public class CookieUtil {
     ) {
         ResponseCookie cookie = ResponseCookie.from(REFRESH_TOKEN, refreshToken)
             .httpOnly(true)
-            .secure(true)
-            .path("/api/v1/auth/refresh")
-            .sameSite("Strict")
+            .path("/api/v1")
             .build();
 
         log.info("Add refresh token to cookie: {}", cookie);
@@ -35,10 +33,8 @@ public class CookieUtil {
     ) {
         ResponseCookie cookie = ResponseCookie.from(REFRESH_TOKEN, "")
             .httpOnly(true)
-            .secure(true)
             .path("/")
             .maxAge(0)
-            .sameSite("Strict")
             .build();
 
         log.info("Remove refresh token from cookie: {}", cookie);

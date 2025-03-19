@@ -1,5 +1,6 @@
 package on.logistics.authservice.presentation;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import on.logistics.authservice.application.AuthServiceImpl;
@@ -7,7 +8,9 @@ import on.logistics.authservice.application.dtos.AuthSignupRequestDto;
 import on.logistics.authservice.presentation.dtos.AuthSignupRequest;
 import on.logistics.authservice.presentation.dtos.AuthSignupResponse;
 import on.logistics.authservice.global.presentation.dtos.CommonResponse;
+import on.logistics.authservice.presentation.dtos.AuthValidateResponse;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,6 +32,16 @@ public class AuthController {
 
         final var requestDto = AuthSignupRequestDto.from(request);
         final var response = authService.signup(requestDto);
+        return ResponseEntity.ok(CommonResponse.success(response));
+    }
+
+    @GetMapping("/validate")
+    public ResponseEntity<CommonResponse<AuthValidateResponse>> validate(
+        HttpServletRequest request
+    ) {
+        log.info("validate request: {}", request);
+
+        final var response = authService.validate(request);
         return ResponseEntity.ok(CommonResponse.success(response));
     }
 }

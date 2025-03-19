@@ -68,16 +68,16 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .sessionManagement(
                 session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .authorizeHttpRequests(authorizeRequests ->
-                authorizeRequests.requestMatchers(
+            .authorizeHttpRequests(authorizeRequests -> authorizeRequests
+                    .requestMatchers(
                         "/", "/api/v1/auth/signup", "/api/v1/auth/login"
                     )
                     .permitAll()
                     .anyRequest()
                     .authenticated()
             )
-            .addFilterBefore(jwtAuthentiactionFilter(), JwtAuthenticationFilter.class)
-            .addFilterBefore(jwtAuthentiactionFilter(), UsernamePasswordAuthenticationFilter.class);
+            .addFilterBefore(jwtAuthentiactionFilter(), UsernamePasswordAuthenticationFilter.class)
+            .addFilterBefore(jwtAuthorizationFilter(), JwtAuthenticationFilter.class);
 
         return http.build();
     }

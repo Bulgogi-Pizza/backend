@@ -81,6 +81,7 @@ public class JwtUtil {
     public String getAccessTokenFromHeader(
         HttpServletRequest request
     ) {
+        log.info("getAccessTokenFromHeader, {}", request.getHeader(AUTHORIZATION_HEADER));
         String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
         if (bearerToken != null && bearerToken.startsWith(BEARER_PREFIX)) {
             return getTokenWithoutBearer(bearerToken);

@@ -50,6 +50,10 @@ public class PassportUtil {
         }
     }
 
+    public String getPassportKeyByToken(String token) {
+        return getPassportKey(token);
+    }
+
     public Passport getPassportByKey(String passportKey) {
         String json = redisTemplate.opsForValue().get(passportKey);
         if (json == null) {

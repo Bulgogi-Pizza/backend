@@ -32,4 +32,14 @@ public class PassportServiceImpl implements PassportService {
 
         passportUtil.createPassport(token, passport, passportExpirationTime);
     }
+
+    @Override
+    public String getPassportIdByToken(String token) {
+        return passportUtil.getPassportKeyByToken(token);
+    }
+
+    @Override
+    public Passport getPassportByToken(String token) {
+        return passportUtil.getPassportByToken(token);
+    }
 }
