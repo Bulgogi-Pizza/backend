@@ -5,6 +5,7 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import on.logistics.userservice.application.dtos.CreateUserDto;
 import on.logistics.userservice.application.dtos.SearchUserDto;
+import on.logistics.userservice.application.dtos.UpdateUserAdminDto;
 import on.logistics.userservice.application.dtos.UpdateUserDto;
 import on.logistics.userservice.application.service.UserService;
 import on.logistics.userservice.global.application.dtos.PageDto;
@@ -14,6 +15,8 @@ import on.logistics.userservice.presentation.dtos.CreateUserResponse;
 import on.logistics.userservice.presentation.dtos.FindByIdUserResponse;
 import on.logistics.userservice.presentation.dtos.FindMyUserResponse;
 import on.logistics.userservice.presentation.dtos.SearchUserResponse;
+import on.logistics.userservice.presentation.dtos.UpdateUserAdminRequest;
+import on.logistics.userservice.presentation.dtos.UpdateUserAdminResponse;
 import on.logistics.userservice.presentation.dtos.UpdateUserRequest;
 import on.logistics.userservice.presentation.dtos.UpdateUserResponse;
 import org.springframework.data.domain.Pageable;
@@ -40,8 +43,8 @@ public class UserController {
     public ResponseEntity<CommonResponse<CreateUserResponse>> createUser(
         @RequestBody CreateUserRequest request
     ) {
-        final var requestDto = CreateUserDto.from(request);
-        final var response = userService.createUser(requestDto);
+        final var dto = CreateUserDto.from(request);
+        final var response = userService.createUser(dto);
         return ResponseEntity.ok(CommonResponse.success(response));
     }
 
@@ -67,8 +70,8 @@ public class UserController {
         @RequestParam(required = false) String slackEmail,
         @PageableDefault Pageable pageable
     ) {
-        SearchUserDto requestDto = SearchUserDto.from(nickname, slackEmail, pageable);
-        PageDto<SearchUserResponse> response = userService.searchUser(requestDto);
+        SearchUserDto dto = SearchUserDto.from(nickname, slackEmail, pageable);
+        PageDto<SearchUserResponse> response = userService.searchUser(dto);
         return ResponseEntity.ok(CommonResponse.success(response));
     }
 
@@ -77,8 +80,18 @@ public class UserController {
         HttpServletRequest request,
         @RequestBody UpdateUserRequest updateUserRequest
     ) {
-        UpdateUserDto requestDto = UpdateUserDto.from(updateUserRequest);
-        UpdateUserResponse response = userService.updateUser(request, requestDto);
+        UpdateUserDto dto = UpdateUserDto.from(updateUserRequest);
+        UpdateUserResponse response = userService.updateUser(request, dto);
+        return ResponseEntity.ok(CommonResponse.success(response));
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<CommonResponse<UpdateUserAdminResponse>> updateUserAdmin(
+        @PathVariable UUID id,
+        @RequestBody UpdateUserAdminRequest updateUserAdminRequest
+    ) {
+        UpdateUserAdminDto dto = UpdateUserAdminDto.from(id, updateUserAdminRequest);
+        UpdateUserAdminResponse response = userService.updateUserAdmin(dto);
         return ResponseEntity.ok(CommonResponse.success(response));
     }
 
