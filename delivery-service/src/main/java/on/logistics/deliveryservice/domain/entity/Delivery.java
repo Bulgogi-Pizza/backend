@@ -1,4 +1,4 @@
-package on.logistics.deliveryservice.domain;
+package on.logistics.deliveryservice.domain.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;

@@ -1,7 +1,7 @@
 package on.logistics.deliveryservice.presentation.dtos.response;
 
 import java.util.UUID;
-import on.logistics.deliveryservice.domain.Delivery;
+import on.logistics.deliveryservice.domain.entity.Delivery;
 import on.logistics.deliveryservice.domain.enums.DeliveryStatus;
 
 public record SearchDeliveryResponse(UUID deliveryId, DeliveryStatus deliveryStatus,

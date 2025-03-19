@@ -1,6 +1,6 @@
 package on.logistics.deliveryservice.infrastructure.querydsl;
 
-import static on.logistics.deliveryservice.domain.QDelivery.delivery;
+import static on.logistics.deliveryservice.domain.entity.QDelivery.delivery;
 
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Order;
@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import on.logistics.deliveryservice.application.dtos.request.SearchDeliveryRequestDto;
-import on.logistics.deliveryservice.domain.Delivery;
+import on.logistics.deliveryservice.domain.entity.Delivery;
 import on.logistics.deliveryservice.global.enums.PageSortBy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;

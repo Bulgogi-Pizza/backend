@@ -12,8 +12,8 @@ import on.logistics.deliveryservice.application.dtos.request.CreateDeliveryReque
 import on.logistics.deliveryservice.application.dtos.request.SearchDeliveryRequestDto;
 import on.logistics.deliveryservice.application.dtos.request.UpdateAssignManagerRequestDto;
 import on.logistics.deliveryservice.application.dtos.request.UpdateDeliveryRequestDto;
-import on.logistics.deliveryservice.domain.Delivery;
 import on.logistics.deliveryservice.domain.dtos.CreateDeliveryDto;
+import on.logistics.deliveryservice.domain.entity.Delivery;
 import on.logistics.deliveryservice.domain.repository.DeliveryRepository;
 import on.logistics.deliveryservice.exception.DeliveryException;
 import on.logistics.deliveryservice.exception.DeliveryExceptionCode;
