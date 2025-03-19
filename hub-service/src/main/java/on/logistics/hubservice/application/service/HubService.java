@@ -3,6 +3,8 @@ package on.logistics.hubservice.application.service;
 import java.math.BigDecimal;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import on.logistics.hubservice.application.clients.map.MapServiceClient;
+import on.logistics.hubservice.application.clients.map.feign.dtos.GetGeocodeResponse;
 import on.logistics.hubservice.application.dtos.request.CreateHubRequestDto;
 import on.logistics.hubservice.application.dtos.request.SearchHubRequestDto;
 import on.logistics.hubservice.application.dtos.request.UpdateHubRequestDto;
@@ -23,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class HubService {
 
     private final HubRepository hubRepository;
+    private final MapServiceClient mapServiceClient;
 
     @Transactional(readOnly = true)
     public GetHubResponse getHub(final UUID id) {
@@ -38,9 +41,9 @@ public class HubService {
 
     @Transactional
     public CreateHubResponse createHub(CreateHubRequestDto requestDto) {
-        // TODO: 추후 네이버 API로 실제 좌표로 수정해야함
-        BigDecimal latitude = new BigDecimal("37.5563");
-        BigDecimal longitude = new BigDecimal("126.9707");
+        GetGeocodeResponse geocodeResponse = mapServiceClient.getGeocode(requestDto.hubAddress());
+        BigDecimal latitude = new BigDecimal(geocodeResponse.latitude());
+        BigDecimal longitude = new BigDecimal(geocodeResponse.longitude());
         Hub hub = Hub.create(requestDto, latitude, longitude);
         Hub savedHub = hubRepository.save(hub);
         return CreateHubResponse.of(savedHub.getId());
