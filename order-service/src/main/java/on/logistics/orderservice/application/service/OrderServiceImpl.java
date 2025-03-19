@@ -4,7 +4,6 @@ import static on.logistics.orderservice.exception.OrderException.OutOfStockProdu
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import on.logistics.orderservice.application.service.dtos.cancel.CancelOrderRequestDto;
@@ -17,6 +16,8 @@ import on.logistics.orderservice.application.service.dtos.get.all.SearchOrderPag
 import on.logistics.orderservice.application.service.dtos.get.all.SearchOrderPageResponseDto;
 import on.logistics.orderservice.application.service.dtos.get.detail.GetOrderDetailRequestDto;
 import on.logistics.orderservice.application.service.dtos.get.detail.GetOrderDetailResponseDto;
+import on.logistics.orderservice.application.service.dtos.returns.request.ReturnRequestRequestDto;
+import on.logistics.orderservice.application.service.dtos.returns.request.ReturnRequestResponseDto;
 import on.logistics.orderservice.application.service.dtos.update.UpdateOrderRequestDto;
 import on.logistics.orderservice.application.service.dtos.update.UpdateOrderResponseDto;
 import on.logistics.orderservice.domain.entity.Order;
@@ -290,19 +291,14 @@ public class OrderServiceImpl implements OrderService {
     Order order = orderRepository.findOrderById(requestDto.orderId())
         .orElseThrow(OrderNotFoundException::new);
 
-    cancelVendorOrder(order, requestDto.vendorOrderId());
-
-    return CancelOrderResponseDto.from(order);
-  }
-
-  private void cancelVendorOrder(final Order order, final UUID vendorOrderId) {
     VendorOrder vendorOrder = order.getVendorOrders().stream()
-        .filter(vo -> vo.getId().equals(vendorOrderId))
+        .filter(vo -> vo.getId().equals(requestDto.vendorOrderId()))
         .filter(vo -> OrderStatus.isBeforeShipped(vo.getStatus()))
         .findFirst()
         .orElseThrow(VendorOrderNotFoundException::new);
 
     vendorOrder.cancel();
+    return CancelOrderResponseDto.from(vendorOrder);
   }
 
   @Transactional
@@ -313,16 +309,31 @@ public class OrderServiceImpl implements OrderService {
     Order order = orderRepository.findOrderById(requestDto.orderId())
         .orElseThrow(OrderNotFoundException::new);
 
-    deleteVendorOrder(order, requestDto.vendorOrderId());
-  }
-
-  private void deleteVendorOrder(final Order order, final UUID vendorOrderId) {
     VendorOrder vendorOrder = order.getVendorOrders().stream()
-        .filter(vo -> vo.getId().equals(vendorOrderId))
+        .filter(vo -> vo.getId().equals(requestDto.vendorOrderId()))
         .filter(vo -> OrderStatus.isAfterDelivered(vo.getStatus()))
         .findFirst()
         .orElseThrow(VendorOrderNotFoundException::new);
 
     order.removeVendorOrder(vendorOrder);
+  }
+
+  @Transactional
+  @Override
+  public ReturnRequestResponseDto requestReturn(final ReturnRequestRequestDto requestDto) {
+    log.info("반품 요청: {}", requestDto);
+
+    Order order = orderRepository.findOrderById(requestDto.orderId())
+        .orElseThrow(OrderNotFoundException::new);
+
+    VendorOrder vendorOrder = order.getVendorOrders().stream()
+        .filter(vo -> vo.getId().equals(requestDto.vendorOrderId()))
+        .filter(vo -> OrderStatus.isAfterDelivered(vo.getStatus()))
+        .findFirst()
+        .orElseThrow(VendorOrderNotFoundException::new);
+
+    vendorOrder.requestReturn();
+
+    return ReturnRequestResponseDto.from(vendorOrder);
   }
 }

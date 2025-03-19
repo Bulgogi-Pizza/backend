@@ -101,4 +101,8 @@ public class VendorOrder {
   public void cancel() {
     this.status = OrderStatus.CANCELLED;
   }
+
+  public void requestReturn() {
+    this.status = OrderStatus.RETURN_REQUESTED;
+  }
 }

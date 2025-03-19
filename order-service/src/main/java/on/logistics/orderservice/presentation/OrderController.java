@@ -13,13 +13,15 @@ import on.logistics.orderservice.application.service.dtos.get.all.SearchOrderPag
 import on.logistics.orderservice.application.service.dtos.get.all.SearchOrderPageResponseDto;
 import on.logistics.orderservice.application.service.dtos.get.detail.GetOrderDetailRequestDto;
 import on.logistics.orderservice.application.service.dtos.get.detail.GetOrderDetailResponseDto;
+import on.logistics.orderservice.application.service.dtos.returns.request.ReturnRequestRequestDto;
+import on.logistics.orderservice.application.service.dtos.returns.request.ReturnRequestResponseDto;
 import on.logistics.orderservice.application.service.dtos.update.UpdateOrderRequestDto;
 import on.logistics.orderservice.application.service.dtos.update.UpdateOrderResponseDto;
 import on.logistics.orderservice.global.application.dtos.PageDto;
 import on.logistics.orderservice.global.enums.AuthRole;
 import on.logistics.orderservice.global.presentation.dtos.CommonResponse;
-import on.logistics.orderservice.presentation.dtos.delete.DeleteOrderRequestDto;
 import on.logistics.orderservice.presentation.dtos.create.CreateOrderRequest;
+import on.logistics.orderservice.presentation.dtos.delete.DeleteOrderRequestDto;
 import on.logistics.orderservice.presentation.dtos.update.UpdateOrderRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -111,5 +113,15 @@ public class OrderController {
     final DeleteOrderRequestDto requestDto = DeleteOrderRequestDto.from(orderId, vendorOrderId);
     orderService.deleteVendorOrder(requestDto);
     return ResponseEntity.ok(CommonResponse.success());
+  }
+
+  @PatchMapping("/{orderId}/return/request/{vendorOrderId}")
+  public ResponseEntity<CommonResponse<ReturnRequestResponseDto>> requestReturn(
+      @PathVariable final UUID orderId,
+      @PathVariable final UUID vendorOrderId
+  ) {
+    final var requestDto = ReturnRequestRequestDto.from(orderId, vendorOrderId);
+    final var responseDto = orderService.requestReturn(requestDto);
+    return ResponseEntity.ok(CommonResponse.success(responseDto));
   }
 }

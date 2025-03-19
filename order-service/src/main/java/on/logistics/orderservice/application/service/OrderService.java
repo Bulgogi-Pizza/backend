@@ -8,6 +8,8 @@ import on.logistics.orderservice.application.service.dtos.get.all.SearchOrderPag
 import on.logistics.orderservice.application.service.dtos.get.all.SearchOrderPageResponseDto;
 import on.logistics.orderservice.application.service.dtos.get.detail.GetOrderDetailRequestDto;
 import on.logistics.orderservice.application.service.dtos.get.detail.GetOrderDetailResponseDto;
+import on.logistics.orderservice.application.service.dtos.returns.request.ReturnRequestRequestDto;
+import on.logistics.orderservice.application.service.dtos.returns.request.ReturnRequestResponseDto;
 import on.logistics.orderservice.application.service.dtos.update.UpdateOrderRequestDto;
 import on.logistics.orderservice.application.service.dtos.update.UpdateOrderResponseDto;
 import on.logistics.orderservice.global.application.dtos.PageDto;
@@ -26,4 +28,6 @@ public interface OrderService {
   CancelOrderResponseDto cancelVendorOrder(final CancelOrderRequestDto requestDto);
 
   void deleteVendorOrder(final DeleteOrderRequestDto requestDto);
+
+  ReturnRequestResponseDto requestReturn(final ReturnRequestRequestDto requestDto);
 }

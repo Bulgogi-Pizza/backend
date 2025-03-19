@@ -1,13 +1,13 @@
 package on.logistics.orderservice.application.service.dtos.cancel;
 
 import java.util.UUID;
-import on.logistics.orderservice.domain.entity.Order;
+import on.logistics.orderservice.domain.entity.VendorOrder;
 
 public record CancelOrderResponseDto(
-    UUID orderId
+    UUID vendorOrderId
 ) {
 
-  public static CancelOrderResponseDto from(Order order) {
-    return new CancelOrderResponseDto(order.getId());
+  public static CancelOrderResponseDto from(VendorOrder vendorOrder) {
+    return new CancelOrderResponseDto(vendorOrder.getId());
   }
 }
