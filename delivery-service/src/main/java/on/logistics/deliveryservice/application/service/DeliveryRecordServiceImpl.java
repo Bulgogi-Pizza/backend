@@ -4,6 +4,7 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import on.logistics.deliveryservice.application.dtos.request.CreateDeliveryRecordRequestDto;
 import on.logistics.deliveryservice.application.dtos.request.UpdateDeliveryRecordRequestDto;
+import on.logistics.deliveryservice.application.dtos.request.UpdateDeliveryRecordStatusRequestDto;
 import on.logistics.deliveryservice.domain.dtos.CreateDeliveryRecordDto;
 import on.logistics.deliveryservice.domain.entity.Delivery;
 import on.logistics.deliveryservice.domain.entity.DeliveryRecord;
@@ -16,6 +17,7 @@ import on.logistics.deliveryservice.infrastructure.client.map.MapServiceClient;
 import on.logistics.deliveryservice.infrastructure.client.map.feign.dtos.GetEstimateInfo;
 import on.logistics.deliveryservice.presentation.dtos.response.CreateDeliveryRecordResponse;
 import on.logistics.deliveryservice.presentation.dtos.response.UpdateDeliveryRecordResponse;
+import on.logistics.deliveryservice.presentation.dtos.response.UpdateDeliveryRecordStatusResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -56,6 +58,14 @@ public class DeliveryRecordServiceImpl implements DeliveryRecordService {
     public void deleteDeliveryRecord(UUID id) {
         DeliveryRecord deliveryRecord = getOrElseThrow(id);
         deliveryRecordRepository.delete(deliveryRecord);
+    }
+
+    @Override
+    public UpdateDeliveryRecordStatusResponse updateStatusDeliveryRecord(
+        UpdateDeliveryRecordStatusRequestDto requestDto) {
+        DeliveryRecord deliveryRecord = getOrElseThrow(requestDto.deliveryRecordId());
+        deliveryRecord.updateStatus(deliveryRecord);
+        return UpdateDeliveryRecordStatusResponse.of(deliveryRecord.getId());
     }
 
     private DeliveryRecord getOrElseThrow(UUID deliveryRecordId) {

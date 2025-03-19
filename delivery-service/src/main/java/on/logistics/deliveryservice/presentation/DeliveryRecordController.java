@@ -5,14 +5,18 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import on.logistics.deliveryservice.application.dtos.request.CreateDeliveryRecordRequestDto;
 import on.logistics.deliveryservice.application.dtos.request.UpdateDeliveryRecordRequestDto;
+import on.logistics.deliveryservice.application.dtos.request.UpdateDeliveryRecordStatusRequestDto;
 import on.logistics.deliveryservice.application.service.DeliveryRecordService;
 import on.logistics.deliveryservice.global.presentation.dtos.CommonResponse;
 import on.logistics.deliveryservice.presentation.dtos.request.CreateDeliveryRecordRequest;
 import on.logistics.deliveryservice.presentation.dtos.request.UpdateDeliveryRecordRequest;
+import on.logistics.deliveryservice.presentation.dtos.request.UpdateDeliveryRecordStatusRequest;
 import on.logistics.deliveryservice.presentation.dtos.response.CreateDeliveryRecordResponse;
 import on.logistics.deliveryservice.presentation.dtos.response.UpdateDeliveryRecordResponse;
+import on.logistics.deliveryservice.presentation.dtos.response.UpdateDeliveryRecordStatusResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -56,5 +60,17 @@ public class DeliveryRecordController {
     ) {
         deliveryRecordService.deleteDeliveryRecord(id);
         return ResponseEntity.ok(CommonResponse.success());
+    }
+
+    @PatchMapping("/status/{id}")
+    public ResponseEntity<CommonResponse<UpdateDeliveryRecordStatusResponse>> updateDeliveryRecordStatus(
+        @PathVariable UUID id,
+        @Valid @RequestBody UpdateDeliveryRecordStatusRequest updateStatusDeliveryRecordRequest
+    ) {
+        UpdateDeliveryRecordStatusRequestDto requestDto = UpdateDeliveryRecordStatusRequestDto.of(
+            id, updateStatusDeliveryRecordRequest);
+        UpdateDeliveryRecordStatusResponse response = deliveryRecordService.updateStatusDeliveryRecord(
+            requestDto);
+        return ResponseEntity.ok(CommonResponse.success(response));
     }
 }

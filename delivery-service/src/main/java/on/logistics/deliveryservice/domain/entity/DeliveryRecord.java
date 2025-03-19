@@ -80,4 +80,8 @@ public class DeliveryRecord extends BaseEntity {
         this.actualDistance = actualDistance;
         this.actualDuration = actualDuration;
     }
+
+    public void updateStatus(DeliveryRecord deliveryRecord) {
+        this.status = deliveryRecord.getStatus();
+    }
 }
