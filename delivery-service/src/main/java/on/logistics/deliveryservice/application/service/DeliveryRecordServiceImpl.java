@@ -75,7 +75,7 @@ public class DeliveryRecordServiceImpl implements DeliveryRecordService {
             throw new DeliveryRecordException(
                 DeliveryRecordExceptionCode.DELIVERY_RECORD_DELIVERY_STATUS_CANCEL);
         }
-        deliveryRecord.updateStatus(deliveryRecord);
+        deliveryRecord.updateStatus(requestDto.status());
         return UpdateDeliveryRecordStatusResponse.of(deliveryRecord.getId());
     }
 

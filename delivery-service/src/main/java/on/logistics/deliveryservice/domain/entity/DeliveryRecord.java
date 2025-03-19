@@ -81,7 +81,7 @@ public class DeliveryRecord extends BaseEntity {
         this.actualDuration = actualDuration;
     }
 
-    public void updateStatus(DeliveryRecord deliveryRecord) {
-        this.status = deliveryRecord.getStatus();
+    public void updateStatus(DeliveryRecordStatus deliveryRecordStatus) {
+        this.status = deliveryRecordStatus;
     }
 }
