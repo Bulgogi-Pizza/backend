@@ -4,8 +4,11 @@ import static on.logistics.orderservice.exception.OrderException.OutOfStockProdu
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import on.logistics.orderservice.application.service.dtos.cancel.CancelOrderRequestDto;
+import on.logistics.orderservice.application.service.dtos.cancel.CancelOrderResponseDto;
 import on.logistics.orderservice.application.service.dtos.create.CreateOrderRequestDto;
 import on.logistics.orderservice.application.service.dtos.create.CreateOrderRequestDto.OrdersByVendor;
 import on.logistics.orderservice.application.service.dtos.create.CreateOrderRequestDto.OrdersByVendor.OrderedProduct;
@@ -252,7 +255,7 @@ public class OrderServiceImpl implements OrderService {
     for (UpdateOrderRequestDto.OrdersByVendor orderByVendor : ordersByVendor) {
       VendorOrder vendorOrder = order.getVendorOrders().stream()
           .filter(vo -> vo.getId().equals(orderByVendor.orderIdByVendor()))
-          .filter(vo -> OrderStatus.isAbleToCancel(vo.getStatus()))
+          .filter(vo -> OrderStatus.isBeforeShipped(vo.getStatus()))
           .findFirst()
           .orElseThrow(VendorOrderNotFoundException::new);
 
@@ -274,5 +277,28 @@ public class OrderServiceImpl implements OrderService {
 
       orderProduct.updateQuantity(product.quantity());
     }
+  }
+
+  @Transactional
+  @Override
+  public CancelOrderResponseDto cancelOrder(CancelOrderRequestDto requestDto) {
+    log.info("주문 취소 요청: {}", requestDto);
+
+    Order order = orderRepository.findOrderById(requestDto.orderId())
+        .orElseThrow(OrderNotFoundException::new);
+
+    cancelVendorOrders(order, requestDto.vendorOrderId());
+
+    return CancelOrderResponseDto.from(order);
+  }
+
+  private void cancelVendorOrders(Order order, UUID vendorOrderId) {
+    VendorOrder vendorOrder = order.getVendorOrders().stream()
+        .filter(vo -> vo.getId().equals(vendorOrderId))
+        .filter(vo -> OrderStatus.isBeforeShipped(vo.getStatus()))
+        .findFirst()
+        .orElseThrow(VendorOrderNotFoundException::new);
+
+    vendorOrder.cancel();
   }
 }

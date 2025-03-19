@@ -1,5 +1,7 @@
 package on.logistics.orderservice.application.service;
 
+import on.logistics.orderservice.application.service.dtos.cancel.CancelOrderRequestDto;
+import on.logistics.orderservice.application.service.dtos.cancel.CancelOrderResponseDto;
 import on.logistics.orderservice.application.service.dtos.create.CreateOrderRequestDto;
 import on.logistics.orderservice.application.service.dtos.create.CreateOrderResponseDto;
 import on.logistics.orderservice.application.service.dtos.get.all.SearchOrderPageRequestDto;
@@ -19,4 +21,6 @@ public interface OrderService {
   GetOrderDetailResponseDto getOrderDetail(final GetOrderDetailRequestDto requestDto);
 
   UpdateOrderResponseDto updateOrder(final UpdateOrderRequestDto requestDto);
+
+  CancelOrderResponseDto cancelOrder(final CancelOrderRequestDto requestDto);
 }

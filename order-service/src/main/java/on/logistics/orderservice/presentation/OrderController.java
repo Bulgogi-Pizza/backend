@@ -5,6 +5,8 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import on.logistics.orderservice.application.service.OrderService;
+import on.logistics.orderservice.application.service.dtos.cancel.CancelOrderRequestDto;
+import on.logistics.orderservice.application.service.dtos.cancel.CancelOrderResponseDto;
 import on.logistics.orderservice.application.service.dtos.create.CreateOrderRequestDto;
 import on.logistics.orderservice.application.service.dtos.create.CreateOrderResponseDto;
 import on.logistics.orderservice.application.service.dtos.get.all.SearchOrderPageRequestDto;
@@ -86,6 +88,16 @@ public class OrderController {
   ) {
     final var requestDto = UpdateOrderRequestDto.from(request, orderId);
     final var responseDto = orderService.updateOrder(requestDto);
+    return ResponseEntity.ok(CommonResponse.success(responseDto));
+  }
+
+  @PatchMapping("/{orderId}/cancel/{vendorOrderId}")
+  public ResponseEntity<CommonResponse<CancelOrderResponseDto>> cancelOrder(
+      @PathVariable final UUID orderId,
+      @PathVariable final UUID vendorOrderId
+  ) {
+    final var requestDto = CancelOrderRequestDto.from(orderId, vendorOrderId);
+    final var responseDto = orderService.cancelOrder(requestDto);
     return ResponseEntity.ok(CommonResponse.success(responseDto));
   }
 }

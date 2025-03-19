@@ -9,7 +9,7 @@ public enum OrderStatus {
   RETURNED,
   ;
 
-  public static boolean isAbleToCancel(OrderStatus status) {
+  public static boolean isBeforeShipped(OrderStatus status) {
     return status == ORDER_CREATED;
   }
 }

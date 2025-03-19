@@ -87,4 +87,8 @@ public class VendorOrder {
   public void updateArrivalDeadline(LocalDateTime arrivalDeadline) {
     this.arrivalDeadline = arrivalDeadline;
   }
+
+  public void cancel() {
+    this.status = OrderStatus.CANCELLED;
+  }
 }
