@@ -7,8 +7,8 @@ import lombok.extern.slf4j.Slf4j;
 import on.logistics.orderservice.application.service.OrderService;
 import on.logistics.orderservice.application.service.dtos.create.CreateOrderRequestDto;
 import on.logistics.orderservice.application.service.dtos.create.CreateOrderResponseDto;
-import on.logistics.orderservice.application.service.dtos.get.all.GetOrderPageByOrdererUserIdResponseDto;
-import on.logistics.orderservice.application.service.dtos.get.all.GetOrdererPageByOrdererUserIdRequestDto;
+import on.logistics.orderservice.application.service.dtos.get.all.SearchOrderPageResponseDto;
+import on.logistics.orderservice.application.service.dtos.get.all.SearchOrderPageRequestDto;
 import on.logistics.orderservice.global.application.dtos.PageDto;
 import on.logistics.orderservice.global.enums.AuthRole;
 import on.logistics.orderservice.global.presentation.dtos.CommonResponse;
@@ -43,19 +43,23 @@ public class OrderController {
   }
 
   @GetMapping
-  public ResponseEntity<CommonResponse<PageDto<GetOrderPageByOrdererUserIdResponseDto>>> getOrderPageByOrdererUserId(
-      @RequestParam(required = false) UUID userId,
+  public ResponseEntity<CommonResponse<PageDto<SearchOrderPageResponseDto>>> searchOrderPage(
+      @RequestParam(required = false) final UUID ordererUserId,
+      @RequestParam(required = false) final String userNickname,
+      @RequestParam(required = false) final UUID ordererCompanyId,
+      @RequestParam(required = false) final String ordererCompanyName,
+      @RequestParam(required = false) final UUID vendorCompanyId,
+      @RequestParam(required = false) final String vendorCompanyName,
       final Pageable pageable
   ) {
     log.warn("패스포트 토큰을 사용하도록 해야합니다!!");
-    UUID ordererUserId = UUID.fromString("29547e69-f33a-430d-b9a6-75e2b265585c");
-    final AuthRole ordererUserRole = AuthRole.MASTER;
-    if (AuthRole.isAllowedSearchingOrderPageByUserId(ordererUserRole) && userId != null) {
-      log.info("마스터 권한으로 다른 사용자의 주문 목록을 조회합니다. userId={}", userId);
-      ordererUserId = userId;
-    }
-    final var requestDto = GetOrdererPageByOrdererUserIdRequestDto.from(ordererUserId, pageable);
-    final var responseDto = orderService.getOrderPageByOrdererUserId(requestDto);
+    final UUID userId = UUID.fromString("29547e69-f33a-430d-b9a6-75e2b265585c");
+    final AuthRole userRole = AuthRole.MASTER;
+    final var requestDto = SearchOrderPageRequestDto.from(
+        pageable, userId, userRole, ordererUserId, userNickname,
+        ordererCompanyId, ordererCompanyName, vendorCompanyId, vendorCompanyName
+    );
+    final var responseDto = orderService.searchOrderPage(requestDto);
     return ResponseEntity.ok(CommonResponse.success(responseDto));
   }
 }

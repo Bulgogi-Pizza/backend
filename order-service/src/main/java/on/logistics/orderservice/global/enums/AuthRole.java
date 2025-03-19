@@ -7,7 +7,7 @@ public enum AuthRole {
   COMPANY_MANAGER,
   ;
 
-  public static boolean isAllowedSearchingOrderPageByUserId(AuthRole role) {
+  public static boolean isAllowedSearchingOtherUserOrders(AuthRole role) {
     return role != null
         && (role.equals(MASTER) || role.equals(HUB_MANAGER) || role.equals(DELIVERY_MANAGER));
   }

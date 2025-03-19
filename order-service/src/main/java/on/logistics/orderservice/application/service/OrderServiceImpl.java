@@ -10,8 +10,8 @@ import on.logistics.orderservice.application.service.dtos.create.CreateOrderRequ
 import on.logistics.orderservice.application.service.dtos.create.CreateOrderRequestDto.OrdersByVendor;
 import on.logistics.orderservice.application.service.dtos.create.CreateOrderRequestDto.OrdersByVendor.OrderedProduct;
 import on.logistics.orderservice.application.service.dtos.create.CreateOrderResponseDto;
-import on.logistics.orderservice.application.service.dtos.get.all.GetOrderPageByOrdererUserIdResponseDto;
-import on.logistics.orderservice.application.service.dtos.get.all.GetOrdererPageByOrdererUserIdRequestDto;
+import on.logistics.orderservice.application.service.dtos.get.all.SearchOrderPageRequestDto;
+import on.logistics.orderservice.application.service.dtos.get.all.SearchOrderPageResponseDto;
 import on.logistics.orderservice.domain.entity.Order;
 import on.logistics.orderservice.domain.entity.OrderProduct;
 import on.logistics.orderservice.domain.entity.Orderer;
@@ -23,6 +23,7 @@ import on.logistics.orderservice.domain.entity.dtos.CreateOrdererDto;
 import on.logistics.orderservice.domain.entity.dtos.CreateVendorDto;
 import on.logistics.orderservice.domain.entity.dtos.CreateVendorOrderDto;
 import on.logistics.orderservice.domain.repository.OrderRepository;
+import on.logistics.orderservice.domain.repository.dtos.SearchOrderPageDto;
 import on.logistics.orderservice.global.application.dtos.PageDto;
 import on.logistics.orderservice.infrastructure.clients.ai.dtos.GenerateShippingDeadlineRequestDto;
 import on.logistics.orderservice.infrastructure.clients.ai.feign.dtos.GenerateShippingDeadlineResponse;
@@ -66,15 +67,15 @@ public class OrderServiceImpl implements OrderService {
   }
 
   @Override
-  public PageDto<GetOrderPageByOrdererUserIdResponseDto> getOrderPageByOrdererUserId(
-      GetOrdererPageByOrdererUserIdRequestDto requestDto
+  public PageDto<SearchOrderPageResponseDto> searchOrderPage(
+      SearchOrderPageRequestDto requestDto
   ) {
     log.info("주문자별 주문 목록 조회 요청: {}", requestDto);
 
-    Page<Order> allByOrdererUserId = orderRepository.findAllByOrdererUserId(
-        requestDto.ordererUserId(), requestDto.pageable());
-    Page<GetOrderPageByOrdererUserIdResponseDto> getOrderPageByOrdererUserIdResponseDtoPage =
-        allByOrdererUserId.map(GetOrderPageByOrdererUserIdResponseDto::from);
+    SearchOrderPageDto searchOrderPageDto = SearchOrderPageDto.from(requestDto);
+    Page<Order> allByOrdererUserId = orderRepository.searchOrderPage(searchOrderPageDto);
+    Page<SearchOrderPageResponseDto> getOrderPageByOrdererUserIdResponseDtoPage =
+        allByOrdererUserId.map(SearchOrderPageResponseDto::from);
     return PageDto.from(getOrderPageByOrdererUserIdResponseDtoPage);
   }
 

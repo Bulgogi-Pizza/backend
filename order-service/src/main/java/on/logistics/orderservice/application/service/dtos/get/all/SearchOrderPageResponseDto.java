@@ -6,7 +6,7 @@ import java.util.UUID;
 import on.logistics.orderservice.domain.entity.Order;
 import on.logistics.orderservice.domain.enums.OrderStatus;
 
-public record GetOrderPageByOrdererUserIdResponseDto(
+public record SearchOrderPageResponseDto(
     UUID orderId,
     LocalDateTime orderCreatedAt,
     UUID ordererUserId,
@@ -26,8 +26,8 @@ public record GetOrderPageByOrdererUserIdResponseDto(
 
   }
 
-  public static GetOrderPageByOrdererUserIdResponseDto from(Order order) {
-    return new GetOrderPageByOrdererUserIdResponseDto(
+  public static SearchOrderPageResponseDto from(Order order) {
+    return new SearchOrderPageResponseDto(
         order.getId(),
         order.getCreatedAt(),
         order.getOrderer().getId(),
