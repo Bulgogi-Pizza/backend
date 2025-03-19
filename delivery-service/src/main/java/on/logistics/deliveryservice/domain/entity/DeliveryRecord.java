@@ -58,7 +58,7 @@ public class DeliveryRecord extends BaseEntity {
     private Long estimatedDuration;
 
     @Column(name = "actual_distance")
-    private double actualDistance;
+    private Long actualDistance;
 
     @Column(name = "actual_duration")
     private Long actualDuration;
@@ -68,15 +68,16 @@ public class DeliveryRecord extends BaseEntity {
 
     public static DeliveryRecord create(CreateDeliveryRecordDto createEntityDto,
         Delivery delivery) {
-        return DeliveryRecord.builder()
-            .sequence(createEntityDto.sequence())
-            .delivery(delivery)
-            .status(createEntityDto.status())
-            .startHubId(createEntityDto.startHubId())
+        return DeliveryRecord.builder().sequence(createEntityDto.sequence()).delivery(delivery)
+            .status(createEntityDto.status()).startHubId(createEntityDto.startHubId())
             .endHubId(createEntityDto.endHubId())
             .estimatedDistance(createEntityDto.estimatedDistance())
             .estimatedDuration(createEntityDto.estimatedDuration())
-            .deliveryManagerId(createEntityDto.deliveryManagerId())
-            .build();
+            .deliveryManagerId(createEntityDto.deliveryManagerId()).build();
+    }
+
+    public void update(Long actualDistance, Long actualDuration) {
+        this.actualDistance = actualDistance;
+        this.actualDuration = actualDuration;
     }
 }

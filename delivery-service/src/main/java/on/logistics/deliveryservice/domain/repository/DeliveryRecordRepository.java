@@ -1,6 +1,7 @@
 package on.logistics.deliveryservice.domain.repository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import on.logistics.deliveryservice.domain.entity.DeliveryRecord;
 
@@ -11,4 +12,6 @@ public interface DeliveryRecordRepository {
     Long countByDeliveryId(UUID deliveryId);
 
     void save(DeliveryRecord saved);
+
+    Optional<DeliveryRecord> findById(UUID uuid);
 }

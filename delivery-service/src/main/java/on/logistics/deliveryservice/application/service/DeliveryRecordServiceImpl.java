@@ -3,15 +3,19 @@ package on.logistics.deliveryservice.application.service;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import on.logistics.deliveryservice.application.dtos.request.CreateDeliveryRecordRequestDto;
+import on.logistics.deliveryservice.application.dtos.request.UpdateDeliveryRecordRequestDto;
 import on.logistics.deliveryservice.domain.dtos.CreateDeliveryRecordDto;
 import on.logistics.deliveryservice.domain.entity.Delivery;
 import on.logistics.deliveryservice.domain.entity.DeliveryRecord;
 import on.logistics.deliveryservice.domain.enums.DeliveryRecordStatus;
 import on.logistics.deliveryservice.domain.repository.DeliveryRecordRepository;
+import on.logistics.deliveryservice.exception.DeliveryRecordException;
+import on.logistics.deliveryservice.exception.DeliveryRecordExceptionCode;
 import on.logistics.deliveryservice.infrastructure.client.hub.HubServiceClient;
 import on.logistics.deliveryservice.infrastructure.client.map.MapServiceClient;
 import on.logistics.deliveryservice.infrastructure.client.map.feign.dtos.GetEstimateInfo;
 import on.logistics.deliveryservice.presentation.dtos.response.CreateDeliveryRecordResponse;
+import on.logistics.deliveryservice.presentation.dtos.response.UpdateDeliveryRecordResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,6 +39,22 @@ public class DeliveryRecordServiceImpl implements DeliveryRecordService {
         DeliveryRecord saved = DeliveryRecord.create(createEntityDto, delivery);
         deliveryRecordRepository.save(saved);
         return CreateDeliveryRecordResponse.of(saved.getId());
+    }
+
+    @Override
+    @Transactional
+    public UpdateDeliveryRecordResponse updateActualDeliveryRecord(
+        UpdateDeliveryRecordRequestDto requestDto) {
+        DeliveryRecord deliveryRecord = getOrElseThrow(requestDto.deliveryRecordId());
+        deliveryRecord.update(requestDto.actualDistance(), requestDto.actualDuration());
+
+        return UpdateDeliveryRecordResponse.of(deliveryRecord.getId());
+    }
+
+    private DeliveryRecord getOrElseThrow(UUID deliveryRecordId) {
+        return deliveryRecordRepository.findById(deliveryRecordId).orElseThrow(
+            () -> new DeliveryRecordException(
+                DeliveryRecordExceptionCode.DELIVERY_RECORD_NOT_FOUND));
     }
 
     private CreateDeliveryRecordDto getCreateDeliveryRecordDto(
