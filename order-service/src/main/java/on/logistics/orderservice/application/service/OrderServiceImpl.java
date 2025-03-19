@@ -26,6 +26,7 @@ import on.logistics.orderservice.domain.entity.dtos.CreateOrderProductDto;
 import on.logistics.orderservice.domain.entity.dtos.CreateOrdererDto;
 import on.logistics.orderservice.domain.entity.dtos.CreateVendorDto;
 import on.logistics.orderservice.domain.entity.dtos.CreateVendorOrderDto;
+import on.logistics.orderservice.domain.enums.OrderStatus;
 import on.logistics.orderservice.domain.repository.OrderRepository;
 import on.logistics.orderservice.domain.repository.dtos.SearchOrderPageDto;
 import on.logistics.orderservice.exception.OrderException.OrderNotFoundException;
@@ -251,6 +252,7 @@ public class OrderServiceImpl implements OrderService {
     for (UpdateOrderRequestDto.OrdersByVendor orderByVendor : ordersByVendor) {
       VendorOrder vendorOrder = order.getVendorOrders().stream()
           .filter(vo -> vo.getId().equals(orderByVendor.orderIdByVendor()))
+          .filter(vo -> OrderStatus.isAbleToCancel(vo.getStatus()))
           .findFirst()
           .orElseThrow(VendorOrderNotFoundException::new);
 
