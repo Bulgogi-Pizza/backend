@@ -4,9 +4,12 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import on.logistics.deliveryservice.application.dtos.request.SearchDeliveryRecordRequestDto;
 import on.logistics.deliveryservice.domain.entity.DeliveryRecord;
 import on.logistics.deliveryservice.domain.repository.DeliveryRecordRepository;
 import on.logistics.deliveryservice.infrastructure.jpa.DeliveryRecordJpaRepository;
+import on.logistics.deliveryservice.infrastructure.querydsl.DeliveryRecordQueryRepository;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -14,6 +17,8 @@ import org.springframework.stereotype.Repository;
 public class DeliveryRecordRepositoryImpl implements DeliveryRecordRepository {
 
     private final DeliveryRecordJpaRepository jpaRepository;
+    private final DeliveryRecordQueryRepository queryRepository;
+    private final DeliveryRecordQueryRepository deliveryRecordQueryRepository;
 
     @Override
     public List<DeliveryRecord> findByDeliveryId(UUID deliveryId) {
@@ -38,5 +43,11 @@ public class DeliveryRecordRepositoryImpl implements DeliveryRecordRepository {
     @Override
     public void delete(DeliveryRecord deliveryRecord) {
         jpaRepository.delete(deliveryRecord);
+    }
+
+    @Override
+    public Page<DeliveryRecord> searchDeliveryRecord(SearchDeliveryRecordRequestDto requestDto) {
+
+        return deliveryRecordQueryRepository.searchDelivery(requestDto);
     }
 }

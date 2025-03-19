@@ -3,6 +3,7 @@ package on.logistics.deliveryservice.application.service;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import on.logistics.deliveryservice.application.dtos.request.CreateDeliveryRecordRequestDto;
+import on.logistics.deliveryservice.application.dtos.request.SearchDeliveryRecordRequestDto;
 import on.logistics.deliveryservice.application.dtos.request.UpdateDeliveryRecordRequestDto;
 import on.logistics.deliveryservice.application.dtos.request.UpdateDeliveryRecordStatusRequestDto;
 import on.logistics.deliveryservice.domain.dtos.CreateDeliveryRecordDto;
@@ -13,13 +14,16 @@ import on.logistics.deliveryservice.domain.enums.DeliveryStatus;
 import on.logistics.deliveryservice.domain.repository.DeliveryRecordRepository;
 import on.logistics.deliveryservice.exception.DeliveryRecordException;
 import on.logistics.deliveryservice.exception.DeliveryRecordExceptionCode;
+import on.logistics.deliveryservice.global.application.dtos.PageDto;
 import on.logistics.deliveryservice.infrastructure.client.hub.HubServiceClient;
 import on.logistics.deliveryservice.infrastructure.client.map.MapServiceClient;
 import on.logistics.deliveryservice.infrastructure.client.map.feign.dtos.GetEstimateInfo;
 import on.logistics.deliveryservice.presentation.dtos.response.CreateDeliveryRecordResponse;
 import on.logistics.deliveryservice.presentation.dtos.response.GetDeliveryRecordResponse;
+import on.logistics.deliveryservice.presentation.dtos.response.SearchDeliveryRecordResponse;
 import on.logistics.deliveryservice.presentation.dtos.response.UpdateDeliveryRecordResponse;
 import on.logistics.deliveryservice.presentation.dtos.response.UpdateDeliveryRecordStatusResponse;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -79,6 +83,16 @@ public class DeliveryRecordServiceImpl implements DeliveryRecordService {
     public GetDeliveryRecordResponse getDeliveryRecord(UUID id) {
         DeliveryRecord deliveryRecord = getOrElseThrow(id);
         return GetDeliveryRecordResponse.from(deliveryRecord);
+    }
+
+    @Override
+    public PageDto<SearchDeliveryRecordResponse> searchDeliveryRecord(
+        SearchDeliveryRecordRequestDto requestDto) {
+        Page<DeliveryRecord> deliveryRecordPage = deliveryRecordRepository.searchDeliveryRecord(
+            requestDto);
+        Page<SearchDeliveryRecordResponse> responsePage = deliveryRecordPage.map(
+            SearchDeliveryRecordResponse::from);
+        return PageDto.from(responsePage);
     }
 
     private DeliveryRecord getOrElseThrow(UUID deliveryRecordId) {
