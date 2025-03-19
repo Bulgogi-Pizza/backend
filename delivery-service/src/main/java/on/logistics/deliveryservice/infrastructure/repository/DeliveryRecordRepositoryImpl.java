@@ -18,7 +18,6 @@ public class DeliveryRecordRepositoryImpl implements DeliveryRecordRepository {
 
     private final DeliveryRecordJpaRepository jpaRepository;
     private final DeliveryRecordQueryRepository queryRepository;
-    private final DeliveryRecordQueryRepository deliveryRecordQueryRepository;
 
     @Override
     public List<DeliveryRecord> findByDeliveryId(UUID deliveryId) {
@@ -48,6 +47,6 @@ public class DeliveryRecordRepositoryImpl implements DeliveryRecordRepository {
     @Override
     public Page<DeliveryRecord> searchDeliveryRecord(SearchDeliveryRecordRequestDto requestDto) {
 
-        return deliveryRecordQueryRepository.searchDelivery(requestDto);
+        return queryRepository.searchDeliveryRecord(requestDto);
     }
 }

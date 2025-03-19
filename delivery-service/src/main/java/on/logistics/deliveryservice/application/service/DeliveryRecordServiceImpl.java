@@ -107,7 +107,7 @@ public class DeliveryRecordServiceImpl implements DeliveryRecordService {
         Long deliveryRecordCount = deliveryRecordRepository.countByDeliveryId(
             requestDto.deliveryId());
 
-        long sequence = 0L;
+        long sequence = 1L;
         DeliveryRecordStatus deliveryRecordStatus = DeliveryRecordStatus.HUB_MOVING;
 
         if (deliveryRecordCount != 0) {

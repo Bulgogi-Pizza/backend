@@ -14,6 +14,7 @@ import on.logistics.deliveryservice.application.dtos.request.SearchDeliveryRecor
 import on.logistics.deliveryservice.domain.entity.DeliveryRecord;
 import on.logistics.deliveryservice.global.enums.PageSortBy;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
@@ -30,7 +31,7 @@ public class DeliveryRecordQueryRepositoryImpl implements DeliveryRecordQueryRep
         List<DeliveryRecord> deliveryRecordList = searchDeliveryList(builder,
             requestDto.pageable());
         Long total = totalCount(builder);
-        return null;
+        return new PageImpl<>(deliveryRecordList, requestDto.pageable(), total);
     }
 
     private Long totalCount(BooleanBuilder builder) {
