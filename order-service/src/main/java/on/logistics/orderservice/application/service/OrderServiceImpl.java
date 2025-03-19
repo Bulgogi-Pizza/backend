@@ -16,6 +16,8 @@ import on.logistics.orderservice.application.service.dtos.get.all.SearchOrderPag
 import on.logistics.orderservice.application.service.dtos.get.all.SearchOrderPageResponseDto;
 import on.logistics.orderservice.application.service.dtos.get.detail.GetOrderDetailRequestDto;
 import on.logistics.orderservice.application.service.dtos.get.detail.GetOrderDetailResponseDto;
+import on.logistics.orderservice.application.service.dtos.returns.denied.ReturnRequestDeniedRequestDto;
+import on.logistics.orderservice.application.service.dtos.returns.denied.ReturnRequestDeniedResponseDto;
 import on.logistics.orderservice.application.service.dtos.returns.request.ReturnRequestRequestDto;
 import on.logistics.orderservice.application.service.dtos.returns.request.ReturnRequestResponseDto;
 import on.logistics.orderservice.application.service.dtos.update.UpdateOrderRequestDto;
@@ -335,5 +337,26 @@ public class OrderServiceImpl implements OrderService {
     vendorOrder.requestReturn();
 
     return ReturnRequestResponseDto.from(vendorOrder);
+  }
+
+  @Transactional
+  @Override
+  public ReturnRequestDeniedResponseDto denyReturnRequest(
+      final ReturnRequestDeniedRequestDto requestDto
+  ) {
+    log.info("반품 거부 요청: {}", requestDto);
+
+    Order order = orderRepository.findOrderById(requestDto.orderId())
+        .orElseThrow(OrderNotFoundException::new);
+
+    VendorOrder vendorOrder = order.getVendorOrders().stream()
+        .filter(vo -> vo.getId().equals(requestDto.vendorOrderId()))
+        .filter(vo -> OrderStatus.isReturnRequested(vo.getStatus()))
+        .findFirst()
+        .orElseThrow(VendorOrderNotFoundException::new);
+
+    vendorOrder.denyReturn();
+
+    return ReturnRequestDeniedResponseDto.from(vendorOrder);
   }
 }

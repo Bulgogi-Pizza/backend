@@ -13,6 +13,8 @@ import on.logistics.orderservice.application.service.dtos.get.all.SearchOrderPag
 import on.logistics.orderservice.application.service.dtos.get.all.SearchOrderPageResponseDto;
 import on.logistics.orderservice.application.service.dtos.get.detail.GetOrderDetailRequestDto;
 import on.logistics.orderservice.application.service.dtos.get.detail.GetOrderDetailResponseDto;
+import on.logistics.orderservice.application.service.dtos.returns.denied.ReturnRequestDeniedRequestDto;
+import on.logistics.orderservice.application.service.dtos.returns.denied.ReturnRequestDeniedResponseDto;
 import on.logistics.orderservice.application.service.dtos.returns.request.ReturnRequestRequestDto;
 import on.logistics.orderservice.application.service.dtos.returns.request.ReturnRequestResponseDto;
 import on.logistics.orderservice.application.service.dtos.update.UpdateOrderRequestDto;
@@ -122,6 +124,16 @@ public class OrderController {
   ) {
     final var requestDto = ReturnRequestRequestDto.from(orderId, vendorOrderId);
     final var responseDto = orderService.requestReturn(requestDto);
+    return ResponseEntity.ok(CommonResponse.success(responseDto));
+  }
+
+  @PatchMapping("/{orderId}/return/denied/{vendorOrderId}")
+  public ResponseEntity<CommonResponse<ReturnRequestDeniedResponseDto>> denyReturnRequest(
+      @PathVariable final UUID orderId,
+      @PathVariable final UUID vendorOrderId
+  ) {
+    final var requestDto = ReturnRequestDeniedRequestDto.from(orderId, vendorOrderId);
+    final var responseDto = orderService.denyReturnRequest(requestDto);
     return ResponseEntity.ok(CommonResponse.success(responseDto));
   }
 }

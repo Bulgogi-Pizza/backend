@@ -105,4 +105,8 @@ public class VendorOrder {
   public void requestReturn() {
     this.status = OrderStatus.RETURN_REQUESTED;
   }
+
+  public void denyReturn() {
+    this.status = OrderStatus.RETURN_REQUEST_DENIED;
+  }
 }
