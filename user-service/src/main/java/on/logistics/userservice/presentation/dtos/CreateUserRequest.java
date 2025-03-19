@@ -1,6 +1,6 @@
 package on.logistics.userservice.presentation.dtos;
 
-public record UserCreateRequest(
+public record CreateUserRequest(
     String nickname,
     String slackEmail
 ) {

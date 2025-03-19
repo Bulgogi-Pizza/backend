@@ -1,13 +1,17 @@
 package on.logistics.userservice.application.service;
 
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.UUID;
-import on.logistics.userservice.application.dtos.UserCreateRequestDto;
-import on.logistics.userservice.presentation.dtos.UserCreateResponse;
-import on.logistics.userservice.presentation.dtos.UserFindByIdResponse;
+import on.logistics.userservice.application.dtos.CreateUserRequestDto;
+import on.logistics.userservice.presentation.dtos.CreateUserResponse;
+import on.logistics.userservice.presentation.dtos.FindByIdUserResponse;
+import on.logistics.userservice.presentation.dtos.FindMyUserResponse;
 
 public interface UserService {
 
-    UserCreateResponse createUser(UserCreateRequestDto requestDto);
+    CreateUserResponse createUser(CreateUserRequestDto requestDto);
 
-    UserFindByIdResponse findUserById(UUID id);
+    FindByIdUserResponse findUserById(UUID id);
+
+    FindMyUserResponse findMyUser(HttpServletRequest request);
 }

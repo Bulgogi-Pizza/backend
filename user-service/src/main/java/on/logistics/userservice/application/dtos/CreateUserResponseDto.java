@@ -1,6 +1,6 @@
 package on.logistics.userservice.application.dtos;
 
-public record UserCreateResponseDto(
+public record CreateUserResponseDto(
 
 ) {
 

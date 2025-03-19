@@ -1,5 +1,5 @@
 server:
-  port: 8910
+  port: 18082
 
 spring:
   application:
@@ -16,10 +16,10 @@ spring:
 
   data:
     redis:
-      host: jdbc:redis://localhost
-      port: 6379
       username: ENC(BFWqJNte+k89HBmq+7Q9nw==)
       password: ENC(QBL7vn8XxPlqYUlcp2WNCA==)
+      host: localhost
+      port: 6379
 
 eureka:
   client:
