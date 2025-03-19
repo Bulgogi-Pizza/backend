@@ -1,4 +1,4 @@
-package on.logistics.deliveryservice.infrastructure.repository;
+package on.logistics.deliveryservice.infrastructure.persistence.repository;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -6,8 +6,8 @@ import lombok.RequiredArgsConstructor;
 import on.logistics.deliveryservice.application.dtos.request.SearchDeliveryRequestDto;
 import on.logistics.deliveryservice.domain.entity.Delivery;
 import on.logistics.deliveryservice.domain.repository.DeliveryRepository;
-import on.logistics.deliveryservice.infrastructure.jpa.DeliveryJpaRepository;
-import on.logistics.deliveryservice.infrastructure.querydsl.DeliveryQueryRepository;
+import on.logistics.deliveryservice.infrastructure.persistence.jpa.DeliveryJpaRepository;
+import on.logistics.deliveryservice.infrastructure.persistence.querydsl.DeliveryQueryRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Repository;
 

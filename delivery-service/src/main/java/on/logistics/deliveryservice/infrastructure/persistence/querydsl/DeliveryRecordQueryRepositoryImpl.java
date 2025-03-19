@@ -1,4 +1,4 @@
-package on.logistics.deliveryservice.infrastructure.querydsl;
+package on.logistics.deliveryservice.infrastructure.persistence.querydsl;
 
 import static on.logistics.deliveryservice.domain.entity.QDeliveryRecord.deliveryRecord;
 

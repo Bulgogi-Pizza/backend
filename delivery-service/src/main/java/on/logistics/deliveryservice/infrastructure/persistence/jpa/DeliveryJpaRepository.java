@@ -1,4 +1,4 @@
-package on.logistics.deliveryservice.infrastructure.jpa;
+package on.logistics.deliveryservice.infrastructure.persistence.jpa;
 
 import java.util.UUID;
 import on.logistics.deliveryservice.domain.entity.Delivery;
