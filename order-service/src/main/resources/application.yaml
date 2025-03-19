@@ -6,9 +6,9 @@ spring:
     name: order-service
 
   datasource:
-    url: ENC(JxM6QEGqptISeqw84S8doCs2qncQxWQI5VCAAEUI076zH+qnHbixY630ctTDHpU5OjxrjtfeM8d6Sp3WolMsqlwsZ6iVG+sLXiXoEJ8ry/9GDCnys2VLwm4gS1/Nq8fl+97A4Joap1o=)
+    url: ENC(NPJQVzywseDK5fvzPMms1CWd2dlt84ikWyCIQXKt0qxvvn0wGj+11Wgt4zCuFpmqn9phsKTgSEd+e2gTQPQ9s1M1a9Ct2kWYkOtipZwIU0CCGWZiPv7jOi7fKOhCUvZWXPfx1pF0b6M=)
     username: ENC(R806XDgVl0uvipypT5G88k3P/C3yp4sW)
-    password: ENC(edPf0aB+iYgH7eo3bTLF5Zq+pwwitlsG)
+    password: ENC(b5+nWwWC/nm5V7oHaHfP86SzCG3AZSQJ)
   jpa:
     hibernate:
       ddl-auto: create
