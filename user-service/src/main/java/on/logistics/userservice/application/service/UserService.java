@@ -23,4 +23,6 @@ public interface UserService {
     PageDto<SearchUserResponse> searchUser(SearchUserDto requestDto);
 
     UpdateUserResponse updateUser(HttpServletRequest request, UpdateUserDto requestDto);
+
+    void deleteUser(UUID id);
 }

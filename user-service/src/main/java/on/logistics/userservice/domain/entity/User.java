@@ -14,6 +14,7 @@ import lombok.NoArgsConstructor;
 import on.logistics.userservice.application.dtos.CreateUserDto;
 import on.logistics.userservice.domain.entity.vo.SlackEmail;
 import on.logistics.userservice.global.domain.BaseEntity;
+import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
 @Getter
@@ -23,6 +24,7 @@ import org.hibernate.annotations.SQLRestriction;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @SQLRestriction("is_deleted = false")
 @Table(name = "p_user")
+@SQLDelete(sql = "UPDATE p_user SET is_deleted = true WHERE id = ?")
 public class User extends BaseEntity {
 
     @Id

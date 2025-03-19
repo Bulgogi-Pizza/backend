@@ -82,5 +82,11 @@ public class UserController {
         return ResponseEntity.ok(CommonResponse.success(response));
     }
 
-
+    @DeleteMapping("/{id}")
+    public ResponseEntity<CommonResponse<Void>> deleteUser(
+        @PathVariable UUID id
+    ) {
+        userService.deleteUser(id);
+        return ResponseEntity.ok(CommonResponse.success());
+    }
 }

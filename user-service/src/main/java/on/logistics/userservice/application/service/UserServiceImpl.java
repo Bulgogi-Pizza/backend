@@ -72,10 +72,18 @@ public class UserServiceImpl implements UserService {
 
         User user = findByIdOrElseThrow(id);
 
+        // TODO: updateBy 해결 필
         user.updateNickname(requestDto.nickname());
         user.updateSlackEmail(requestDto.slackEmail());
 
         return UpdateUserResponse.from(user);
+    }
+
+    @Override
+    public void deleteUser(UUID id) {
+        // TODO: deletedBy, deletedAt 해결 필
+        User user = findByIdOrElseThrow(id);
+        userRepository.delete(user);
     }
 
     private User findByIdOrElseThrow(UUID id) {
