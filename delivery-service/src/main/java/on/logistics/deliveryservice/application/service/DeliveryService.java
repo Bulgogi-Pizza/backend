@@ -5,6 +5,7 @@ import on.logistics.deliveryservice.application.dtos.request.CreateDeliveryReque
 import on.logistics.deliveryservice.application.dtos.request.SearchDeliveryRequestDto;
 import on.logistics.deliveryservice.application.dtos.request.UpdateAssignManagerRequestDto;
 import on.logistics.deliveryservice.application.dtos.request.UpdateDeliveryRequestDto;
+import on.logistics.deliveryservice.domain.entity.Delivery;
 import on.logistics.deliveryservice.global.application.dtos.PageDto;
 import on.logistics.deliveryservice.presentation.dtos.response.CreateDeliveryResponse;
 import on.logistics.deliveryservice.presentation.dtos.response.GetDeliveryResponse;
@@ -41,4 +42,7 @@ public interface DeliveryService {
     UpdateDeliveryStatusCompanyArriveResponse updateDeliveryStatusCompanyArrive(UUID id);
 
     UpdateDeliveryStatusCancelResponse updateDeliveryStatusCancel(UUID id);
+
+    Delivery getOrElseThrow(UUID deliveryId);
+
 }

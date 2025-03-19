@@ -170,7 +170,7 @@ public class DeliveryServiceImpl implements DeliveryService {
         return DeliveryUserInfoDto.of(recipient, recipientSlackEmail);
     }
 
-    private Delivery getOrElseThrow(UUID deliveryId) {
+    public Delivery getOrElseThrow(UUID deliveryId) {
         return deliveryRepository.findById(deliveryId)
             .orElseThrow(() -> new DeliveryException(DeliveryExceptionCode.DELIVERY_NOT_FOUND));
     }
