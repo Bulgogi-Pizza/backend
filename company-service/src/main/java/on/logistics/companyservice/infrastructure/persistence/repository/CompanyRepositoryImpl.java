@@ -1,4 +1,4 @@
-package on.logistics.companyservice.infrastructure.repository;
+package on.logistics.companyservice.infrastructure.persistence.repository;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -6,8 +6,8 @@ import lombok.RequiredArgsConstructor;
 import on.logistics.companyservice.application.dtos.request.SearchCompanyRequestDto;
 import on.logistics.companyservice.domain.entity.Company;
 import on.logistics.companyservice.domain.repository.CompanyRepository;
-import on.logistics.companyservice.infrastructure.jpa.CompanyJpaRepository;
-import on.logistics.companyservice.infrastructure.querydsl.CompanyQueryRepository;
+import on.logistics.companyservice.infrastructure.persistence.jpa.CompanyJpaRepository;
+import on.logistics.companyservice.infrastructure.persistence.querydsl.CompanyQueryRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Repository;
 

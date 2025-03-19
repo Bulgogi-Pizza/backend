@@ -1,4 +1,4 @@
-package on.logistics.companyservice.infrastructure.querydsl;
+package on.logistics.companyservice.infrastructure.persistence.querydsl;
 
 import static on.logistics.companyservice.domain.entity.QCompany.company;
 
