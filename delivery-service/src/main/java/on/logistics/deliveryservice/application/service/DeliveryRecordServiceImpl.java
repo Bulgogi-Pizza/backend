@@ -17,6 +17,7 @@ import on.logistics.deliveryservice.infrastructure.client.hub.HubServiceClient;
 import on.logistics.deliveryservice.infrastructure.client.map.MapServiceClient;
 import on.logistics.deliveryservice.infrastructure.client.map.feign.dtos.GetEstimateInfo;
 import on.logistics.deliveryservice.presentation.dtos.response.CreateDeliveryRecordResponse;
+import on.logistics.deliveryservice.presentation.dtos.response.GetDeliveryRecordResponse;
 import on.logistics.deliveryservice.presentation.dtos.response.UpdateDeliveryRecordResponse;
 import on.logistics.deliveryservice.presentation.dtos.response.UpdateDeliveryRecordStatusResponse;
 import org.springframework.stereotype.Service;
@@ -62,6 +63,7 @@ public class DeliveryRecordServiceImpl implements DeliveryRecordService {
     }
 
     @Override
+    @Transactional
     public UpdateDeliveryRecordStatusResponse updateStatusDeliveryRecord(
         UpdateDeliveryRecordStatusRequestDto requestDto) {
         DeliveryRecord deliveryRecord = getOrElseThrow(requestDto.deliveryRecordId());
@@ -71,6 +73,12 @@ public class DeliveryRecordServiceImpl implements DeliveryRecordService {
         }
         deliveryRecord.updateStatus(deliveryRecord);
         return UpdateDeliveryRecordStatusResponse.of(deliveryRecord.getId());
+    }
+
+    @Override
+    public GetDeliveryRecordResponse getDeliveryRecord(UUID id) {
+        DeliveryRecord deliveryRecord = getOrElseThrow(id);
+        return GetDeliveryRecordResponse.from(deliveryRecord);
     }
 
     private DeliveryRecord getOrElseThrow(UUID deliveryRecordId) {
