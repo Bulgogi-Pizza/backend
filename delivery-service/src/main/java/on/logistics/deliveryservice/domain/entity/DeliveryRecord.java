@@ -52,7 +52,7 @@ public class DeliveryRecord extends BaseEntity {
     private UUID endHubId;
 
     @Column(name = "estimated_distance", nullable = false)
-    private double estimatedDistance;
+    private Long estimatedDistance;
 
     @Column(name = "estimated_duration", nullable = false)
     private Long estimatedDuration;
