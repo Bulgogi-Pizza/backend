@@ -51,12 +51,9 @@ public class Company extends BaseEntity {
     private Address address;
 
     public static Company create(CreateCompanyDto createCompanyDto) {
-        return Company.builder()
-            .userId(createCompanyDto.userId())
-            .name(new Name(createCompanyDto.companyName()))
-            .type(createCompanyDto.type())
-            .address(new Address(createCompanyDto.companyAddress()))
-            .build();
+        return Company.builder().userId(createCompanyDto.userId())
+            .name(new Name(createCompanyDto.companyName())).type(createCompanyDto.type())
+            .address(new Address(createCompanyDto.companyAddress())).build();
     }
 
     public void update(String companyName, String companyAddress) {
@@ -74,5 +71,9 @@ public class Company extends BaseEntity {
 
     public void updateCompanyType(CompanyType companyType) {
         this.type = companyType;
+    }
+
+    public void updateCompanyUser(UUID userId) {
+        this.userId = userId;
     }
 }

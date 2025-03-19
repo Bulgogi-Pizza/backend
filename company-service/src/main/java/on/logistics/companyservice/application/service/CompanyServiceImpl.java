@@ -8,6 +8,7 @@ import on.logistics.companyservice.application.dtos.request.SearchCompanyRequest
 import on.logistics.companyservice.application.dtos.request.UpdateCompanyHubRequestDto;
 import on.logistics.companyservice.application.dtos.request.UpdateCompanyRequestDto;
 import on.logistics.companyservice.application.dtos.request.UpdateCompanyTypeRequestDto;
+import on.logistics.companyservice.application.dtos.request.UpdateCompanyUserRequestDto;
 import on.logistics.companyservice.domain.entity.Company;
 import on.logistics.companyservice.domain.entity.dtos.CreateCompanyDto;
 import on.logistics.companyservice.domain.repository.CompanyRepository;
@@ -20,6 +21,7 @@ import on.logistics.companyservice.presentation.dtos.response.SearchCompanyRespo
 import on.logistics.companyservice.presentation.dtos.response.UpdateCompanyHubResponse;
 import on.logistics.companyservice.presentation.dtos.response.UpdateCompanyResponse;
 import on.logistics.companyservice.presentation.dtos.response.UpdateCompanyTypeResponse;
+import on.logistics.companyservice.presentation.dtos.response.UpdateCompanyUserResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -96,6 +98,14 @@ public class CompanyServiceImpl implements CompanyService {
         Company company = getOrElseThrow(requestDto.companyId());
         company.updateCompanyType(requestDto.companyType());
         return UpdateCompanyTypeResponse.of(company.getId());
+    }
+
+    @Override
+    @Transactional
+    public UpdateCompanyUserResponse updateCompanyUser(UpdateCompanyUserRequestDto requestDto) {
+        Company company = getOrElseThrow(requestDto.companyId());
+        company.updateCompanyUser(requestDto.userId());
+        return UpdateCompanyUserResponse.of(company.getId());
     }
 
     private Company getOrElseThrow(UUID id) {

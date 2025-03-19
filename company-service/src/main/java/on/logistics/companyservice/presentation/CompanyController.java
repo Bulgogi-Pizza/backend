@@ -8,6 +8,7 @@ import on.logistics.companyservice.application.dtos.request.SearchCompanyRequest
 import on.logistics.companyservice.application.dtos.request.UpdateCompanyHubRequestDto;
 import on.logistics.companyservice.application.dtos.request.UpdateCompanyRequestDto;
 import on.logistics.companyservice.application.dtos.request.UpdateCompanyTypeRequestDto;
+import on.logistics.companyservice.application.dtos.request.UpdateCompanyUserRequestDto;
 import on.logistics.companyservice.application.service.CompanyService;
 import on.logistics.companyservice.domain.entity.enums.CompanyType;
 import on.logistics.companyservice.global.application.dtos.PageDto;
@@ -16,12 +17,14 @@ import on.logistics.companyservice.presentation.dtos.request.CreateCompanyReques
 import on.logistics.companyservice.presentation.dtos.request.UpdateCompanyHubRequest;
 import on.logistics.companyservice.presentation.dtos.request.UpdateCompanyRequest;
 import on.logistics.companyservice.presentation.dtos.request.UpdateCompanyTypeRequest;
+import on.logistics.companyservice.presentation.dtos.request.UpdateCompanyUserRequest;
 import on.logistics.companyservice.presentation.dtos.response.CreateCompanyResponse;
 import on.logistics.companyservice.presentation.dtos.response.GetCompanyResponse;
 import on.logistics.companyservice.presentation.dtos.response.SearchCompanyResponse;
 import on.logistics.companyservice.presentation.dtos.response.UpdateCompanyHubResponse;
 import on.logistics.companyservice.presentation.dtos.response.UpdateCompanyResponse;
 import on.logistics.companyservice.presentation.dtos.response.UpdateCompanyTypeResponse;
+import on.logistics.companyservice.presentation.dtos.response.UpdateCompanyUserResponse;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
@@ -100,6 +103,17 @@ public class CompanyController {
         final UpdateCompanyTypeRequestDto requestDto = UpdateCompanyTypeRequestDto.from(id,
             updateCompanyTypeRequest.companyType());
         UpdateCompanyTypeResponse response = companyService.updateCompanyType(requestDto);
+        return ResponseEntity.ok(CommonResponse.success(response));
+    }
+
+    @PatchMapping("/user/{id}")
+    public ResponseEntity<CommonResponse<UpdateCompanyUserResponse>> updateCompanyUser(
+        @PathVariable UUID id,
+        @Valid @RequestBody UpdateCompanyUserRequest updateCompanyUserRequest
+    ) {
+        final UpdateCompanyUserRequestDto requestDto = UpdateCompanyUserRequestDto.of(id,
+            updateCompanyUserRequest.userId());
+        UpdateCompanyUserResponse response = companyService.updateCompanyUser(requestDto);
         return ResponseEntity.ok(CommonResponse.success(response));
     }
 }
