@@ -1,6 +1,5 @@
 package on.logistics.deliveryservice.infrastructure.querydsl;
 
-import static on.logistics.deliveryservice.domain.entity.QDelivery.delivery;
 import static on.logistics.deliveryservice.domain.entity.QDeliveryRecord.deliveryRecord;
 
 import com.querydsl.core.BooleanBuilder;
@@ -72,10 +71,10 @@ public class DeliveryRecordQueryRepositoryImpl implements DeliveryRecordQueryRep
 
             switch (PageSortBy.valueOf(sortBy.toUpperCase())) {
                 case CREATED_AT ->
-                    orderSpecifiers.add(new OrderSpecifier<>(direction, delivery.createdAt));
+                    orderSpecifiers.add(new OrderSpecifier<>(direction, deliveryRecord.createdAt));
                 case UPDATED_AT ->
-                    orderSpecifiers.add(new OrderSpecifier<>(direction, delivery.updatedAt));
-                case ID -> orderSpecifiers.add(new OrderSpecifier<>(direction, delivery.id));
+                    orderSpecifiers.add(new OrderSpecifier<>(direction, deliveryRecord.updatedAt));
+                case ID -> orderSpecifiers.add(new OrderSpecifier<>(direction, deliveryRecord.id));
             }
         });
 
