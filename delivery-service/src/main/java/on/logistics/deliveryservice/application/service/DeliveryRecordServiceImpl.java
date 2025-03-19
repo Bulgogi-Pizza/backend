@@ -51,6 +51,13 @@ public class DeliveryRecordServiceImpl implements DeliveryRecordService {
         return UpdateDeliveryRecordResponse.of(deliveryRecord.getId());
     }
 
+    @Override
+    @Transactional
+    public void deleteDeliveryRecord(UUID id) {
+        DeliveryRecord deliveryRecord = getOrElseThrow(id);
+        deliveryRecordRepository.delete(deliveryRecord);
+    }
+
     private DeliveryRecord getOrElseThrow(UUID deliveryRecordId) {
         return deliveryRecordRepository.findById(deliveryRecordId).orElseThrow(
             () -> new DeliveryRecordException(

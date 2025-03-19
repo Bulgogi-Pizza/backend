@@ -1,5 +1,6 @@
 package on.logistics.deliveryservice.application.service;
 
+import java.util.UUID;
 import on.logistics.deliveryservice.application.dtos.request.CreateDeliveryRecordRequestDto;
 import on.logistics.deliveryservice.application.dtos.request.UpdateDeliveryRecordRequestDto;
 import on.logistics.deliveryservice.presentation.dtos.response.CreateDeliveryRecordResponse;
@@ -11,4 +12,6 @@ public interface DeliveryRecordService {
 
     UpdateDeliveryRecordResponse updateActualDeliveryRecord(
         UpdateDeliveryRecordRequestDto requestDto);
+
+    void deleteDeliveryRecord(UUID id);
 }

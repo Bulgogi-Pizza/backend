@@ -14,4 +14,6 @@ public interface DeliveryRecordRepository {
     void save(DeliveryRecord saved);
 
     Optional<DeliveryRecord> findById(UUID uuid);
+
+    void delete(DeliveryRecord deliveryRecord);
 }
