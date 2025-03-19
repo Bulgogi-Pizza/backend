@@ -50,7 +50,7 @@ public class DeliveryRecordQueryRepositoryImpl implements DeliveryRecordQueryRep
             builder.and(deliveryRecord.deliveryManagerId.eq(cond.deliveryManagerId()));
         }
         if (cond.deliveryId() != null) {
-            builder.and(deliveryRecord.id.eq(cond.deliveryId()));
+            builder.and(deliveryRecord.delivery.id.eq(cond.deliveryId()));
         }
         if (cond.startHubId() != null) {
             builder.and(deliveryRecord.startHubId.eq(cond.startHubId()));
