@@ -3,6 +3,8 @@ package on.logistics.orderservice.domain.entity;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -43,6 +45,7 @@ public class VendorOrder {
   private Long totalAmount;
 
   @Column(name = "status", nullable = false)
+  @Enumerated(value = EnumType.STRING)
   private OrderStatus status;
 
   @Column(name = "arrival_deadline", nullable = false)
