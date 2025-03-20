@@ -1,0 +1,75 @@
+package on.logistics.deliverymanagerservice.application.service;
+
+import java.util.UUID;
+import lombok.RequiredArgsConstructor;
+import on.logistics.deliverymanagerservice.application.dtos.CreateDeliveryManagerRequestDto;
+import on.logistics.deliverymanagerservice.application.dtos.UpdateDeliveryManagerRequestDto;
+import on.logistics.deliverymanagerservice.domain.entity.DeliveryManager;
+import on.logistics.deliverymanagerservice.domain.entity.DeliveryType;
+import on.logistics.deliverymanagerservice.domain.entity.dtos.CreateDeliveryManagerDto;
+import on.logistics.deliverymanagerservice.domain.entity.repository.DeliveryManagerRepository;
+import on.logistics.deliverymanagerservice.exception.DeliveryManagerException;
+import on.logistics.deliverymanagerservice.exception.DeliveryManagerExceptionCode;
+import on.logistics.deliverymanagerservice.presentation.dtos.response.CreateDeliveryManagerResponse;
+import on.logistics.deliverymanagerservice.presentation.dtos.response.GetDeliveryManagerResponse;
+import on.logistics.deliverymanagerservice.presentation.dtos.response.UpdateDeliveryManagerResponse;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+@RequiredArgsConstructor
+public class DeliveryManagerService {
+
+    private final DeliveryManagerRepository deliveryManagerRepository;
+
+    @Transactional(readOnly = true)
+    public GetDeliveryManagerResponse getDeliveryManager(UUID id) {
+        DeliveryManager deliveryManager = findDeliveryManagerById(id);
+        // TODO: 추후 실제 유저 정보 넣어주기
+        return GetDeliveryManagerResponse.of(deliveryManager, "김배달", "kim delivery");
+    }
+
+    @Transactional
+    public CreateDeliveryManagerResponse createDeliveryManager(
+        CreateDeliveryManagerRequestDto requestDto) {
+        Integer sequence = getAssignedSequence(requestDto.hubId(), requestDto.deliveryType());
+        CreateDeliveryManagerDto createDeliveryManagerDto = CreateDeliveryManagerDto.of(requestDto,
+            sequence);
+        DeliveryManager deliveryManager = DeliveryManager.create(createDeliveryManagerDto);
+        DeliveryManager savedDeliveryManager = deliveryManagerRepository.save(deliveryManager);
+        return CreateDeliveryManagerResponse.of(savedDeliveryManager.getId());
+    }
+
+    @Transactional
+    public UpdateDeliveryManagerResponse updateDeliveryManager(
+        UpdateDeliveryManagerRequestDto requestDto) {
+        DeliveryManager deliveryManager = findDeliveryManagerById(requestDto.deliveryManagerId());
+        if (deliveryManager.getType() == requestDto.deliveryType()) {
+            throw new DeliveryManagerException(DeliveryManagerExceptionCode.SAME_DELIVERY_TYPE);
+        }
+        int sequence = getAssignedSequence(deliveryManager.getHubId(), requestDto.deliveryType());
+        deliveryManager.update(requestDto.deliveryType(), sequence);
+        // TODO: 추후 실제 유저 정보 넣어주기
+        return UpdateDeliveryManagerResponse.of(deliveryManager, "김배달", "kim delivery");
+    }
+
+    @Transactional
+    public void deleteDeliveryManager(final UUID id) {
+        DeliveryManager deliveryManager = findDeliveryManagerById(id);
+        deliveryManager.delete();
+    }
+
+    private DeliveryManager findDeliveryManagerById(UUID id) {
+        return deliveryManagerRepository.findByIdAndIsDeleted(id, false)
+            .orElseThrow(() -> new DeliveryManagerException(
+                DeliveryManagerExceptionCode.DELIVERY_MANAGER_NOT_FOUND));
+    }
+
+    private Integer getAssignedSequence(UUID hubId, DeliveryType deliveryType) {
+        DeliveryManager maxDeliveryManager = deliveryManagerRepository
+            .findMaxSequenceByHubIdAndType(hubId, deliveryType)
+            .orElse(null);
+        int maxSequence = (maxDeliveryManager == null) ? 0 : maxDeliveryManager.getSequence();
+        return maxSequence + 1;
+    }
+}

@@ -7,6 +7,8 @@ import on.logistics.companyservice.application.dtos.request.CreateCompanyRequest
 import on.logistics.companyservice.application.dtos.request.SearchCompanyRequestDto;
 import on.logistics.companyservice.application.dtos.request.UpdateCompanyHubRequestDto;
 import on.logistics.companyservice.application.dtos.request.UpdateCompanyRequestDto;
+import on.logistics.companyservice.application.dtos.request.UpdateCompanyTypeRequestDto;
+import on.logistics.companyservice.application.dtos.request.UpdateCompanyUserRequestDto;
 import on.logistics.companyservice.application.service.CompanyService;
 import on.logistics.companyservice.domain.entity.enums.CompanyType;
 import on.logistics.companyservice.global.application.dtos.PageDto;
@@ -14,11 +16,15 @@ import on.logistics.companyservice.global.presentation.dtos.CommonResponse;
 import on.logistics.companyservice.presentation.dtos.request.CreateCompanyRequest;
 import on.logistics.companyservice.presentation.dtos.request.UpdateCompanyHubRequest;
 import on.logistics.companyservice.presentation.dtos.request.UpdateCompanyRequest;
+import on.logistics.companyservice.presentation.dtos.request.UpdateCompanyTypeRequest;
+import on.logistics.companyservice.presentation.dtos.request.UpdateCompanyUserRequest;
 import on.logistics.companyservice.presentation.dtos.response.CreateCompanyResponse;
 import on.logistics.companyservice.presentation.dtos.response.GetCompanyResponse;
 import on.logistics.companyservice.presentation.dtos.response.SearchCompanyResponse;
 import on.logistics.companyservice.presentation.dtos.response.UpdateCompanyHubResponse;
 import on.logistics.companyservice.presentation.dtos.response.UpdateCompanyResponse;
+import on.logistics.companyservice.presentation.dtos.response.UpdateCompanyTypeResponse;
+import on.logistics.companyservice.presentation.dtos.response.UpdateCompanyUserResponse;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
@@ -64,6 +70,7 @@ public class CompanyController {
         return ResponseEntity.ok(CommonResponse.success(response));
     }
 
+
     @PutMapping("/{id}")
     public ResponseEntity<CommonResponse<UpdateCompanyResponse>> updateCompany(
         @PathVariable UUID id, @Valid @RequestBody UpdateCompanyRequest updateCompanyRequest) {
@@ -85,6 +92,28 @@ public class CompanyController {
         final UpdateCompanyHubRequestDto requestDto = UpdateCompanyHubRequest.from(
             updateCompanyHubRequest);
         UpdateCompanyHubResponse response = companyService.updateCompanyHub(id, requestDto);
+        return ResponseEntity.ok(CommonResponse.success(response));
+    }
+
+    @PatchMapping("/type/{id}")
+    public ResponseEntity<CommonResponse<UpdateCompanyTypeResponse>> updateCompanyType(
+        @PathVariable UUID id,
+        @Valid @RequestBody UpdateCompanyTypeRequest updateCompanyTypeRequest
+    ) {
+        final UpdateCompanyTypeRequestDto requestDto = UpdateCompanyTypeRequestDto.from(id,
+            updateCompanyTypeRequest.companyType());
+        UpdateCompanyTypeResponse response = companyService.updateCompanyType(requestDto);
+        return ResponseEntity.ok(CommonResponse.success(response));
+    }
+
+    @PatchMapping("/user/{id}")
+    public ResponseEntity<CommonResponse<UpdateCompanyUserResponse>> updateCompanyUser(
+        @PathVariable UUID id,
+        @Valid @RequestBody UpdateCompanyUserRequest updateCompanyUserRequest
+    ) {
+        final UpdateCompanyUserRequestDto requestDto = UpdateCompanyUserRequestDto.of(id,
+            updateCompanyUserRequest.userId());
+        UpdateCompanyUserResponse response = companyService.updateCompanyUser(requestDto);
         return ResponseEntity.ok(CommonResponse.success(response));
     }
 }
