@@ -48,11 +48,13 @@ public class UserController {
         return ResponseEntity.ok(CommonResponse.success(response));
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<CommonResponse<FindByIdUserResponse>> findUserById(
-        @PathVariable("id") String id
+    @PatchMapping("/my")
+    public ResponseEntity<CommonResponse<UpdateUserResponse>> updateUser(
+        HttpServletRequest request,
+        @RequestBody UpdateUserRequest updateUserRequest
     ) {
-        final var response = userService.findUserById(UUID.fromString(id));
+        UpdateUserDto dto = UpdateUserDto.from(updateUserRequest);
+        UpdateUserResponse response = userService.updateUser(request, dto);
         return ResponseEntity.ok(CommonResponse.success(response));
     }
 
@@ -64,6 +66,14 @@ public class UserController {
         return ResponseEntity.ok(CommonResponse.success(response));
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<CommonResponse<FindByIdUserResponse>> findUserById(
+        @PathVariable("id") String id
+    ) {
+        final var response = userService.findUserById(UUID.fromString(id));
+        return ResponseEntity.ok(CommonResponse.success(response));
+    }
+
     @GetMapping
     public ResponseEntity<CommonResponse<PageDto<SearchUserResponse>>> getUser(
         @RequestParam(required = false) String nickname,
@@ -72,16 +82,6 @@ public class UserController {
     ) {
         SearchUserDto dto = SearchUserDto.from(nickname, slackEmail, pageable);
         PageDto<SearchUserResponse> response = userService.searchUser(dto);
-        return ResponseEntity.ok(CommonResponse.success(response));
-    }
-
-    @PatchMapping("/my")
-    public ResponseEntity<CommonResponse<UpdateUserResponse>> updateUser(
-        HttpServletRequest request,
-        @RequestBody UpdateUserRequest updateUserRequest
-    ) {
-        UpdateUserDto dto = UpdateUserDto.from(updateUserRequest);
-        UpdateUserResponse response = userService.updateUser(request, dto);
         return ResponseEntity.ok(CommonResponse.success(response));
     }
 
