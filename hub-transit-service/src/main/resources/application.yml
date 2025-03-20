@@ -1,9 +1,9 @@
 server:
-  port: 8903
+  port: 8904
 
 spring:
   application:
-    name: hub-transit-route-service
+    name: hub-transit-service
   cloud:
     discovery:
       enabled: true
