@@ -14,7 +14,8 @@ public enum ProductExceptionCode implements ExceptionCode {
     PRODUCT_QUANTITY_MIN(HttpStatus.BAD_REQUEST, "상품 재고는 음수일 수 없습니다."),
     PRODUCT_QUANTITY_LIMIT(HttpStatus.BAD_REQUEST, "상품 재고가 모두 소진되었습니다."),
     PRODUCT_BUNDLE_SIZE_MIN(HttpStatus.BAD_REQUEST, "번들 사이즈는 0개 이하일 수 없습니다."),
-    PRODUCT_IS_NOT_FOUND(HttpStatus.NOT_FOUND, "상품을 찾을 수 없습니다.");
+    PRODUCT_IS_NOT_FOUND(HttpStatus.NOT_FOUND, "상품을 찾을 수 없습니다."),
+    PRODUCT_COMPANY_IS_NOT_FOUND(HttpStatus.NOT_FOUND, "회사 정보를 찾지 못해 상품을 등록할 수 없습니다.");
     private final HttpStatus httpStatus;
     private final String message;
 }
