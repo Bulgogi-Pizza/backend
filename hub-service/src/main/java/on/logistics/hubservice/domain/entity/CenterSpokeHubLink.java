@@ -1,9 +1,12 @@
 package on.logistics.hubservice.domain.entity;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.util.UUID;
 import lombok.AccessLevel;
@@ -22,12 +25,16 @@ public class CenterSpokeHubLink extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    private UUID center;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "center_id")
+    private Hub center;
 
-    private UUID spoke;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "spoke_id")
+    private Hub spoke;
 
     @Builder
-    private CenterSpokeHubLink(UUID center, UUID spoke) {
+    private CenterSpokeHubLink(Hub center, Hub spoke) {
         this.center = center;
         this.spoke = spoke;
     }
