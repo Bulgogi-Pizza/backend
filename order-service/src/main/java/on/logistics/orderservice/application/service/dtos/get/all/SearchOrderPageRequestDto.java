@@ -16,7 +16,7 @@ public record SearchOrderPageRequestDto(
     String vendorCompanyName
 ) {
 
-  public static SearchOrderPageRequestDto from(
+  public static SearchOrderPageRequestDto of(
       Pageable pageable,
       UUID userId,
       AuthRole userRole,

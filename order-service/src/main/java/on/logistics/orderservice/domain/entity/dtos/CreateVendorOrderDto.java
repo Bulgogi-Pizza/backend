@@ -10,7 +10,7 @@ public record CreateVendorOrderDto(
     LocalDateTime arrivalDeadline
 ) {
 
-  public static CreateVendorOrderDto from(
+  public static CreateVendorOrderDto of(
       Order order,
       OrdersByVendor ordersByVendor
   ) {

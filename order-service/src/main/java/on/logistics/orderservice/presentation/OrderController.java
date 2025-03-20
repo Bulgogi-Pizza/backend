@@ -52,7 +52,7 @@ public class OrderController {
     log.warn("패스포트 토큰을 사용하도록 해야합니다!!");
     final UUID ordererUserId = UUID.fromString("29547e69-f33a-430d-b9a6-75e2b265585c");
     final String ordererUserNickname = "userNickname";
-    final var requestDto = CreateOrderRequestDto.from(request, ordererUserId, ordererUserNickname);
+    final var requestDto = CreateOrderRequestDto.of(request, ordererUserId, ordererUserNickname);
     final var responseDto = orderService.createOrder(requestDto);
     return ResponseEntity.ok(CommonResponse.success(responseDto));
   }
@@ -70,7 +70,7 @@ public class OrderController {
     log.warn("패스포트 토큰을 사용하도록 해야합니다!!");
     final UUID userId = UUID.fromString("29547e69-f33a-430d-b9a6-75e2b265585c");
     final AuthRole userRole = AuthRole.MASTER;
-    final var requestDto = SearchOrderPageRequestDto.from(
+    final var requestDto = SearchOrderPageRequestDto.of(
         pageable, userId, userRole, ordererUserId, userNickname,
         ordererCompanyId, ordererCompanyName, vendorCompanyId, vendorCompanyName
     );
@@ -92,7 +92,7 @@ public class OrderController {
       @PathVariable final UUID orderId,
       @RequestBody @Valid final UpdateOrderRequest request
   ) {
-    final var requestDto = UpdateOrderRequestDto.from(request, orderId);
+    final var requestDto = UpdateOrderRequestDto.of(request, orderId);
     final var responseDto = orderService.updateOrder(requestDto);
     return ResponseEntity.ok(CommonResponse.success(responseDto));
   }
@@ -102,7 +102,7 @@ public class OrderController {
       @PathVariable final UUID orderId,
       @PathVariable final UUID vendorOrderId
   ) {
-    final var requestDto = CancelOrderRequestDto.from(orderId, vendorOrderId);
+    final var requestDto = CancelOrderRequestDto.of(orderId, vendorOrderId);
     final var responseDto = orderService.cancelVendorOrder(requestDto);
     return ResponseEntity.ok(CommonResponse.success(responseDto));
   }
@@ -112,7 +112,7 @@ public class OrderController {
       @PathVariable final UUID orderId,
       @PathVariable final UUID vendorOrderId
   ) {
-    final DeleteOrderRequestDto requestDto = DeleteOrderRequestDto.from(orderId, vendorOrderId);
+    final DeleteOrderRequestDto requestDto = DeleteOrderRequestDto.of(orderId, vendorOrderId);
     orderService.deleteVendorOrder(requestDto);
     return ResponseEntity.ok(CommonResponse.success());
   }
@@ -122,7 +122,7 @@ public class OrderController {
       @PathVariable final UUID orderId,
       @PathVariable final UUID vendorOrderId
   ) {
-    final var requestDto = ReturnRequestRequestDto.from(orderId, vendorOrderId);
+    final var requestDto = ReturnRequestRequestDto.of(orderId, vendorOrderId);
     final var responseDto = orderService.requestReturn(requestDto);
     return ResponseEntity.ok(CommonResponse.success(responseDto));
   }
@@ -132,7 +132,7 @@ public class OrderController {
       @PathVariable final UUID orderId,
       @PathVariable final UUID vendorOrderId
   ) {
-    final var requestDto = ReturnRequestDeniedRequestDto.from(orderId, vendorOrderId);
+    final var requestDto = ReturnRequestDeniedRequestDto.of(orderId, vendorOrderId);
     final var responseDto = orderService.denyReturnRequest(requestDto);
     return ResponseEntity.ok(CommonResponse.success(responseDto));
   }

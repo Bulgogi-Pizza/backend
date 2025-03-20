@@ -35,7 +35,7 @@ public record CreateOrderRequestDto(
     }
   }
 
-  public static CreateOrderRequestDto from(
+  public static CreateOrderRequestDto of(
       CreateOrderRequest createOrderRequest,
       UUID ordererUserId,
       String ordererUserNickname

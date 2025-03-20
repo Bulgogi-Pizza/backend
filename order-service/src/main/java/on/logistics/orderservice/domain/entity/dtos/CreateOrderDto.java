@@ -7,7 +7,7 @@ public record CreateOrderDto(
     Long totalAmount
 ) {
 
-  public static CreateOrderDto of(
+  public static CreateOrderDto from(
       CreateOrderRequestDto requestDto
   ) {
     return new CreateOrderDto(

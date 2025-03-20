@@ -24,7 +24,7 @@ public record UpdateOrderRequestDto(
     }
   }
 
-  public static UpdateOrderRequestDto from(UpdateOrderRequest request, UUID orderId) {
+  public static UpdateOrderRequestDto of(UpdateOrderRequest request, UUID orderId) {
     return new UpdateOrderRequestDto(
         orderId,
         request.ordersByVendor().stream()

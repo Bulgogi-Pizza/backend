@@ -68,7 +68,7 @@ public class OrderServiceImpl implements OrderService {
   public CreateOrderResponseDto createOrder(final CreateOrderRequestDto requestDto) {
     log.info("주문 생성 요청: {}", requestDto);
 
-    var createOrderDto = CreateOrderDto.of(requestDto);
+    var createOrderDto = CreateOrderDto.from(requestDto);
     Order createdOrder = Order.create(createOrderDto);
 
     Orderer orderer = createOrderer(createdOrder, requestDto);
@@ -110,7 +110,7 @@ public class OrderServiceImpl implements OrderService {
   ) {
     log.info("판매자별 주문 엔티티 생성");
 
-    var createVendorOrderDto = CreateVendorOrderDto.from(createdOrder, ordersByVendor);
+    var createVendorOrderDto = CreateVendorOrderDto.of(createdOrder, ordersByVendor);
     VendorOrder createdVendorOrder = VendorOrder.create(createVendorOrderDto);
 
     Vendor vendor = createVendor(createdVendorOrder, ordersByVendor);
