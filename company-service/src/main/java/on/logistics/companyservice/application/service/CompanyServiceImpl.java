@@ -15,6 +15,8 @@ import on.logistics.companyservice.domain.repository.CompanyRepository;
 import on.logistics.companyservice.exception.CompanyException;
 import on.logistics.companyservice.exception.CompanyExceptionCode;
 import on.logistics.companyservice.global.application.dtos.PageDto;
+import on.logistics.companyservice.infrastructure.clients.hub.HubServiceClient;
+import on.logistics.companyservice.infrastructure.clients.hub.feign.dtos.GetHubInfo;
 import on.logistics.companyservice.presentation.dtos.response.CreateCompanyResponse;
 import on.logistics.companyservice.presentation.dtos.response.GetCompanyResponse;
 import on.logistics.companyservice.presentation.dtos.response.SearchCompanyResponse;
@@ -33,11 +35,12 @@ import org.springframework.transaction.annotation.Transactional;
 public class CompanyServiceImpl implements CompanyService {
 
     private final CompanyRepository companyRepository;
+    private final HubServiceClient hubServiceClient;
 
     @Override
     @Transactional
     public CreateCompanyResponse createCompany(CreateCompanyRequestDto requestDto) {
-        // todo : 임시 유저 아이디 발급 로직 수정 필요
+        // todo : 임시 유저 아이디 발급. 패스포트로 받아서 넣기
         UUID userId = UUID.randomUUID();
 
         companyRepository.findByUserId(userId).ifPresent(company -> {
@@ -86,8 +89,12 @@ public class CompanyServiceImpl implements CompanyService {
     @Transactional
     public UpdateCompanyHubResponse updateCompanyHub(UUID id,
         UpdateCompanyHubRequestDto requestDto) {
-        // todo : 유저의 아이디 정보를 받아와서 본인 회사인지 체크하는 로직 필요
+        // todo : 허브 매니저 및 마스터만 이용 가능
         Company company = getOrElseThrow(id);
+        GetHubInfo hubInfo = hubServiceClient.getHubInfo(requestDto.managedHubId());
+        if (hubInfo == null) {
+            throw new CompanyException(CompanyExceptionCode.COMPANY_HUB_NOT_FOUND);
+        }
         company.updateHub(requestDto.managedHubId());
         return UpdateCompanyHubResponse.of(company.getId());
     }
@@ -95,6 +102,7 @@ public class CompanyServiceImpl implements CompanyService {
     @Override
     @Transactional
     public UpdateCompanyTypeResponse updateCompanyType(UpdateCompanyTypeRequestDto requestDto) {
+        // todo : 유저의 아이디 정보를 받아와서 본인 회사인지 체크하는 로직 필요
         Company company = getOrElseThrow(requestDto.companyId());
         company.updateCompanyType(requestDto.companyType());
         return UpdateCompanyTypeResponse.of(company.getId());
