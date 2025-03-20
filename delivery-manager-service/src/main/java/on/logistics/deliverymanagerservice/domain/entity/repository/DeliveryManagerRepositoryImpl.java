@@ -22,10 +22,10 @@ public class DeliveryManagerRepositoryImpl implements DeliveryManagerRepository 
     }
 
     @Override
-    public Optional<DeliveryManager> findMaxSequenceByHubIdAndType(
+    public Integer findMaxSequenceByHubIdAndType(
         UUID hubId,
         DeliveryType deliveryType) {
-        return deliveryManagerJpaRepository.findMaxSequenceByHubIdAndType(hubId,
+        return deliveryManagerRepositoryCustom.findMaxSequenceByHubIdAndType(hubId,
             deliveryType);
     }
 
@@ -45,7 +45,8 @@ public class DeliveryManagerRepositoryImpl implements DeliveryManagerRepository 
     }
 
     @Override
-    public Optional<DeliveryManager> findFirstByHubIdOrderBySequenceAsc(UUID hubId, DeliveryType type) {
+    public Optional<DeliveryManager> findFirstByHubIdOrderBySequenceAsc(UUID hubId,
+        DeliveryType type) {
         return deliveryManagerRepositoryCustom.findFirstByHubIdOrderBySequenceAsc(hubId, type);
     }
 }

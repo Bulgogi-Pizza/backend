@@ -11,7 +11,7 @@ public interface DeliveryManagerRepository {
 
     DeliveryManager save(DeliveryManager deliveryManager);
 
-    Optional<DeliveryManager> findMaxSequenceByHubIdAndType(UUID hubId, DeliveryType deliveryType);
+    Integer findMaxSequenceByHubIdAndType(UUID hubId, DeliveryType deliveryType);
 
     Optional<DeliveryManager> findByIdAndIsDeleted(UUID id, boolean isDeleted);
 

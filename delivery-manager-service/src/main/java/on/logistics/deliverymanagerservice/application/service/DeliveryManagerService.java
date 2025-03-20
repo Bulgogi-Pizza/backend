@@ -71,8 +71,10 @@ public class DeliveryManagerService {
 
         DeliveryManager nextManager;
         if (lastAssigned != null) {
-            nextManager = deliveryManagerRepository.findNextDeliveryManager(requestDto.hubId(), lastAssigned.getSequence())
-                .orElseGet(() -> findFirstByHubIdOrderBySequenceAsc(requestDto.hubId(), requestDto.type()));
+            nextManager = deliveryManagerRepository.findNextDeliveryManager(requestDto.hubId(),
+                    lastAssigned.getSequence())
+                .orElseGet(() -> findFirstByHubIdOrderBySequenceAsc(requestDto.hubId(),
+                    requestDto.type()));
         } else {
             nextManager = findFirstByHubIdOrderBySequenceAsc(requestDto.hubId(), requestDto.type());
         }
@@ -89,15 +91,14 @@ public class DeliveryManagerService {
     }
 
     private Integer getAssignedSequence(UUID hubId, DeliveryType deliveryType) {
-        DeliveryManager maxDeliveryManager = deliveryManagerRepository
-            .findMaxSequenceByHubIdAndType(hubId, deliveryType)
-            .orElse(null);
-        int maxSequence = (maxDeliveryManager == null) ? 0 : maxDeliveryManager.getSequence();
+        int maxSequence = deliveryManagerRepository
+            .findMaxSequenceByHubIdAndType(hubId, deliveryType);
         return maxSequence + 1;
     }
 
     private DeliveryManager findFirstByHubIdOrderBySequenceAsc(UUID hubId, DeliveryType type) {
         return deliveryManagerRepository.findFirstByHubIdOrderBySequenceAsc(hubId, type)
-            .orElseThrow(() -> new DeliveryManagerException(DeliveryManagerExceptionCode.DELIVERY_MANAGER_NOT_FOUND));
+            .orElseThrow(() -> new DeliveryManagerException(
+                DeliveryManagerExceptionCode.DELIVERY_MANAGER_NOT_FOUND));
     }
 }

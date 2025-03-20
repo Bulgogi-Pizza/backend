@@ -17,6 +17,20 @@ public class DeliveryManagerRepositoryCustomImpl implements DeliveryManagerRepos
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
+    public Integer findMaxSequenceByHubIdAndType(UUID hubId, DeliveryType deliveryType) {
+        Integer maxSequence = jpaQueryFactory
+            .select(deliveryManager.sequence.max())
+            .from(deliveryManager)
+            .where(
+                deliveryManager.hubId.eq(hubId),
+                deliveryManager.type.eq(deliveryType)
+            )
+            .fetchOne();
+
+        return (maxSequence != null) ? maxSequence : 0;
+    }
+
+    @Override
     public Optional<DeliveryManager> findLastAssignedManager(UUID hubId, DeliveryType type) {
         return Optional.ofNullable(
             jpaQueryFactory.selectFrom(deliveryManager)

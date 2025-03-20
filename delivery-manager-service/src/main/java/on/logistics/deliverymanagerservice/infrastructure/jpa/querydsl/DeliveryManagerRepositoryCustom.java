@@ -8,6 +8,9 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface DeliveryManagerRepositoryCustom {
+
+    Integer findMaxSequenceByHubIdAndType(UUID hubId, DeliveryType deliveryType);
+
     Optional<DeliveryManager> findLastAssignedManager(UUID hubId, DeliveryType type);
 
     Optional<DeliveryManager> findNextDeliveryManager(UUID hubId, Integer sequence);
