@@ -1,6 +1,7 @@
 package on.logistics.userservice.application.service;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +16,7 @@ import on.logistics.userservice.exception.UserExceptionCode;
 import on.logistics.userservice.global.application.dtos.PageDto;
 import on.logistics.userservice.global.domain.Passport;
 import on.logistics.userservice.global.util.PassportUtil;
+import on.logistics.userservice.infrastructure.feign.AuthClientService;
 import on.logistics.userservice.presentation.dtos.CreateUserResponse;
 import on.logistics.userservice.presentation.dtos.FindByIdUserResponse;
 import on.logistics.userservice.presentation.dtos.FindMyUserResponse;
@@ -32,6 +34,7 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final PassportUtil passportUtil;
+    private final AuthClientService authClientService;
 
     @Override
     @Transactional
@@ -40,7 +43,7 @@ public class UserServiceImpl implements UserService {
         User user = User.create(dto);
 
         User savedUser = userRepository.save(user);
-        savedUser.setIdForUser(savedUser.getId());
+        savedUser.setId(savedUser.getId());
 
         return CreateUserResponse.from(savedUser);
     }
@@ -82,9 +85,18 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void deleteUser(UUID id) {
+    public void deleteUser(
+        HttpServletRequest request,
+        HttpServletResponse response
+    ) {
         // TODO: deletedBy, deletedAt 해결 필
-        User user = findByIdOrElseThrow(id);
+        Passport passport = passportUtil.getPassportByHttpServletRequest(request);
+        String passportId = request.getParameter("X-Passport-Id");
+
+        // TODO: feignClient 해결 필
+//        authClientService.deleteAuthByPassport(passportId);
+
+        User user = findByIdOrElseThrow(passport.getUserId());
         userRepository.delete(user);
     }
 

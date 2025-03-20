@@ -1,6 +1,7 @@
 package on.logistics.userservice.presentation;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import on.logistics.userservice.application.dtos.CreateUserDto;
@@ -96,12 +97,13 @@ public class UserController {
         return ResponseEntity.ok(CommonResponse.success(response));
     }
 
-    // TODO: 사용자 탈퇴 -> 패스포트 삭제, auth 삭제 필요
-    @DeleteMapping("/{id}")
+    // TODO: FeignClient 연결은 확인, auth에서 SpringSecurity에 걸림
+    @DeleteMapping("/my")
     public ResponseEntity<CommonResponse<Void>> deleteUser(
-        @PathVariable UUID id
+        HttpServletRequest request,
+        HttpServletResponse response
     ) {
-        userService.deleteUser(id);
+        userService.deleteUser(request, response);
         return ResponseEntity.ok(CommonResponse.success());
     }
 }

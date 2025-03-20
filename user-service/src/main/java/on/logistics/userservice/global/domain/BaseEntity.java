@@ -60,7 +60,7 @@ public abstract class BaseEntity {
         }
     }
 
-    public void setIdForUser(UUID id) {
+    public void setId(UUID id) {
         this.createdBy = id;
         this.updatedBy = id;
     }

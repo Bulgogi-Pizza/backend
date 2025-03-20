@@ -1,6 +1,7 @@
 package on.logistics.userservice.application.service;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.UUID;
 import on.logistics.userservice.application.dtos.CreateUserDto;
 import on.logistics.userservice.application.dtos.SearchUserDto;
@@ -26,7 +27,7 @@ public interface UserService {
 
     UpdateUserResponse updateUser(HttpServletRequest request, UpdateUserDto requestDto);
 
-    void deleteUser(UUID id);
+    void deleteUser(HttpServletRequest request, HttpServletResponse response);
 
     UpdateUserAdminResponse updateUserAdmin(UpdateUserAdminDto dto);
 }
