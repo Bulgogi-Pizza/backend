@@ -6,6 +6,8 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import on.logistics.hubservice.application.clients.map.MapServiceClient;
 import on.logistics.hubservice.application.clients.map.feign.dtos.GetGeocodeResponse;
+import java.util.UUID;
+import lombok.RequiredArgsConstructor;
 import on.logistics.hubservice.application.dtos.request.CreateHubRequestDto;
 import on.logistics.hubservice.application.dtos.request.SearchHubRequestDto;
 import on.logistics.hubservice.application.dtos.request.UpdateHubRequestDto;
@@ -63,14 +65,12 @@ public class HubService {
         Hub hub = findHubById(id);
         hub.delete();
     }
-
     @Transactional(readOnly = true)
     public List<GetSpokesLinkedToCenterResponse> getSpokesLinkedToCenter(final UUID centerId) {
         Hub centerHub = findHubById(centerId);
         final var response = hubRepository.findSpokesLinkedToCenter(centerHub.getId());
         return response;
     }
-
     private Hub findHubById(UUID id) {
         return hubRepository.findByIdAndIsDeleted(id, false)
             .orElseThrow(() -> new HubException(HubExceptionCode.HUB_NOT_FOUND));

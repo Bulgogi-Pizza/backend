@@ -39,7 +39,6 @@ public class HubRepositoryImpl implements HubRepository {
     public PageDto<SearchHubResponse> searchHub(SearchHubRequestDto requestDto) {
         return hubRepositoryCustom.searchHub(requestDto);
     }
-
     @Override
     public List<GetSpokesLinkedToCenterResponse> findSpokesLinkedToCenter(UUID centerId) {
         return hubRepositoryCustom.getSpokesLinkedToCenter(centerId);
