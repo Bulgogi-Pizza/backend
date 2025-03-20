@@ -44,45 +44,36 @@ public class ProductController {
 
     @PostMapping
     public ResponseEntity<CommonResponse<CreateProductResponse>> createProduct(
-        @Valid @RequestBody CreateProductRequest createProductRequest
-    ) {
-        CreateProductRequestDto requestDto = CreateProductRequest.from(createProductRequest);
+        @Valid @RequestBody CreateProductRequest createProductRequest) {
+        CreateProductRequestDto requestDto = CreateProductRequestDto.from(createProductRequest);
         CreateProductResponse response = productService.createProduct(requestDto);
         return ResponseEntity.ok(CommonResponse.success(response));
     }
 
     @GetMapping("/search")
     public ResponseEntity<CommonResponse<PageDto<SearchProductResponse>>> getProduct(
-        @RequestParam(required = false) String name,
-        @PageableDefault Pageable pageable
-    ) {
+        @RequestParam(required = false) String name, @PageableDefault Pageable pageable) {
         SearchProductRequestDto requestDto = SearchProductRequestDto.from(name, pageable);
         PageDto<SearchProductResponse> response = productService.searchProduct(requestDto);
         return ResponseEntity.ok(CommonResponse.success(response));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CommonResponse<GetProductResponse>> getProduct(
-        @PathVariable UUID id
-    ) {
+    public ResponseEntity<CommonResponse<GetProductResponse>> getProduct(@PathVariable UUID id) {
         GetProductResponse response = productService.getProduct(id);
         return ResponseEntity.ok(CommonResponse.success(response));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<CommonResponse<UpdateProductResponse>> updateProduct(
-        @PathVariable UUID id,
-        @Valid @RequestBody UpdateProductRequest updateProductRequest
-    ) {
-        UpdateProductRequestDto requestDto = UpdateProductRequest.from(id, updateProductRequest);
+        @PathVariable UUID id, @Valid @RequestBody UpdateProductRequest updateProductRequest) {
+        UpdateProductRequestDto requestDto = UpdateProductRequestDto.from(id, updateProductRequest);
         UpdateProductResponse response = productService.updateProduct(requestDto);
         return ResponseEntity.ok(CommonResponse.success(response));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<CommonResponse<Void>> deleteProduct(
-        @PathVariable UUID id
-    ) {
+    public ResponseEntity<CommonResponse<Void>> deleteProduct(@PathVariable UUID id) {
         productService.deleteProduct(id);
         return ResponseEntity.ok(CommonResponse.success());
     }
@@ -90,11 +81,9 @@ public class ProductController {
     @PatchMapping("/reduce/quantity/{id}")
     public ResponseEntity<CommonResponse<UpdateReduceProductQuantityResponse>> updateReduceProductQuantity(
         @PathVariable UUID id,
-        @Valid @RequestBody UpdateReduceProductQuantityRequest updateReduceProductQuantityRequest
-    ) {
-        UpdateReduceProductQuantityRequestDto requestDto = UpdateReduceProductQuantityRequest.from(
-            id,
-            updateReduceProductQuantityRequest);
+        @Valid @RequestBody UpdateReduceProductQuantityRequest updateReduceProductQuantityRequest) {
+        UpdateReduceProductQuantityRequestDto requestDto = UpdateReduceProductQuantityRequestDto.from(
+            id, updateReduceProductQuantityRequest);
         UpdateReduceProductQuantityResponse response = productService.updateReduceProductQuantity(
             requestDto);
         return ResponseEntity.ok(CommonResponse.success(response));
@@ -103,11 +92,9 @@ public class ProductController {
     @PatchMapping("/increase/quantity/{id}")
     public ResponseEntity<CommonResponse<UpdateIncreaseProductQuantityResponse>> updateIncreaseProductQuantity(
         @PathVariable UUID id,
-        @Valid @RequestBody UpdateIncreaseProductQuantityRequest updateIncreaseProductQuantityRequest
-    ) {
-        UpdateIncreaseProductQuantityRequestDto requestDto = UpdateIncreaseProductQuantityRequest.from(
-            id,
-            updateIncreaseProductQuantityRequest);
+        @Valid @RequestBody UpdateIncreaseProductQuantityRequest updateIncreaseProductQuantityRequest) {
+        UpdateIncreaseProductQuantityRequestDto requestDto = UpdateIncreaseProductQuantityRequestDto.from(
+            id, updateIncreaseProductQuantityRequest);
         UpdateIncreaseProductQuantityResponse response = productService.updateIncreaseProductQuantity(
             requestDto);
         return ResponseEntity.ok(CommonResponse.success(response));
