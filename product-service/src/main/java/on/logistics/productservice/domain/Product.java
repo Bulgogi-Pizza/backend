@@ -23,12 +23,12 @@ import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
 @Getter
-@Entity
+@Entity(name = "p_product")
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @SQLRestriction("is_deleted = false")
-@SQLDelete(sql = "UPDATE product SET is_deleted = true WHERE id = ?")
+@SQLDelete(sql = "UPDATE p_product SET is_deleted = true WHERE id = ?")
 public class Product extends BaseEntity {
 
     @Id

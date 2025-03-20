@@ -1,4 +1,4 @@
-package on.logistics.productservice.infrastructure.querydsl;
+package on.logistics.productservice.infrastructure.persistence.querydsl;
 
 import static on.logistics.productservice.domain.QProduct.product;
 

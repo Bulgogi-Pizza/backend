@@ -1,4 +1,4 @@
-package on.logistics.productservice.infrastructure.jpa;
+package on.logistics.productservice.infrastructure.persistence.jpa;
 
 import java.util.UUID;
 import on.logistics.productservice.domain.Product;

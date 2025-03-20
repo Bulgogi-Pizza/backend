@@ -1,4 +1,4 @@
-package on.logistics.productservice.infrastructure.repository;
+package on.logistics.productservice.infrastructure.persistence.repository;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -6,8 +6,8 @@ import lombok.RequiredArgsConstructor;
 import on.logistics.productservice.application.dto.SearchProductRequestDto;
 import on.logistics.productservice.domain.Product;
 import on.logistics.productservice.domain.repository.ProductRepository;
-import on.logistics.productservice.infrastructure.jpa.ProductJpaRepository;
-import on.logistics.productservice.infrastructure.querydsl.ProductQueryRepository;
+import on.logistics.productservice.infrastructure.persistence.jpa.ProductJpaRepository;
+import on.logistics.productservice.infrastructure.persistence.querydsl.ProductQueryRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Repository;
 
