@@ -33,6 +33,8 @@ public class FixtureFactory {
         "companyName" + seq++,
         UUID.randomUUID(),
         "userNickname",
+        UUID.randomUUID(),
+        "ordererHubName",
         order
     );
     return Orderer.create(createOrdererDto);
@@ -69,7 +71,7 @@ public class FixtureFactory {
         UUID.randomUUID(),
         10L,
         1000L,
-        "productName" + seq++
+        "name" + seq++
     );
     return OrderProduct.create(createOrderProductDto1);
   }
