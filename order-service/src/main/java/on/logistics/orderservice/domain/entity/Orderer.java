@@ -18,6 +18,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import on.logistics.orderservice.domain.entity.dtos.CreateOrdererDto;
 import on.logistics.orderservice.domain.vo.CompanyName;
+import on.logistics.orderservice.domain.vo.HubName;
 import on.logistics.orderservice.domain.vo.UserNickname;
 
 @Entity
@@ -38,11 +39,17 @@ public class Orderer {
   @Embedded
   private CompanyName companyName;
 
-  @Column(name = "user_id", updatable = false, nullable = false)
+  @Column(name = "user_id", updatable = false)
   private UUID userId;
 
   @Embedded
   private UserNickname userNickname;
+
+  @Column(name = "orderer_hub_id", updatable = false, nullable = false)
+  private UUID ordererHubId;
+
+  @Embedded
+  private HubName ordererHubName;
 
   @OneToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "order_id", updatable = false, nullable = false)
@@ -55,6 +62,18 @@ public class Orderer {
         .userId(requestDto.userId())
         .companyName(new CompanyName(requestDto.companyName()))
         .userNickname(new UserNickname(requestDto.userNickname()))
+        .ordererHubId(requestDto.ordererHubId())
+        .ordererHubName(new HubName(requestDto.ordererHubName()))
+        .build();
+  }
+
+  public static Orderer create(Order order, Vendor vendor) {
+    return Orderer.builder()
+        .order(order)
+        .companyId(vendor.getCompanyId())
+        .companyName(vendor.getName())
+        .ordererHubId(vendor.getVendorHubId())
+        .ordererHubName(vendor.getVendorHubName())
         .build();
   }
 }

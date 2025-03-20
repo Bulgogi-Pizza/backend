@@ -9,6 +9,8 @@ public record CreateOrdererDto(
     String companyName,
     UUID userId,
     String userNickname,
+    UUID ordererHubId,
+    String ordererHubName,
     Order order
 ) {
 
@@ -21,6 +23,8 @@ public record CreateOrdererDto(
         requestDto.ordererName(),
         requestDto.ordererUserId(),
         requestDto.ordererUserNickname(),
+        requestDto.ordererHubId(),
+        requestDto.ordererHubName(),
         order
     );
   }

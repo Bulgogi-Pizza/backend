@@ -57,6 +57,36 @@ public class Order extends BaseEntity {
         .build();
   }
 
+  public static Order create(Orderer orderer, VendorOrder vendorOrder) {
+    Order returnedOrder =  Order.builder()
+        .totalAmount(vendorOrder.getTotalAmount())
+        .destination(vendorOrder.getVendor().getVendorHubName().getValue())
+        .build();
+
+    Orderer returnedOrderer = Orderer.create(returnedOrder, vendorOrder.getVendor());
+
+    VendorOrder returnedVendorOrder = createReturnedVendorOrder(
+        orderer, vendorOrder, returnedOrder);
+
+    returnedOrder.addDependencies(returnedOrderer, List.of(returnedVendorOrder));
+    return returnedOrder;
+  }
+
+  private static VendorOrder createReturnedVendorOrder(
+      Orderer orderer,
+      VendorOrder vendorOrder,
+      Order returnedOrder
+  ) {
+    VendorOrder returnedVendorOrder = VendorOrder.create(returnedOrder);
+
+    Vendor returnedVendor = Vendor.create(orderer, returnedVendorOrder);
+    List<OrderProduct> orderProducts = vendorOrder.getOrderProducts().stream()
+        .map(orderProduct -> OrderProduct.create(orderProduct, returnedVendorOrder))
+        .toList();
+    returnedVendorOrder.addDependencies(returnedVendor, orderProducts);
+    return returnedVendorOrder;
+  }
+
   public void addDependencies(Orderer orderer, List<VendorOrder> vendorOrders) {
     this.orderer = orderer;
     this.vendorOrders = vendorOrders;

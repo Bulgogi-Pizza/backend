@@ -13,6 +13,8 @@ import on.logistics.orderservice.application.service.dtos.get.all.SearchOrderPag
 import on.logistics.orderservice.application.service.dtos.get.all.SearchOrderPageResponseDto;
 import on.logistics.orderservice.application.service.dtos.get.detail.GetOrderDetailRequestDto;
 import on.logistics.orderservice.application.service.dtos.get.detail.GetOrderDetailResponseDto;
+import on.logistics.orderservice.application.service.dtos.returns.accept.ReturnOrderRequestDto;
+import on.logistics.orderservice.application.service.dtos.returns.accept.ReturnOrderResponseDto;
 import on.logistics.orderservice.application.service.dtos.returns.denied.ReturnRequestDeniedRequestDto;
 import on.logistics.orderservice.application.service.dtos.returns.denied.ReturnRequestDeniedResponseDto;
 import on.logistics.orderservice.application.service.dtos.returns.request.ReturnRequestRequestDto;
@@ -134,6 +136,16 @@ public class OrderController {
   ) {
     final var requestDto = ReturnRequestDeniedRequestDto.of(orderId, vendorOrderId);
     final var responseDto = orderService.denyReturnRequest(requestDto);
+    return ResponseEntity.ok(CommonResponse.success(responseDto));
+  }
+
+  @PatchMapping("/{orderId}/return/{vendorOrderId}")
+  public ResponseEntity<CommonResponse<ReturnOrderResponseDto>> returnOrder(
+      @PathVariable final UUID orderId,
+      @PathVariable final UUID vendorOrderId
+  ) {
+    final var requestDto = ReturnOrderRequestDto.of(orderId, vendorOrderId);
+    final var responseDto = orderService.returnOrder(requestDto);
     return ResponseEntity.ok(CommonResponse.success(responseDto));
   }
 }

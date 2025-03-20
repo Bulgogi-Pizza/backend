@@ -49,7 +49,8 @@ public record GetOrderDetailResponseDto(
         order.getOrderer().getCompanyId(),
         order.getOrderer().getCompanyName().getValue(),
         order.getOrderer().getUserId(),
-        order.getOrderer().getUserNickname().getValue(),
+        order.getOrderer().getUserNickname() == null
+            ? "N/A" : order.getOrderer().getUserNickname().getValue(),
         order.getDestination(),
         order.getVendorOrders().stream()
             .map(vendorOrder -> new OrdersByVendor(

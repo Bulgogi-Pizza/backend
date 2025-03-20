@@ -59,4 +59,14 @@ public class Vendor {
         .vendorHubId(createVendorDto.vendorHubId())
         .build();
   }
+
+  public static Vendor create(Orderer orderer, VendorOrder vendorOrder) {
+    return Vendor.builder()
+        .companyId(orderer.getCompanyId())
+        .name(orderer.getCompanyName())
+        .vendorHubId(orderer.getOrdererHubId())
+        .vendorHubName(orderer.getOrdererHubName())
+        .vendorOrder(vendorOrder)
+        .build();
+  }
 }

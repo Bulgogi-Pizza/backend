@@ -15,7 +15,7 @@ public class UserNickname {
 
   private static final int MAX_LENGTH = 100;
 
-  @Column(name = "user_nickname", nullable = false, length = MAX_LENGTH)
+  @Column(name = "user_nickname", length = MAX_LENGTH)
   private String value;
 
   public UserNickname(final String value) {

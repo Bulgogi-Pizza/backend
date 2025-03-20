@@ -79,6 +79,15 @@ public class VendorOrder {
         .build();
   }
 
+  public static VendorOrder create(Order order) {
+    return VendorOrder.builder()
+        .totalAmount(order.getTotalAmount())
+        .status(OrderStatus.ORDER_CREATED)
+        .arrivalDeadline(LocalDateTime.now().plusDays(7))
+        .order(order)
+        .build();
+  }
+
   public void addDependencies(Vendor vendor, List<OrderProduct> orderProducts) {
     this.vendor = vendor;
     this.orderProducts = orderProducts;
@@ -108,5 +117,13 @@ public class VendorOrder {
 
   public void denyReturn() {
     this.status = OrderStatus.RETURN_REQUEST_DENIED;
+  }
+
+  public void returnOrder() {
+    this.status = OrderStatus.RETURNED;
+  }
+
+  public void ship() {
+    this.shippedAt = LocalDateTime.now();
   }
 }

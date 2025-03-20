@@ -8,6 +8,8 @@ import on.logistics.orderservice.application.service.dtos.get.all.SearchOrderPag
 import on.logistics.orderservice.application.service.dtos.get.all.SearchOrderPageResponseDto;
 import on.logistics.orderservice.application.service.dtos.get.detail.GetOrderDetailRequestDto;
 import on.logistics.orderservice.application.service.dtos.get.detail.GetOrderDetailResponseDto;
+import on.logistics.orderservice.application.service.dtos.returns.accept.ReturnOrderRequestDto;
+import on.logistics.orderservice.application.service.dtos.returns.accept.ReturnOrderResponseDto;
 import on.logistics.orderservice.application.service.dtos.returns.denied.ReturnRequestDeniedRequestDto;
 import on.logistics.orderservice.application.service.dtos.returns.denied.ReturnRequestDeniedResponseDto;
 import on.logistics.orderservice.application.service.dtos.returns.request.ReturnRequestRequestDto;
@@ -34,4 +36,6 @@ public interface OrderService {
   ReturnRequestResponseDto requestReturn(final ReturnRequestRequestDto requestDto);
 
   ReturnRequestDeniedResponseDto denyReturnRequest(final ReturnRequestDeniedRequestDto requestDto);
+
+  ReturnOrderResponseDto returnOrder(final ReturnOrderRequestDto requestDto);
 }

@@ -10,6 +10,8 @@ public record CreateOrderRequestDto(
     String ordererName,
     UUID ordererUserId,
     String ordererUserNickname,
+    UUID ordererHubId,
+    String ordererHubName,
     String destination,
     Long totalAmount,
     List<OrdersByVendor> ordersByVendor
@@ -45,6 +47,8 @@ public record CreateOrderRequestDto(
         createOrderRequest.ordererName(),
         ordererUserId,
         ordererUserNickname,
+        createOrderRequest.ordererHubId(),
+        createOrderRequest.ordererHubName(),
         createOrderRequest.destination(),
         createOrderRequest.totalAmount(),
         createOrderRequest.ordersByVendor().stream()

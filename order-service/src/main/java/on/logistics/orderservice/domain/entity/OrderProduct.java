@@ -59,6 +59,19 @@ public class OrderProduct {
         .build();
   }
 
+  public static OrderProduct create(
+      OrderProduct orderProduct,
+      VendorOrder returnedVendorOrder
+  ) {
+    return OrderProduct.builder()
+        .vendorOrder(returnedVendorOrder)
+        .productId(orderProduct.getProductId())
+        .name(orderProduct.getName())
+        .quantity(orderProduct.getQuantity())
+        .price(orderProduct.getPrice())
+        .build();
+  }
+
   public void updateQuantity(Long quantity) {
     this.quantity = new ProductQuantity(quantity);
   }
