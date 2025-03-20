@@ -1,0 +1,31 @@
+spring:
+  application:
+    name: hub-service
+
+  datasource:
+    url: ENC(w/qxsogEfvgBRSPgkV068Bv4ys0L0DrQ9z/DSlc8/J5ExaZoFPTkoattvgqf5b6f)
+    username: ENC(O0JZhVcB3wpGWRMG9nvHVgGq6/kWnWpc)
+    password: ENC(XSH/orVzAokrfuvimJvFnA==)
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    database: postgresql
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    defer-datasource-initialization: true
+  sql:
+    init:
+      mode: always
+      data-locations: classpath:data_sql.sql
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    prefer-ip-address: true
