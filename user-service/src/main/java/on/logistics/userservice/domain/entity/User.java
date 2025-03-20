@@ -56,4 +56,5 @@ public class User extends BaseEntity {
             this.slackEmail = slackEmail;
         }
     }
+
 }

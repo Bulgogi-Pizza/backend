@@ -38,9 +38,10 @@ public class UserServiceImpl implements UserService {
     public CreateUserResponse createUser(CreateUserDto dto) {
 
         User user = User.create(dto);
-        // TODO: createdBy 해결 필
-        user.createUser();
+
         User savedUser = userRepository.save(user);
+        savedUser.setIdForUser(savedUser.getId());
+
         return CreateUserResponse.from(savedUser);
     }
 
@@ -74,7 +75,6 @@ public class UserServiceImpl implements UserService {
 
         User user = findByIdOrElseThrow(id);
 
-        // TODO: updateBy 해결 필
         user.updateNickname(dto.nickname());
         user.updateSlackEmail(dto.slackEmail());
 
@@ -93,7 +93,6 @@ public class UserServiceImpl implements UserService {
     public UpdateUserAdminResponse updateUserAdmin(UpdateUserAdminDto dto) {
         User user = findByIdOrElseThrow(dto.userId());
 
-        // TODO: updateBy 해결 필
         user.updateNickname(dto.nickname());
         user.updateSlackEmail(dto.slackEmail());
 

@@ -5,10 +5,13 @@ import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.PreRemove;
 import java.time.LocalDateTime;
+import java.util.UUID;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -23,21 +26,23 @@ public abstract class BaseEntity {
     @Column(name = "created_at", updatable = false, nullable = false)
     private LocalDateTime createdAt;
 
-    @Column(name = "created_by", updatable = false)
-    private Long createdBy;
+    @CreatedBy
+    @Column(name = "created_by")
+    private UUID createdBy;
 
     @LastModifiedDate
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
+    @LastModifiedBy
     @Column(name = "updated_by")
-    private Long updatedBy;
+    private UUID updatedBy;
 
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 
     @Column(name = "deleted_by")
-    private Long deletedBy;
+    private UUID deletedBy;
 
     @Column(name = "is_deleted")
     private Boolean isDeleted = false;
@@ -55,8 +60,8 @@ public abstract class BaseEntity {
         }
     }
 
-    public void createUser() {
-        createdBy = 1L;
-        updatedBy = 1L;
+    public void setIdForUser(UUID id) {
+        this.createdBy = id;
+        this.updatedBy = id;
     }
 }
