@@ -49,7 +49,8 @@ public class CompanyController {
     @PostMapping
     public ResponseEntity<CommonResponse<CreateCompanyResponse>> createCompany(
         @Valid @RequestBody CreateCompanyRequest createCompanyRequest) {
-        final CreateCompanyRequestDto requestDto = CreateCompanyRequest.from(createCompanyRequest);
+        final CreateCompanyRequestDto requestDto = CreateCompanyRequestDto.from(
+            createCompanyRequest);
         CreateCompanyResponse response = companyService.createCompany(requestDto);
         return ResponseEntity.ok(CommonResponse.success(response));
     }
@@ -74,7 +75,8 @@ public class CompanyController {
     @PutMapping("/{id}")
     public ResponseEntity<CommonResponse<UpdateCompanyResponse>> updateCompany(
         @PathVariable UUID id, @Valid @RequestBody UpdateCompanyRequest updateCompanyRequest) {
-        final UpdateCompanyRequestDto requestDto = UpdateCompanyRequest.from(updateCompanyRequest);
+        final UpdateCompanyRequestDto requestDto = UpdateCompanyRequestDto.from(
+            updateCompanyRequest);
         UpdateCompanyResponse response = companyService.updateCompany(id, requestDto);
         return ResponseEntity.ok(CommonResponse.success(response));
     }
@@ -89,7 +91,7 @@ public class CompanyController {
     public ResponseEntity<CommonResponse<UpdateCompanyHubResponse>> updateCompanyHub(
         @PathVariable UUID id,
         @Valid @RequestBody UpdateCompanyHubRequest updateCompanyHubRequest) {
-        final UpdateCompanyHubRequestDto requestDto = UpdateCompanyHubRequest.from(
+        final UpdateCompanyHubRequestDto requestDto = UpdateCompanyHubRequestDto.from(
             updateCompanyHubRequest);
         UpdateCompanyHubResponse response = companyService.updateCompanyHub(id, requestDto);
         return ResponseEntity.ok(CommonResponse.success(response));
