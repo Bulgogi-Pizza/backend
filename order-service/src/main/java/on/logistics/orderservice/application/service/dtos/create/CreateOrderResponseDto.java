@@ -7,9 +7,9 @@ public record CreateOrderResponseDto(
     UUID id
 ) {
 
-  public static CreateOrderResponseDto from(Order order) {
-    return new CreateOrderResponseDto(
-        order.getId()
-    );
-  }
+    public static CreateOrderResponseDto from(Order order) {
+        return new CreateOrderResponseDto(
+            order.getId()
+        );
+    }
 }

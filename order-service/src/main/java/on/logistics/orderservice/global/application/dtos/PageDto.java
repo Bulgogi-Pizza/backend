@@ -10,12 +10,12 @@ public record PageDto<T>(
     long totalElements
 ) {
 
-  public static <T> PageDto<T> from(Page<T> page) {
-    return new PageDto<>(
-        page.getContent(),
-        page.isLast(),
-        page.getTotalPages(),
-        page.getTotalElements()
-    );
-  }
+    public static <T> PageDto<T> from(Page<T> page) {
+        return new PageDto<>(
+            page.getContent(),
+            page.isLast(),
+            page.getTotalPages(),
+            page.getTotalElements()
+        );
+    }
 }

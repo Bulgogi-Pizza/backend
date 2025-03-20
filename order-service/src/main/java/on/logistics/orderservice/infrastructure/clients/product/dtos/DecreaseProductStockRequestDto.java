@@ -8,10 +8,10 @@ public record DecreaseProductStockRequestDto(
     Long quantity
 ) {
 
-  public static DecreaseProductStockRequestDto from(OrderedProduct orderedProduct) {
-    return new DecreaseProductStockRequestDto(
-        orderedProduct.productId(),
-        orderedProduct.quantity()
-    );
-  }
+    public static DecreaseProductStockRequestDto from(OrderedProduct orderedProduct) {
+        return new DecreaseProductStockRequestDto(
+            orderedProduct.productId(),
+            orderedProduct.quantity()
+        );
+    }
 }

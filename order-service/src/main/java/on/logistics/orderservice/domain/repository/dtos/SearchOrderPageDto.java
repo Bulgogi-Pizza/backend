@@ -17,17 +17,17 @@ public record SearchOrderPageDto(
     String vendorCompanyName
 ) {
 
-  public static SearchOrderPageDto from(SearchOrderPageRequestDto requestDto) {
-    return new SearchOrderPageDto(
-        requestDto.pageable(),
-        requestDto.userId(),
-        requestDto.userRole(),
-        requestDto.ordererUserId(),
-        requestDto.ordererUserNickname(),
-        requestDto.ordererCompanyId(),
-        requestDto.ordererCompanyName(),
-        requestDto.vendorCompanyId(),
-        requestDto.vendorCompanyName()
-    );
-  }
+    public static SearchOrderPageDto from(SearchOrderPageRequestDto requestDto) {
+        return new SearchOrderPageDto(
+            requestDto.pageable(),
+            requestDto.userId(),
+            requestDto.userRole(),
+            requestDto.ordererUserId(),
+            requestDto.ordererUserNickname(),
+            requestDto.ordererCompanyId(),
+            requestDto.ordererCompanyName(),
+            requestDto.vendorCompanyId(),
+            requestDto.vendorCompanyName()
+        );
+    }
 }

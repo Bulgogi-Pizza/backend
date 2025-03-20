@@ -17,27 +17,27 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class ProductServiceImpl implements ProductService {
 
-  private final ProductServiceFeignClient productServiceFeignClient;
+    private final ProductServiceFeignClient productServiceFeignClient;
 
-  @Override
-  public void decreaseProductStock(DecreaseProductStockRequestDto requestDto) {
-    log.info("Decreasing product stock: {}", requestDto);
-    var decreaseProductStockRequest = DecreaseProductStockRequest.from(requestDto);
-    Response response = productServiceFeignClient.decreaseProductStock(
-        requestDto.productId(),
-        decreaseProductStockRequest
-    );
-    FeignClientResponseUtils.validateResponseStatus(response);
-  }
+    @Override
+    public void decreaseProductStock(DecreaseProductStockRequestDto requestDto) {
+        log.info("Decreasing product stock: {}", requestDto);
+        var decreaseProductStockRequest = DecreaseProductStockRequest.from(requestDto);
+        Response response = productServiceFeignClient.decreaseProductStock(
+            requestDto.productId(),
+            decreaseProductStockRequest
+        );
+        FeignClientResponseUtils.validateResponseStatus(response);
+    }
 
-  @Override
-  public void rollbackDecreaseProductStock(RollbackDecreaseProductStockRequestDto requestDto) {
-    log.info("Rollback decrease product stock: {}", requestDto);
-    var increaseProductStockRequest = IncreaseProductStockRequest.from(requestDto);
-    Response response = productServiceFeignClient.increaseProductStock(
-        requestDto.productId(),
-        increaseProductStockRequest
-    );
-    FeignClientResponseUtils.validateResponseStatus(response);
-  }
+    @Override
+    public void rollbackDecreaseProductStock(RollbackDecreaseProductStockRequestDto requestDto) {
+        log.info("Rollback decrease product stock: {}", requestDto);
+        var increaseProductStockRequest = IncreaseProductStockRequest.from(requestDto);
+        Response response = productServiceFeignClient.increaseProductStock(
+            requestDto.productId(),
+            increaseProductStockRequest
+        );
+        FeignClientResponseUtils.validateResponseStatus(response);
+    }
 }

@@ -13,23 +13,24 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UserNickname {
 
-  private static final int MAX_LENGTH = 100;
+    private static final int MAX_LENGTH = 100;
 
-  @Column(name = "user_nickname", length = MAX_LENGTH)
-  private String value;
+    @Column(name = "user_nickname", length = MAX_LENGTH)
+    private String value;
 
-  public UserNickname(final String value) {
-    validate(value);
-    this.value = value;
-  }
-
-  private void validate(final String value) {
-    if (value == null || value.isBlank()) {
-      throw new IllegalArgumentException("Company companyName must not be empty");
+    public UserNickname(final String value) {
+        validate(value);
+        this.value = value;
     }
-    if (value.length() > MAX_LENGTH) {
-      throw new IllegalArgumentException("Company companyName must not be longer than " + MAX_LENGTH + " characters");
+
+    private void validate(final String value) {
+        if (value == null || value.isBlank()) {
+            throw new IllegalArgumentException("Company companyName must not be empty");
+        }
+        if (value.length() > MAX_LENGTH) {
+            throw new IllegalArgumentException(
+                "Company companyName must not be longer than " + MAX_LENGTH + " characters");
+        }
     }
-  }
 
 }

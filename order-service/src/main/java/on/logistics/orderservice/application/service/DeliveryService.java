@@ -4,5 +4,5 @@ import on.logistics.orderservice.infrastructure.clients.delivery.dtos.DeliveryRe
 
 public interface DeliveryService {
 
-  void deliveryRequest(DeliveryRequestDto requestDto);
+    void deliveryRequest(DeliveryRequestDto requestDto);
 }

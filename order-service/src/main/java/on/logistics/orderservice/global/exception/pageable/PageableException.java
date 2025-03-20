@@ -4,29 +4,29 @@ import on.logistics.orderservice.global.exception.CustomException;
 
 public class PageableException extends CustomException {
 
-  public PageableException(PageableExceptionCode pageableExceptionCode) {
-    super(pageableExceptionCode);
-  }
-
-  public static class InvalidPageSizeException extends PageableException {
-
-    public InvalidPageSizeException() {
-      super(PageableExceptionCode.INVALID_PAGE_SIZE);
+    public PageableException(PageableExceptionCode pageableExceptionCode) {
+        super(pageableExceptionCode);
     }
-  }
 
-  public static class InvalidSortByException extends PageableException {
+    public static class InvalidPageSizeException extends PageableException {
 
-    public InvalidSortByException() {
-      super(PageableExceptionCode.INVALID_SORT_BY);
+        public InvalidPageSizeException() {
+            super(PageableExceptionCode.INVALID_PAGE_SIZE);
+        }
     }
-  }
 
-  public static class InvalidPageNumberException extends PageableException {
+    public static class InvalidSortByException extends PageableException {
 
-    public InvalidPageNumberException() {
-      super(PageableExceptionCode.INVALID_PAGE_NUMBER);
+        public InvalidSortByException() {
+            super(PageableExceptionCode.INVALID_SORT_BY);
+        }
     }
-  }
+
+    public static class InvalidPageNumberException extends PageableException {
+
+        public InvalidPageNumberException() {
+            super(PageableExceptionCode.INVALID_PAGE_NUMBER);
+        }
+    }
 
 }

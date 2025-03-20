@@ -16,22 +16,22 @@ import org.springframework.stereotype.Repository;
 @RequiredArgsConstructor
 public class OrderRepositoryImpl implements OrderRepository {
 
-  private final OrderJpaRepository orderJpaRepository;
+    private final OrderJpaRepository orderJpaRepository;
 
-  @Override
-  public Order save(Order order) {
-    return orderJpaRepository.save(order);
-  }
+    @Override
+    public Order save(Order order) {
+        return orderJpaRepository.save(order);
+    }
 
-  @Override
-  public Page<Order> searchOrderPage(SearchOrderPageDto searchOrderPageDto) {
-    return orderJpaRepository.searchOrderPage(searchOrderPageDto);
-  }
+    @Override
+    public Page<Order> searchOrderPage(SearchOrderPageDto searchOrderPageDto) {
+        return orderJpaRepository.searchOrderPage(searchOrderPageDto);
+    }
 
-  @Override
-  public Optional<Order> findOrderById(UUID orderId) {
-    log.warn("N+1 문제가 발생할 수 있습니다!");
-    return orderJpaRepository.findById(orderId);
-  }
+    @Override
+    public Optional<Order> findOrderById(UUID orderId) {
+        log.warn("N+1 문제가 발생할 수 있습니다!");
+        return orderJpaRepository.findById(orderId);
+    }
 
 }

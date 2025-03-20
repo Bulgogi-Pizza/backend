@@ -10,35 +10,35 @@ public record UpdateOrderRequestDto(
     List<OrdersByVendor> ordersByVendor
 ) {
 
-  public record OrdersByVendor(
-      UUID orderIdByVendor,
-      LocalDateTime arrivalDeadline,
-      List<OrderedProduct> orderedProducts
-  ) {
-
-    public record OrderedProduct(
-        UUID productId,
-        Long quantity
+    public record OrdersByVendor(
+        UUID orderIdByVendor,
+        LocalDateTime arrivalDeadline,
+        List<OrderedProduct> orderedProducts
     ) {
 
-    }
-  }
+        public record OrderedProduct(
+            UUID productId,
+            Long quantity
+        ) {
 
-  public static UpdateOrderRequestDto of(UpdateOrderRequest request, UUID orderId) {
-    return new UpdateOrderRequestDto(
-        orderId,
-        request.ordersByVendor().stream()
-            .map(ordersByVendor -> new OrdersByVendor(
-                ordersByVendor.orderIdByVendor(),
-                ordersByVendor.arrivalDeadline(),
-                ordersByVendor.orderedProducts().stream()
-                    .map(orderedProduct -> new OrdersByVendor.OrderedProduct(
-                        orderedProduct.productId(),
-                        orderedProduct.quantity()
-                    ))
-                    .toList()
-            ))
-            .toList()
-    );
-  }
+        }
+    }
+
+    public static UpdateOrderRequestDto of(UpdateOrderRequest request, UUID orderId) {
+        return new UpdateOrderRequestDto(
+            orderId,
+            request.ordersByVendor().stream()
+                .map(ordersByVendor -> new OrdersByVendor(
+                    ordersByVendor.orderIdByVendor(),
+                    ordersByVendor.arrivalDeadline(),
+                    ordersByVendor.orderedProducts().stream()
+                        .map(orderedProduct -> new OrdersByVendor.OrderedProduct(
+                            orderedProduct.productId(),
+                            orderedProduct.quantity()
+                        ))
+                        .toList()
+                ))
+                .toList()
+        );
+    }
 }

@@ -9,6 +9,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 @FeignClient(name = "ai-service")
 public interface AIServiceFeignClient {
 
-  @GetMapping("/api/v1/ai/shipping-deadline")
-  Response generateShippingDeadline(@RequestBody GenerateShippingDeadlineRequest request);
+    @GetMapping("/api/v1/ai/shipping-deadline")
+    Response generateShippingDeadline(@RequestBody GenerateShippingDeadlineRequest request);
 }

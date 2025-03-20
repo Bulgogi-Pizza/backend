@@ -13,18 +13,18 @@ import org.springframework.web.bind.annotation.RequestBody;
 @FeignClient(name = "product-service")
 public interface ProductServiceFeignClient {
 
-  @GetMapping("/api/v1/product/{productId}")
-  Response getProductById(@PathVariable UUID productId);
+    @GetMapping("/api/v1/product/{productId}")
+    Response getProductById(@PathVariable UUID productId);
 
-  @PostMapping("/api/v1/product/quantity/{productId}")
-  Response decreaseProductStock(
-      @PathVariable UUID productId,
-      @RequestBody DecreaseProductStockRequest request
-  );
+    @PostMapping("/api/v1/product/quantity/{productId}")
+    Response decreaseProductStock(
+        @PathVariable UUID productId,
+        @RequestBody DecreaseProductStockRequest request
+    );
 
-  @PostMapping("/api/v1/product/quantity/{productId}/rollback")
-  Response increaseProductStock(
-      @PathVariable UUID productId,
-      @RequestBody IncreaseProductStockRequest request
-  );
+    @PostMapping("/api/v1/product/quantity/{productId}/rollback")
+    Response increaseProductStock(
+        @PathVariable UUID productId,
+        @RequestBody IncreaseProductStockRequest request
+    );
 }

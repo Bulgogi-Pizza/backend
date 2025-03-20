@@ -8,9 +8,9 @@ import org.springframework.data.domain.Page;
 
 public interface OrderRepository {
 
-  Order save(Order order);
+    Order save(Order order);
 
-  Page<Order> searchOrderPage(SearchOrderPageDto searchOrderPageDto);
+    Page<Order> searchOrderPage(SearchOrderPageDto searchOrderPageDto);
 
-  Optional<Order> findOrderById(UUID orderId);
+    Optional<Order> findOrderById(UUID orderId);
 }

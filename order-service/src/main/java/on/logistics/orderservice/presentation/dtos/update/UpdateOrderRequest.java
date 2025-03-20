@@ -12,18 +12,18 @@ public record UpdateOrderRequest(
     @NotEmpty List<OrdersByVendor> ordersByVendor
 ) {
 
-  public record OrdersByVendor(
-      @NotNull UUID orderIdByVendor,
-      @NotNull @Future LocalDateTime arrivalDeadline,
-      @NotEmpty List<OrderedProduct> orderedProducts
-  ) {
-
-    public record OrderedProduct(
-        @NotNull UUID productId,
-        @NotNull @PositiveOrZero Long quantity
+    public record OrdersByVendor(
+        @NotNull UUID orderIdByVendor,
+        @NotNull @Future LocalDateTime arrivalDeadline,
+        @NotEmpty List<OrderedProduct> orderedProducts
     ) {
 
+        public record OrderedProduct(
+            @NotNull UUID productId,
+            @NotNull @PositiveOrZero Long quantity
+        ) {
+
+        }
     }
-  }
 
 }

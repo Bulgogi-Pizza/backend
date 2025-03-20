@@ -10,14 +10,14 @@ public record CreateVendorOrderDto(
     LocalDateTime arrivalDeadline
 ) {
 
-  public static CreateVendorOrderDto of(
-      Order order,
-      OrdersByVendor ordersByVendor
-  ) {
-    return new CreateVendorOrderDto(
-        order,
-        ordersByVendor.totalAmount(),
-        ordersByVendor.arrivalDeadline()
-    );
-  }
+    public static CreateVendorOrderDto of(
+        Order order,
+        OrdersByVendor ordersByVendor
+    ) {
+        return new CreateVendorOrderDto(
+            order,
+            ordersByVendor.totalAmount(),
+            ordersByVendor.arrivalDeadline()
+        );
+    }
 }

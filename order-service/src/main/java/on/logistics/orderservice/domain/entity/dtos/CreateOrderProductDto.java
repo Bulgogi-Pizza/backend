@@ -12,16 +12,16 @@ public record CreateOrderProductDto(
     String name
 ) {
 
-  public static CreateOrderProductDto of(
-      VendorOrder vendorOrder,
-      OrderedProduct orderedProduct
-  ) {
-    return new CreateOrderProductDto(
-        vendorOrder,
-        orderedProduct.productId(),
-        orderedProduct.quantity(),
-        orderedProduct.price(),
-        orderedProduct.name()
-    );
-  }
+    public static CreateOrderProductDto of(
+        VendorOrder vendorOrder,
+        OrderedProduct orderedProduct
+    ) {
+        return new CreateOrderProductDto(
+            vendorOrder,
+            orderedProduct.productId(),
+            orderedProduct.quantity(),
+            orderedProduct.price(),
+            orderedProduct.name()
+        );
+    }
 }

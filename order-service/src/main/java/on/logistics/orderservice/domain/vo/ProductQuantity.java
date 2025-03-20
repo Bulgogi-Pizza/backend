@@ -13,17 +13,17 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ProductQuantity {
 
-  @Column(name = "quantity", nullable = false)
-  private Long value;
+    @Column(name = "quantity", nullable = false)
+    private Long value;
 
-  public ProductQuantity(final Long value) {
-    validate(value);
-    this.value = value;
-  }
-
-  private void validate(final Long value) {
-    if (value == null || value <= 0) {
-      throw new IllegalArgumentException("Product quantity must be greater than 0");
+    public ProductQuantity(final Long value) {
+        validate(value);
+        this.value = value;
     }
-  }
+
+    private void validate(final Long value) {
+        if (value == null || value <= 0) {
+            throw new IllegalArgumentException("Product quantity must be greater than 0");
+        }
+    }
 }

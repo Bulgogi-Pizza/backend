@@ -12,16 +12,16 @@ public record CreateVendorDto(
     VendorOrder vendorOrder
 ) {
 
-  public static CreateVendorDto of(
-      VendorOrder vendorOrder,
-      OrdersByVendor ordersByVendor
-  ) {
-    return new CreateVendorDto(
-        ordersByVendor.vendorId(),
-        ordersByVendor.vendorName(),
-        ordersByVendor.vendorHubId(),
-        ordersByVendor.vendorHubName(),
-        vendorOrder
-    );
-  }
+    public static CreateVendorDto of(
+        VendorOrder vendorOrder,
+        OrdersByVendor ordersByVendor
+    ) {
+        return new CreateVendorDto(
+            ordersByVendor.vendorId(),
+            ordersByVendor.vendorName(),
+            ordersByVendor.vendorHubId(),
+            ordersByVendor.vendorHubName(),
+            vendorOrder
+        );
+    }
 }

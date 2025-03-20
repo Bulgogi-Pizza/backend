@@ -5,7 +5,7 @@ import on.logistics.orderservice.infrastructure.clients.product.dtos.RollbackDec
 
 public interface ProductService {
 
-  void decreaseProductStock(DecreaseProductStockRequestDto requestDto);
+    void decreaseProductStock(DecreaseProductStockRequestDto requestDto);
 
-  void rollbackDecreaseProductStock(RollbackDecreaseProductStockRequestDto requestDto);
+    void rollbackDecreaseProductStock(RollbackDecreaseProductStockRequestDto requestDto);
 }

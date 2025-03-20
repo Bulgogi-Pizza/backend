@@ -12,26 +12,26 @@ public record GenerateShippingDeadlineRequest(
     String destination
 ) {
 
-  public record Product(
-      String name,
-      Long quantity
-  ) {
+    public record Product(
+        String name,
+        Long quantity
+    ) {
 
-  }
+    }
 
-  public static GenerateShippingDeadlineRequest from(
-      GenerateShippingDeadlineRequestDto requestDto
-  ) {
-    return new GenerateShippingDeadlineRequest(
-        requestDto.products().stream()
-            .map(product -> new Product(
-                product.name(),
-                product.quantity()
-            )).toList(),
-        requestDto.arrivalDeadline(),
-        requestDto.startHubName(),
-        requestDto.endHubName(),
-        requestDto.destination()
-    );
-  }
+    public static GenerateShippingDeadlineRequest from(
+        GenerateShippingDeadlineRequestDto requestDto
+    ) {
+        return new GenerateShippingDeadlineRequest(
+            requestDto.products().stream()
+                .map(product -> new Product(
+                    product.name(),
+                    product.quantity()
+                )).toList(),
+            requestDto.arrivalDeadline(),
+            requestDto.startHubName(),
+            requestDto.endHubName(),
+            requestDto.destination()
+        );
+    }
 }

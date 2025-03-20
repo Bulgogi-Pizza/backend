@@ -25,82 +25,82 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 @Slf4j
 public class PageableVerificationArgumentResolver extends PageableHandlerMethodArgumentResolver {
 
-  private final SortArgumentResolver resolver = new SortHandlerMethodArgumentResolver();
+    private final SortArgumentResolver resolver = new SortHandlerMethodArgumentResolver();
 
-  @Override
-  public Pageable resolveArgument(
-      MethodParameter methodParameter,
-      @Nullable ModelAndViewContainer mavContainer,
-      NativeWebRequest webRequest,
-      @Nullable WebDataBinderFactory binderFactory
-  ) {
+    @Override
+    public Pageable resolveArgument(
+        MethodParameter methodParameter,
+        @Nullable ModelAndViewContainer mavContainer,
+        NativeWebRequest webRequest,
+        @Nullable WebDataBinderFactory binderFactory
+    ) {
 
-    String pageText = webRequest.getParameter(
-        getParameterNameToUse(getPageParameterName(), methodParameter));
-    String sizeText = webRequest.getParameter(
-        getParameterNameToUse(getSizeParameterName(), methodParameter));
-    Sort sort = resolver.resolveArgument(methodParameter, mavContainer, webRequest,
-        binderFactory);
+        String pageText = webRequest.getParameter(
+            getParameterNameToUse(getPageParameterName(), methodParameter));
+        String sizeText = webRequest.getParameter(
+            getParameterNameToUse(getSizeParameterName(), methodParameter));
+        Sort sort = resolver.resolveArgument(methodParameter, mavContainer, webRequest,
+            binderFactory);
 
-    log.info("pageText: {}", pageText);
-    log.info("sizeText: {}", sizeText);
-    log.info("sort: {}", sort);
+        log.info("pageText: {}", pageText);
+        log.info("sizeText: {}", sizeText);
+        log.info("sort: {}", sort);
 
-    if (pageText == null) {
-      pageText = String.valueOf(PageNumber.MINIMUM_PAGE_NUMBER.getNumber());
-    }
-    if (sizeText == null) {
-      sizeText = String.valueOf(PageSize.DEFAULT.getSize());
-    }
-    if (!sort.isSorted()) {
-      sort = Sort.by(
-          Sort.Direction.DESC,
-          PageSortBy.CREATED_AT.getSortBy(),
-          PageSortBy.UPDATED_AT.getSortBy(),
-          PageSortBy.ID.getSortBy()
-      );
-    }
-
-    validatePage(pageText);
-    validatePageSize(sizeText);
-    validateSort(sort);
-
-    return PageRequest.of(Integer.parseInt(pageText), Integer.parseInt(sizeText), sort);
-  }
-
-  private void validatePage(String pageText) {
-    if (StringUtils.hasText(pageText)) {
-      try {
-        int page = Integer.parseInt(pageText);
-        if (!PageNumber.isValid(page)) {
-          throw new InvalidPageNumberException();
+        if (pageText == null) {
+            pageText = String.valueOf(PageNumber.MINIMUM_PAGE_NUMBER.getNumber());
         }
-      } catch (NumberFormatException e) {
-        throw new InvalidPageNumberException();
-      }
-    }
-  }
-
-  private void validatePageSize(String sizeText) {
-    if (sizeText != null && !sizeText.isEmpty()) {
-      try {
-        int size = Integer.parseInt(sizeText);
-        if (!PageSize.isValid(size)) {
-          throw new InvalidPageSizeException();
+        if (sizeText == null) {
+            sizeText = String.valueOf(PageSize.DEFAULT.getSize());
         }
-      } catch (NumberFormatException e) {
-        throw new InvalidPageSizeException();
-      }
-    }
-  }
-
-  private void validateSort(Sort sort) {
-    if (sort != null) {
-      sort.forEach(order -> {
-        if (!PageSortBy.isValid(order.getProperty())) {
-          throw new InvalidSortByException();
+        if (!sort.isSorted()) {
+            sort = Sort.by(
+                Sort.Direction.DESC,
+                PageSortBy.CREATED_AT.getSortBy(),
+                PageSortBy.UPDATED_AT.getSortBy(),
+                PageSortBy.ID.getSortBy()
+            );
         }
-      });
+
+        validatePage(pageText);
+        validatePageSize(sizeText);
+        validateSort(sort);
+
+        return PageRequest.of(Integer.parseInt(pageText), Integer.parseInt(sizeText), sort);
     }
-  }
+
+    private void validatePage(String pageText) {
+        if (StringUtils.hasText(pageText)) {
+            try {
+                int page = Integer.parseInt(pageText);
+                if (!PageNumber.isValid(page)) {
+                    throw new InvalidPageNumberException();
+                }
+            } catch (NumberFormatException e) {
+                throw new InvalidPageNumberException();
+            }
+        }
+    }
+
+    private void validatePageSize(String sizeText) {
+        if (sizeText != null && !sizeText.isEmpty()) {
+            try {
+                int size = Integer.parseInt(sizeText);
+                if (!PageSize.isValid(size)) {
+                    throw new InvalidPageSizeException();
+                }
+            } catch (NumberFormatException e) {
+                throw new InvalidPageSizeException();
+            }
+        }
+    }
+
+    private void validateSort(Sort sort) {
+        if (sort != null) {
+            sort.forEach(order -> {
+                if (!PageSortBy.isValid(order.getProperty())) {
+                    throw new InvalidSortByException();
+                }
+            });
+        }
+    }
 }

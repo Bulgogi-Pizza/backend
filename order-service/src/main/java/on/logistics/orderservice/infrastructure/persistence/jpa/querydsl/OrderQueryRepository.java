@@ -6,5 +6,5 @@ import org.springframework.data.domain.Page;
 
 public interface OrderQueryRepository {
 
-  Page<Order> searchOrderPage(SearchOrderPageDto searchOrderPageDto);
+    Page<Order> searchOrderPage(SearchOrderPageDto searchOrderPageDto);
 }

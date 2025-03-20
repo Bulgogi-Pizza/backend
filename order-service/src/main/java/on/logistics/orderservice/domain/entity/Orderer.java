@@ -29,51 +29,51 @@ import on.logistics.orderservice.domain.vo.UserNickname;
 @Getter
 public class Orderer {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.UUID)
-  private UUID id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
-  @Column(name = "company_id", updatable = false, nullable = false)
-  private UUID companyId;
+    @Column(name = "company_id", updatable = false, nullable = false)
+    private UUID companyId;
 
-  @Embedded
-  private CompanyName companyName;
+    @Embedded
+    private CompanyName companyName;
 
-  @Column(name = "user_id", updatable = false)
-  private UUID userId;
+    @Column(name = "user_id", updatable = false)
+    private UUID userId;
 
-  @Embedded
-  private UserNickname userNickname;
+    @Embedded
+    private UserNickname userNickname;
 
-  @Column(name = "orderer_hub_id", updatable = false, nullable = false)
-  private UUID ordererHubId;
+    @Column(name = "orderer_hub_id", updatable = false, nullable = false)
+    private UUID ordererHubId;
 
-  @Embedded
-  private HubName ordererHubName;
+    @Embedded
+    private HubName ordererHubName;
 
-  @OneToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "order_id", updatable = false, nullable = false)
-  private Order order;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_id", updatable = false, nullable = false)
+    private Order order;
 
-  public static Orderer create(CreateOrdererDto requestDto) {
-    return Orderer.builder()
-        .order(requestDto.order())
-        .companyId(requestDto.companyId())
-        .userId(requestDto.userId())
-        .companyName(new CompanyName(requestDto.companyName()))
-        .userNickname(new UserNickname(requestDto.userNickname()))
-        .ordererHubId(requestDto.ordererHubId())
-        .ordererHubName(new HubName(requestDto.ordererHubName()))
-        .build();
-  }
+    public static Orderer create(CreateOrdererDto requestDto) {
+        return Orderer.builder()
+            .order(requestDto.order())
+            .companyId(requestDto.companyId())
+            .userId(requestDto.userId())
+            .companyName(new CompanyName(requestDto.companyName()))
+            .userNickname(new UserNickname(requestDto.userNickname()))
+            .ordererHubId(requestDto.ordererHubId())
+            .ordererHubName(new HubName(requestDto.ordererHubName()))
+            .build();
+    }
 
-  public static Orderer create(Order order, Vendor vendor) {
-    return Orderer.builder()
-        .order(order)
-        .companyId(vendor.getCompanyId())
-        .companyName(vendor.getName())
-        .ordererHubId(vendor.getVendorHubId())
-        .ordererHubName(vendor.getVendorHubName())
-        .build();
-  }
+    public static Orderer create(Order order, Vendor vendor) {
+        return Orderer.builder()
+            .order(order)
+            .companyId(vendor.getCompanyId())
+            .companyName(vendor.getName())
+            .ordererHubId(vendor.getVendorHubId())
+            .ordererHubName(vendor.getVendorHubName())
+            .build();
+    }
 }

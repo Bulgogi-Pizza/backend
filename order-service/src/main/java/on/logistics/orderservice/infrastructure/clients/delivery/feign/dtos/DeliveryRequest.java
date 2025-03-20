@@ -9,11 +9,11 @@ public record DeliveryRequest(
     UUID startHubId
 ) {
 
-  public static DeliveryRequest from(DeliveryRequestDto requestDto) {
-    return new DeliveryRequest(
-        requestDto.orderId(),
-        requestDto.destination(),
-        requestDto.startHubId()
-    );
-  }
+    public static DeliveryRequest from(DeliveryRequestDto requestDto) {
+        return new DeliveryRequest(
+            requestDto.orderId(),
+            requestDto.destination(),
+            requestDto.startHubId()
+        );
+    }
 }

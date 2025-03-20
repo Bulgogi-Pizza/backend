@@ -15,34 +15,34 @@ public record SearchOrderPageResponseDto(
     List<OrdersByVendor> ordersByVendor
 ) {
 
-  private record OrdersByVendor(
-      UUID vendorOrderId,
-      UUID vendorId,
-      String vendorName,
-      Long amountByVendor,
-      OrderStatus orderStatus,
-      LocalDateTime arrivalDateTime
-  ) {
+    private record OrdersByVendor(
+        UUID vendorOrderId,
+        UUID vendorId,
+        String vendorName,
+        Long amountByVendor,
+        OrderStatus orderStatus,
+        LocalDateTime arrivalDateTime
+    ) {
 
-  }
+    }
 
-  public static SearchOrderPageResponseDto from(Order order) {
-    return new SearchOrderPageResponseDto(
-        order.getId(),
-        order.getCreatedAt(),
-        order.getOrderer().getId(),
-        order.getOrderer().getCompanyName().getValue(),
-        order.getTotalAmount(),
-        order.getVendorOrders().stream()
-            .map(ordersByVendor -> new OrdersByVendor(
-                ordersByVendor.getId(),
-                ordersByVendor.getVendor().getId(),
-                ordersByVendor.getVendor().getName().getValue(),
-                ordersByVendor.getAmountByVendor(),
-                ordersByVendor.getStatus(),
-                ordersByVendor.getArrivalDeadline()
-            ))
-            .toList()
-    );
-  }
+    public static SearchOrderPageResponseDto from(Order order) {
+        return new SearchOrderPageResponseDto(
+            order.getId(),
+            order.getCreatedAt(),
+            order.getOrderer().getId(),
+            order.getOrderer().getCompanyName().getValue(),
+            order.getTotalAmount(),
+            order.getVendorOrders().stream()
+                .map(ordersByVendor -> new OrdersByVendor(
+                    ordersByVendor.getId(),
+                    ordersByVendor.getVendor().getId(),
+                    ordersByVendor.getVendor().getName().getValue(),
+                    ordersByVendor.getAmountByVendor(),
+                    ordersByVendor.getStatus(),
+                    ordersByVendor.getArrivalDeadline()
+                ))
+                .toList()
+        );
+    }
 }

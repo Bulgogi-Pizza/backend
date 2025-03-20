@@ -7,7 +7,7 @@ public record ReturnRequestRequestDto(
     UUID vendorOrderId
 ) {
 
-  public static ReturnRequestRequestDto of(UUID orderId, UUID vendorOrderId) {
-    return new ReturnRequestRequestDto(orderId, vendorOrderId);
-  }
+    public static ReturnRequestRequestDto of(UUID orderId, UUID vendorOrderId) {
+        return new ReturnRequestRequestDto(orderId, vendorOrderId);
+    }
 }

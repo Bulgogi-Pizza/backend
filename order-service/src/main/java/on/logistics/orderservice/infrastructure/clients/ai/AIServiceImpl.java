@@ -16,15 +16,15 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class AIServiceImpl implements AIService {
 
-  private final AIServiceFeignClient aiServiceFeignClient;
+    private final AIServiceFeignClient aiServiceFeignClient;
 
-  @Override
-  public GenerateShippingDeadlineResponse generateShippingDeadline(
-      GenerateShippingDeadlineRequestDto requestDto
-  ) {
-    log.info("배송 시한 생성 요청");
-    GenerateShippingDeadlineRequest request = GenerateShippingDeadlineRequest.from(requestDto);
-    Response response = aiServiceFeignClient.generateShippingDeadline(request);
-    return FeignClientResponseUtils.getBody(response, GenerateShippingDeadlineResponse.class);
-  }
+    @Override
+    public GenerateShippingDeadlineResponse generateShippingDeadline(
+        GenerateShippingDeadlineRequestDto requestDto
+    ) {
+        log.info("배송 시한 생성 요청");
+        GenerateShippingDeadlineRequest request = GenerateShippingDeadlineRequest.from(requestDto);
+        Response response = aiServiceFeignClient.generateShippingDeadline(request);
+        return FeignClientResponseUtils.getBody(response, GenerateShippingDeadlineResponse.class);
+    }
 }

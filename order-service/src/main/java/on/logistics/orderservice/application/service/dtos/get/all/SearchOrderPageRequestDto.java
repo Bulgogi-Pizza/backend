@@ -16,27 +16,27 @@ public record SearchOrderPageRequestDto(
     String vendorCompanyName
 ) {
 
-  public static SearchOrderPageRequestDto of(
-      Pageable pageable,
-      UUID userId,
-      AuthRole userRole,
-      UUID ordererUserId,
-      String ordererUserNickname,
-      UUID ordererCompanyId,
-      String ordererCompanyName,
-      UUID vendorCompanyId,
-      String vendorCompanyName
-  ) {
-    return new SearchOrderPageRequestDto(
-        pageable,
-        userId,
-        userRole,
-        ordererUserId,
-        ordererUserNickname,
-        ordererCompanyId,
-        ordererCompanyName,
-        vendorCompanyId,
-        vendorCompanyName
-    );
-  }
+    public static SearchOrderPageRequestDto of(
+        Pageable pageable,
+        UUID userId,
+        AuthRole userRole,
+        UUID ordererUserId,
+        String ordererUserNickname,
+        UUID ordererCompanyId,
+        String ordererCompanyName,
+        UUID vendorCompanyId,
+        String vendorCompanyName
+    ) {
+        return new SearchOrderPageRequestDto(
+            pageable,
+            userId,
+            userRole,
+            ordererUserId,
+            ordererUserNickname,
+            ordererCompanyId,
+            ordererCompanyName,
+            vendorCompanyId,
+            vendorCompanyName
+        );
+    }
 }

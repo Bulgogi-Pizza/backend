@@ -12,24 +12,24 @@ public record GenerateShippingDeadlineRequestDto(
     String destination
 ) {
 
-  public record Product(
-      String name,
-      Long quantity
-  ) {
+    public record Product(
+        String name,
+        Long quantity
+    ) {
 
-  }
+    }
 
-  public static GenerateShippingDeadlineRequestDto from(VendorOrder createdVendorOrder) {
-    return new GenerateShippingDeadlineRequestDto(
-        createdVendorOrder.getOrderProducts().stream()
-            .map(orderProduct -> new Product(
-                orderProduct.getName().getValue(),
-                orderProduct.getQuantity().getValue()
-            )).toList(),
-        createdVendorOrder.getArrivalDeadline(),
-        createdVendorOrder.getVendor().getVendorHubName().getValue(),
-        createdVendorOrder.getOrder().getOrderer().getOrdererHubName().getValue(),
-        createdVendorOrder.getOrder().getDestination()
-    );
-  }
+    public static GenerateShippingDeadlineRequestDto from(VendorOrder createdVendorOrder) {
+        return new GenerateShippingDeadlineRequestDto(
+            createdVendorOrder.getOrderProducts().stream()
+                .map(orderProduct -> new Product(
+                    orderProduct.getName().getValue(),
+                    orderProduct.getQuantity().getValue()
+                )).toList(),
+            createdVendorOrder.getArrivalDeadline(),
+            createdVendorOrder.getVendor().getVendorHubName().getValue(),
+            createdVendorOrder.getOrder().getOrderer().getOrdererHubName().getValue(),
+            createdVendorOrder.getOrder().getDestination()
+        );
+    }
 }

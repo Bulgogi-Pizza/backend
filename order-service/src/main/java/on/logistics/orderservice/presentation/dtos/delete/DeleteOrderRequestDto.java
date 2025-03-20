@@ -7,10 +7,10 @@ public record DeleteOrderRequestDto(
     UUID vendorOrderId
 ) {
 
-  public static DeleteOrderRequestDto of(UUID orderId, UUID vendorOrderId) {
-    return new DeleteOrderRequestDto(
-        orderId,
-        vendorOrderId
-    );
-  }
+    public static DeleteOrderRequestDto of(UUID orderId, UUID vendorOrderId) {
+        return new DeleteOrderRequestDto(
+            orderId,
+            vendorOrderId
+        );
+    }
 }

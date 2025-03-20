@@ -6,7 +6,7 @@ public record GetOrderDetailRequestDto(
     UUID orderId
 ) {
 
-  public static GetOrderDetailRequestDto from(UUID orderId) {
-    return new GetOrderDetailRequestDto(orderId);
-  }
+    public static GetOrderDetailRequestDto from(UUID orderId) {
+        return new GetOrderDetailRequestDto(orderId);
+    }
 }

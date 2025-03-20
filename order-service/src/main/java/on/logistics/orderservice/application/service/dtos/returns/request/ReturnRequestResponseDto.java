@@ -7,7 +7,7 @@ public record ReturnRequestResponseDto(
     UUID vendorOrderId
 ) {
 
-  public static ReturnRequestResponseDto from(VendorOrder vendorOrder) {
-    return new ReturnRequestResponseDto(vendorOrder.getId());
-  }
+    public static ReturnRequestResponseDto from(VendorOrder vendorOrder) {
+        return new ReturnRequestResponseDto(vendorOrder.getId());
+    }
 }

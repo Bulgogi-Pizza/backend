@@ -18,61 +18,61 @@ public record UpdateOrderResponseDto(
     List<OrdersByVendor> ordersByVendor
 ) {
 
-  public record OrdersByVendor(
-      UUID vendorOrderId,
-      Long amountByVendor,
-      LocalDateTime arrivalDeadline,
-      UUID vendorCompanyId,
-      String vendorCompanyName,
-      UUID vendorHubId,
-      String vendorHubName,
-      OrderStatus orderStatus,
-      LocalDateTime shippedAt,
-      List<OrderedProducts> orderedProducts
-  ) {
-
-    public record OrderedProducts(
-        UUID productId,
-        String name,
-        Long price,
-        Long quantity
+    public record OrdersByVendor(
+        UUID vendorOrderId,
+        Long amountByVendor,
+        LocalDateTime arrivalDeadline,
+        UUID vendorCompanyId,
+        String vendorCompanyName,
+        UUID vendorHubId,
+        String vendorHubName,
+        OrderStatus orderStatus,
+        LocalDateTime shippedAt,
+        List<OrderedProducts> orderedProducts
     ) {
 
-    }
-  }
+        public record OrderedProducts(
+            UUID productId,
+            String name,
+            Long price,
+            Long quantity
+        ) {
 
-  public static UpdateOrderResponseDto from(Order order) {
-    return new UpdateOrderResponseDto(
-        order.getId(),
-        order.getCreatedAt(),
-        order.getTotalAmount(),
-        order.getOrderer().getCompanyId(),
-        order.getOrderer().getCompanyName().getValue(),
-        order.getOrderer().getUserId(),
-        order.getOrderer().getUserNickname().getValue(),
-        order.getDestination(),
-        order.getVendorOrders().stream()
-            .map(vendorOrder -> new UpdateOrderResponseDto.OrdersByVendor(
-                vendorOrder.getId(),
-                vendorOrder.getTotalAmount(),
-                vendorOrder.getArrivalDeadline(),
-                vendorOrder.getVendor().getCompanyId(),
-                vendorOrder.getVendor().getName().getValue(),
-                vendorOrder.getVendor().getVendorHubId(),
-                vendorOrder.getVendor().getVendorHubName().getValue(),
-                vendorOrder.getStatus(),
-                vendorOrder.getShippedAt(),
-                vendorOrder.getOrderProducts().stream()
-                    .map(
-                        orderedProduct -> new UpdateOrderResponseDto.OrdersByVendor.OrderedProducts(
-                            orderedProduct.getProductId(),
-                            orderedProduct.getName().getValue(),
-                            orderedProduct.getPrice().getValue(),
-                            orderedProduct.getQuantity().getValue()
-                        ))
-                    .toList()
-            ))
-            .toList()
-    );
-  }
+        }
+    }
+
+    public static UpdateOrderResponseDto from(Order order) {
+        return new UpdateOrderResponseDto(
+            order.getId(),
+            order.getCreatedAt(),
+            order.getTotalAmount(),
+            order.getOrderer().getCompanyId(),
+            order.getOrderer().getCompanyName().getValue(),
+            order.getOrderer().getUserId(),
+            order.getOrderer().getUserNickname().getValue(),
+            order.getDestination(),
+            order.getVendorOrders().stream()
+                .map(vendorOrder -> new UpdateOrderResponseDto.OrdersByVendor(
+                    vendorOrder.getId(),
+                    vendorOrder.getTotalAmount(),
+                    vendorOrder.getArrivalDeadline(),
+                    vendorOrder.getVendor().getCompanyId(),
+                    vendorOrder.getVendor().getName().getValue(),
+                    vendorOrder.getVendor().getVendorHubId(),
+                    vendorOrder.getVendor().getVendorHubName().getValue(),
+                    vendorOrder.getStatus(),
+                    vendorOrder.getShippedAt(),
+                    vendorOrder.getOrderProducts().stream()
+                        .map(
+                            orderedProduct -> new UpdateOrderResponseDto.OrdersByVendor.OrderedProducts(
+                                orderedProduct.getProductId(),
+                                orderedProduct.getName().getValue(),
+                                orderedProduct.getPrice().getValue(),
+                                orderedProduct.getQuantity().getValue()
+                            ))
+                        .toList()
+                ))
+                .toList()
+        );
+    }
 }

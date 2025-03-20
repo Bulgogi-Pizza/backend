@@ -37,93 +37,93 @@ import org.hibernate.annotations.SQLRestriction;
 @SQLDelete(sql = "UPDATE p_vendor_orders SET is_deleted = true WHERE id = ?")
 public class VendorOrder {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.UUID)
-  private UUID id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
-  @Column(name = "total_amount", nullable = false)
-  private Long totalAmount;
+    @Column(name = "total_amount", nullable = false)
+    private Long totalAmount;
 
-  @Column(name = "status", nullable = false)
-  @Enumerated(value = EnumType.STRING)
-  private OrderStatus status;
+    @Column(name = "status", nullable = false)
+    @Enumerated(value = EnumType.STRING)
+    private OrderStatus status;
 
-  @Column(name = "arrival_deadline", nullable = false)
-  private LocalDateTime arrivalDeadline;
+    @Column(name = "arrival_deadline", nullable = false)
+    private LocalDateTime arrivalDeadline;
 
-  @Column(name = "shipping_deadline")
-  private LocalDateTime shippingDeadline;
+    @Column(name = "shipping_deadline")
+    private LocalDateTime shippingDeadline;
 
-  @Column(name = "shipped_at")
-  private LocalDateTime shippedAt;
+    @Column(name = "shipped_at")
+    private LocalDateTime shippedAt;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "order_id", nullable = false)
-  private Order order;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_id", nullable = false)
+    private Order order;
 
-  @OneToOne(mappedBy = "vendorOrder", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-  private Vendor vendor;
+    @OneToOne(mappedBy = "vendorOrder", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Vendor vendor;
 
-  @OneToMany(mappedBy = "vendorOrder", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-  private List<OrderProduct> orderProducts;
+    @OneToMany(mappedBy = "vendorOrder", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<OrderProduct> orderProducts;
 
-  @Column(name = "is_deleted")
-  private boolean isDeleted = false;
+    @Column(name = "is_deleted")
+    private boolean isDeleted = false;
 
-  public static VendorOrder create(CreateVendorOrderDto createVendorOrderDto) {
-    return VendorOrder.builder()
-        .order(createVendorOrderDto.order())
-        .totalAmount(createVendorOrderDto.totalAmount())
-        .status(OrderStatus.ORDER_CREATED)
-        .arrivalDeadline(createVendorOrderDto.arrivalDeadline())
-        .build();
-  }
+    public static VendorOrder create(CreateVendorOrderDto createVendorOrderDto) {
+        return VendorOrder.builder()
+            .order(createVendorOrderDto.order())
+            .totalAmount(createVendorOrderDto.totalAmount())
+            .status(OrderStatus.ORDER_CREATED)
+            .arrivalDeadline(createVendorOrderDto.arrivalDeadline())
+            .build();
+    }
 
-  public static VendorOrder create(Order order) {
-    return VendorOrder.builder()
-        .totalAmount(order.getTotalAmount())
-        .status(OrderStatus.ORDER_CREATED)
-        .arrivalDeadline(LocalDateTime.now().plusDays(7))
-        .order(order)
-        .build();
-  }
+    public static VendorOrder create(Order order) {
+        return VendorOrder.builder()
+            .totalAmount(order.getTotalAmount())
+            .status(OrderStatus.ORDER_CREATED)
+            .arrivalDeadline(LocalDateTime.now().plusDays(7))
+            .order(order)
+            .build();
+    }
 
-  public void addDependencies(Vendor vendor, List<OrderProduct> orderProducts) {
-    this.vendor = vendor;
-    this.orderProducts = orderProducts;
-  }
+    public void addDependencies(Vendor vendor, List<OrderProduct> orderProducts) {
+        this.vendor = vendor;
+        this.orderProducts = orderProducts;
+    }
 
-  public void updateShippingDeadline(LocalDateTime shippingDeadline) {
-    this.shippingDeadline = shippingDeadline;
-  }
+    public void updateShippingDeadline(LocalDateTime shippingDeadline) {
+        this.shippingDeadline = shippingDeadline;
+    }
 
-  public Long getAmountByVendor() {
-    return orderProducts.stream()
-        .mapToLong(orderProduct -> orderProduct.getPrice().getValue())
-        .sum();
-  }
+    public Long getAmountByVendor() {
+        return orderProducts.stream()
+            .mapToLong(orderProduct -> orderProduct.getPrice().getValue())
+            .sum();
+    }
 
-  public void updateArrivalDeadline(LocalDateTime arrivalDeadline) {
-    this.arrivalDeadline = arrivalDeadline;
-  }
+    public void updateArrivalDeadline(LocalDateTime arrivalDeadline) {
+        this.arrivalDeadline = arrivalDeadline;
+    }
 
-  public void cancel() {
-    this.status = OrderStatus.CANCELLED;
-  }
+    public void cancel() {
+        this.status = OrderStatus.CANCELLED;
+    }
 
-  public void requestReturn() {
-    this.status = OrderStatus.RETURN_REQUESTED;
-  }
+    public void requestReturn() {
+        this.status = OrderStatus.RETURN_REQUESTED;
+    }
 
-  public void denyReturn() {
-    this.status = OrderStatus.RETURN_REQUEST_DENIED;
-  }
+    public void denyReturn() {
+        this.status = OrderStatus.RETURN_REQUEST_DENIED;
+    }
 
-  public void returnOrder() {
-    this.status = OrderStatus.RETURNED;
-  }
+    public void returnOrder() {
+        this.status = OrderStatus.RETURNED;
+    }
 
-  public void ship() {
-    this.shippedAt = LocalDateTime.now();
-  }
+    public void ship() {
+        this.shippedAt = LocalDateTime.now();
+    }
 }

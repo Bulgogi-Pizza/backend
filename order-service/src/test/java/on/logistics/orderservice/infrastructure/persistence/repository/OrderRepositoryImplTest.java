@@ -26,54 +26,54 @@ import org.springframework.data.domain.Pageable;
 @Import({JpaAuditingConfig.class, QuerydslConfig.class})
 class OrderRepositoryImplTest {
 
-  @Autowired
-  private OrderJpaRepository orderJpaRepository;
+    @Autowired
+    private OrderJpaRepository orderJpaRepository;
 
-  @Autowired
-  private EntityManager em;
+    @Autowired
+    private EntityManager em;
 
-  private Order order;
+    private Order order;
 
-  @BeforeEach
-  void setUp() {
-    order = FixtureFactory.getOrder();
-    em.persist(order);
-    em.flush();
-    em.clear();
-  }
+    @BeforeEach
+    void setUp() {
+        order = FixtureFactory.getOrder();
+        em.persist(order);
+        em.flush();
+        em.clear();
+    }
 
-  @Test
-  @DisplayName("주문 페이지 검색 테스트 - 주문자 업체 명으로 검색")
-  void searchOrderPageByOrdererCompanyName() {
-    // given
-    Pageable pageable = PageRequest.of(0, 10);
-    SearchOrderPageDto searchOrderPageDto = new SearchOrderPageDto(
-        pageable,
-        order.getOrderer().getUserId(),
-        AuthRole.MASTER,
-        null, null, null,
-        order.getOrderer().getCompanyName().getValue(),
-        null, null
-    );
+    @Test
+    @DisplayName("주문 페이지 검색 테스트 - 주문자 업체 명으로 검색")
+    void searchOrderPageByOrdererCompanyName() {
+        // given
+        Pageable pageable = PageRequest.of(0, 10);
+        SearchOrderPageDto searchOrderPageDto = new SearchOrderPageDto(
+            pageable,
+            order.getOrderer().getUserId(),
+            AuthRole.MASTER,
+            null, null, null,
+            order.getOrderer().getCompanyName().getValue(),
+            null, null
+        );
 
-    // when
-    Page<Order> orders = orderJpaRepository.searchOrderPage(searchOrderPageDto);
+        // when
+        Page<Order> orders = orderJpaRepository.searchOrderPage(searchOrderPageDto);
 
-    // then
-    assertThat(orders).isNotNull();
-    assertThat(orders.getTotalElements()).isEqualTo(1);
-  }
+        // then
+        assertThat(orders).isNotNull();
+        assertThat(orders.getTotalElements()).isEqualTo(1);
+    }
 
-  @Test
-  @DisplayName("주문 상세 조회 - 주문 ID로 검색")
-  void findByIdAndOrdererUserId() {
-    // given
-    UUID orderId = order.getId();
+    @Test
+    @DisplayName("주문 상세 조회 - 주문 ID로 검색")
+    void findByIdAndOrdererUserId() {
+        // given
+        UUID orderId = order.getId();
 
-    // when
-    Optional<Order> orderOptional = orderJpaRepository.findById(orderId);
+        // when
+        Optional<Order> orderOptional = orderJpaRepository.findById(orderId);
 
-    // then
-    assertThat(orderOptional).isPresent();
-  }
+        // then
+        assertThat(orderOptional).isPresent();
+    }
 }

@@ -5,6 +5,6 @@ import on.logistics.orderservice.infrastructure.clients.ai.feign.dtos.GenerateSh
 
 public interface AIService {
 
-  GenerateShippingDeadlineResponse generateShippingDeadline(
-      GenerateShippingDeadlineRequestDto requestDto);
+    GenerateShippingDeadlineResponse generateShippingDeadline(
+        GenerateShippingDeadlineRequestDto requestDto);
 }

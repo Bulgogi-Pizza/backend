@@ -7,7 +7,7 @@ public record ReturnRequestDeniedResponseDto(
     UUID vendorOrderId
 ) {
 
-  public static ReturnRequestDeniedResponseDto from(VendorOrder vendorOrder) {
-    return new ReturnRequestDeniedResponseDto(vendorOrder.getId());
-  }
+    public static ReturnRequestDeniedResponseDto from(VendorOrder vendorOrder) {
+        return new ReturnRequestDeniedResponseDto(vendorOrder.getId());
+    }
 }

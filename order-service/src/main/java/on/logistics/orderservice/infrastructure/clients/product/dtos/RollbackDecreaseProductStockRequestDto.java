@@ -8,10 +8,10 @@ public record RollbackDecreaseProductStockRequestDto(
     Long quantity
 ) {
 
-  public static RollbackDecreaseProductStockRequestDto from(OrderProduct orderProduct) {
-    return new RollbackDecreaseProductStockRequestDto(
-        orderProduct.getProductId(),
-        orderProduct.getQuantity().getValue()
-    );
-  }
+    public static RollbackDecreaseProductStockRequestDto from(OrderProduct orderProduct) {
+        return new RollbackDecreaseProductStockRequestDto(
+            orderProduct.getProductId(),
+            orderProduct.getQuantity().getValue()
+        );
+    }
 }

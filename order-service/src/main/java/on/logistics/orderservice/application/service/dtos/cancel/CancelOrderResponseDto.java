@@ -7,7 +7,7 @@ public record CancelOrderResponseDto(
     UUID vendorOrderId
 ) {
 
-  public static CancelOrderResponseDto from(VendorOrder vendorOrder) {
-    return new CancelOrderResponseDto(vendorOrder.getId());
-  }
+    public static CancelOrderResponseDto from(VendorOrder vendorOrder) {
+        return new CancelOrderResponseDto(vendorOrder.getId());
+    }
 }

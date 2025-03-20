@@ -7,12 +7,12 @@ public record CreateOrderDto(
     Long totalAmount
 ) {
 
-  public static CreateOrderDto from(
-      CreateOrderRequestDto requestDto
-  ) {
-    return new CreateOrderDto(
-        requestDto.destination(),
-        requestDto.totalAmount()
-    );
-  }
+    public static CreateOrderDto from(
+        CreateOrderRequestDto requestDto
+    ) {
+        return new CreateOrderDto(
+            requestDto.destination(),
+            requestDto.totalAmount()
+        );
+    }
 }

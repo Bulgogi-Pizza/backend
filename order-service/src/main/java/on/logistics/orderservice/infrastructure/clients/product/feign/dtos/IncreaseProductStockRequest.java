@@ -6,11 +6,11 @@ public record IncreaseProductStockRequest(
     Long productQuantity
 ) {
 
-  public static IncreaseProductStockRequest from(
-      RollbackDecreaseProductStockRequestDto requestDto
-  ) {
-    return new IncreaseProductStockRequest(
-        requestDto.quantity()
-    );
-  }
+    public static IncreaseProductStockRequest from(
+        RollbackDecreaseProductStockRequestDto requestDto
+    ) {
+        return new IncreaseProductStockRequest(
+            requestDto.quantity()
+        );
+    }
 }

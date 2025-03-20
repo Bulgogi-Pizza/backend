@@ -19,39 +19,39 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Getter
 public abstract class BaseEntity {
 
-  @CreatedDate
-  @Column(name = "created_at", updatable = false, nullable = false)
-  private LocalDateTime createdAt;
+    @CreatedDate
+    @Column(name = "created_at", updatable = false, nullable = false)
+    private LocalDateTime createdAt;
 
-  @Column(name = "created_by", updatable = false)
-  private Long createdBy;
+    @Column(name = "created_by", updatable = false)
+    private Long createdBy;
 
-  @LastModifiedDate
-  @Column(name = "updated_at", nullable = false)
-  private LocalDateTime updatedAt;
+    @LastModifiedDate
+    @Column(name = "updated_at", nullable = false)
+    private LocalDateTime updatedAt;
 
-  @Column(name = "updated_by")
-  private Long updatedBy;
+    @Column(name = "updated_by")
+    private Long updatedBy;
 
-  @Column(name = "deleted_at")
-  private LocalDateTime deletedAt;
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
 
-  @Column(name = "deleted_by")
-  private Long deletedBy;
+    @Column(name = "deleted_by")
+    private Long deletedBy;
 
-  @Column(name = "is_deleted")
-  private Boolean isDeleted = false;
+    @Column(name = "is_deleted")
+    private Boolean isDeleted = false;
 
-  @PreRemove
-  protected void deleteSoftly() {
-    if (isDeleted != null && !isDeleted) {
-      if (deletedAt == null) {
-        deletedAt = LocalDateTime.now();
-      }
-      if (deletedBy == null) {
-        deletedBy = updatedBy;
-      }
-      isDeleted = true;
+    @PreRemove
+    protected void deleteSoftly() {
+        if (isDeleted != null && !isDeleted) {
+            if (deletedAt == null) {
+                deletedAt = LocalDateTime.now();
+            }
+            if (deletedBy == null) {
+                deletedBy = updatedBy;
+            }
+            isDeleted = true;
+        }
     }
-  }
 }

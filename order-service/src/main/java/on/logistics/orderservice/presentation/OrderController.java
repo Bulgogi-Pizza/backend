@@ -45,107 +45,108 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/orders")
 public class OrderController {
 
-  private final OrderService orderService;
+    private final OrderService orderService;
 
-  @PostMapping
-  public ResponseEntity<CommonResponse<CreateOrderResponseDto>> createOrder(
-      @RequestBody @Valid final CreateOrderRequest request
-  ) {
-    log.warn("패스포트 토큰을 사용하도록 해야합니다!!");
-    final UUID ordererUserId = UUID.fromString("29547e69-f33a-430d-b9a6-75e2b265585c");
-    final String ordererUserNickname = "userNickname";
-    final var requestDto = CreateOrderRequestDto.of(request, ordererUserId, ordererUserNickname);
-    final var responseDto = orderService.createOrder(requestDto);
-    return ResponseEntity.ok(CommonResponse.success(responseDto));
-  }
+    @PostMapping
+    public ResponseEntity<CommonResponse<CreateOrderResponseDto>> createOrder(
+        @RequestBody @Valid final CreateOrderRequest request
+    ) {
+        log.warn("패스포트 토큰을 사용하도록 해야합니다!!");
+        final UUID ordererUserId = UUID.fromString("29547e69-f33a-430d-b9a6-75e2b265585c");
+        final String ordererUserNickname = "userNickname";
+        final var requestDto = CreateOrderRequestDto.of(request, ordererUserId,
+            ordererUserNickname);
+        final var responseDto = orderService.createOrder(requestDto);
+        return ResponseEntity.ok(CommonResponse.success(responseDto));
+    }
 
-  @GetMapping
-  public ResponseEntity<CommonResponse<PageDto<SearchOrderPageResponseDto>>> searchOrderPage(
-      @RequestParam(required = false) final UUID ordererUserId,
-      @RequestParam(required = false) final String userNickname,
-      @RequestParam(required = false) final UUID ordererCompanyId,
-      @RequestParam(required = false) final String ordererCompanyName,
-      @RequestParam(required = false) final UUID vendorCompanyId,
-      @RequestParam(required = false) final String vendorCompanyName,
-      final Pageable pageable
-  ) {
-    log.warn("패스포트 토큰을 사용하도록 해야합니다!!");
-    final UUID userId = UUID.fromString("29547e69-f33a-430d-b9a6-75e2b265585c");
-    final AuthRole userRole = AuthRole.MASTER;
-    final var requestDto = SearchOrderPageRequestDto.of(
-        pageable, userId, userRole, ordererUserId, userNickname,
-        ordererCompanyId, ordererCompanyName, vendorCompanyId, vendorCompanyName
-    );
-    final var responseDto = orderService.searchOrderPage(requestDto);
-    return ResponseEntity.ok(CommonResponse.success(responseDto));
-  }
+    @GetMapping
+    public ResponseEntity<CommonResponse<PageDto<SearchOrderPageResponseDto>>> searchOrderPage(
+        @RequestParam(required = false) final UUID ordererUserId,
+        @RequestParam(required = false) final String userNickname,
+        @RequestParam(required = false) final UUID ordererCompanyId,
+        @RequestParam(required = false) final String ordererCompanyName,
+        @RequestParam(required = false) final UUID vendorCompanyId,
+        @RequestParam(required = false) final String vendorCompanyName,
+        final Pageable pageable
+    ) {
+        log.warn("패스포트 토큰을 사용하도록 해야합니다!!");
+        final UUID userId = UUID.fromString("29547e69-f33a-430d-b9a6-75e2b265585c");
+        final AuthRole userRole = AuthRole.MASTER;
+        final var requestDto = SearchOrderPageRequestDto.of(
+            pageable, userId, userRole, ordererUserId, userNickname,
+            ordererCompanyId, ordererCompanyName, vendorCompanyId, vendorCompanyName
+        );
+        final var responseDto = orderService.searchOrderPage(requestDto);
+        return ResponseEntity.ok(CommonResponse.success(responseDto));
+    }
 
-  @GetMapping("/{orderId}")
-  public ResponseEntity<CommonResponse<GetOrderDetailResponseDto>> getOrderDetail(
-      @PathVariable final UUID orderId
-  ) {
-    final var requestDto = GetOrderDetailRequestDto.from(orderId);
-    final var responseDto = orderService.getOrderDetail(requestDto);
-    return ResponseEntity.ok(CommonResponse.success(responseDto));
-  }
+    @GetMapping("/{orderId}")
+    public ResponseEntity<CommonResponse<GetOrderDetailResponseDto>> getOrderDetail(
+        @PathVariable final UUID orderId
+    ) {
+        final var requestDto = GetOrderDetailRequestDto.from(orderId);
+        final var responseDto = orderService.getOrderDetail(requestDto);
+        return ResponseEntity.ok(CommonResponse.success(responseDto));
+    }
 
-  @PatchMapping("/{orderId}")
-  public ResponseEntity<CommonResponse<UpdateOrderResponseDto>> updateOrder(
-      @PathVariable final UUID orderId,
-      @RequestBody @Valid final UpdateOrderRequest request
-  ) {
-    final var requestDto = UpdateOrderRequestDto.of(request, orderId);
-    final var responseDto = orderService.updateOrder(requestDto);
-    return ResponseEntity.ok(CommonResponse.success(responseDto));
-  }
+    @PatchMapping("/{orderId}")
+    public ResponseEntity<CommonResponse<UpdateOrderResponseDto>> updateOrder(
+        @PathVariable final UUID orderId,
+        @RequestBody @Valid final UpdateOrderRequest request
+    ) {
+        final var requestDto = UpdateOrderRequestDto.of(request, orderId);
+        final var responseDto = orderService.updateOrder(requestDto);
+        return ResponseEntity.ok(CommonResponse.success(responseDto));
+    }
 
-  @PatchMapping("/{orderId}/cancel/{vendorOrderId}")
-  public ResponseEntity<CommonResponse<CancelOrderResponseDto>> cancelVendorOrder(
-      @PathVariable final UUID orderId,
-      @PathVariable final UUID vendorOrderId
-  ) {
-    final var requestDto = CancelOrderRequestDto.of(orderId, vendorOrderId);
-    final var responseDto = orderService.cancelVendorOrder(requestDto);
-    return ResponseEntity.ok(CommonResponse.success(responseDto));
-  }
+    @PatchMapping("/{orderId}/cancel/{vendorOrderId}")
+    public ResponseEntity<CommonResponse<CancelOrderResponseDto>> cancelVendorOrder(
+        @PathVariable final UUID orderId,
+        @PathVariable final UUID vendorOrderId
+    ) {
+        final var requestDto = CancelOrderRequestDto.of(orderId, vendorOrderId);
+        final var responseDto = orderService.cancelVendorOrder(requestDto);
+        return ResponseEntity.ok(CommonResponse.success(responseDto));
+    }
 
-  @DeleteMapping("/{orderId}/{vendorOrderId}")
-  public ResponseEntity<CommonResponse<Void>> deleteVendorOrder(
-      @PathVariable final UUID orderId,
-      @PathVariable final UUID vendorOrderId
-  ) {
-    final DeleteOrderRequestDto requestDto = DeleteOrderRequestDto.of(orderId, vendorOrderId);
-    orderService.deleteVendorOrder(requestDto);
-    return ResponseEntity.ok(CommonResponse.success());
-  }
+    @DeleteMapping("/{orderId}/{vendorOrderId}")
+    public ResponseEntity<CommonResponse<Void>> deleteVendorOrder(
+        @PathVariable final UUID orderId,
+        @PathVariable final UUID vendorOrderId
+    ) {
+        final DeleteOrderRequestDto requestDto = DeleteOrderRequestDto.of(orderId, vendorOrderId);
+        orderService.deleteVendorOrder(requestDto);
+        return ResponseEntity.ok(CommonResponse.success());
+    }
 
-  @PatchMapping("/{orderId}/return/request/{vendorOrderId}")
-  public ResponseEntity<CommonResponse<ReturnRequestResponseDto>> requestReturn(
-      @PathVariable final UUID orderId,
-      @PathVariable final UUID vendorOrderId
-  ) {
-    final var requestDto = ReturnRequestRequestDto.of(orderId, vendorOrderId);
-    final var responseDto = orderService.requestReturn(requestDto);
-    return ResponseEntity.ok(CommonResponse.success(responseDto));
-  }
+    @PatchMapping("/{orderId}/return/request/{vendorOrderId}")
+    public ResponseEntity<CommonResponse<ReturnRequestResponseDto>> requestReturn(
+        @PathVariable final UUID orderId,
+        @PathVariable final UUID vendorOrderId
+    ) {
+        final var requestDto = ReturnRequestRequestDto.of(orderId, vendorOrderId);
+        final var responseDto = orderService.requestReturn(requestDto);
+        return ResponseEntity.ok(CommonResponse.success(responseDto));
+    }
 
-  @PatchMapping("/{orderId}/return/denied/{vendorOrderId}")
-  public ResponseEntity<CommonResponse<ReturnRequestDeniedResponseDto>> denyReturnRequest(
-      @PathVariable final UUID orderId,
-      @PathVariable final UUID vendorOrderId
-  ) {
-    final var requestDto = ReturnRequestDeniedRequestDto.of(orderId, vendorOrderId);
-    final var responseDto = orderService.denyReturnRequest(requestDto);
-    return ResponseEntity.ok(CommonResponse.success(responseDto));
-  }
+    @PatchMapping("/{orderId}/return/denied/{vendorOrderId}")
+    public ResponseEntity<CommonResponse<ReturnRequestDeniedResponseDto>> denyReturnRequest(
+        @PathVariable final UUID orderId,
+        @PathVariable final UUID vendorOrderId
+    ) {
+        final var requestDto = ReturnRequestDeniedRequestDto.of(orderId, vendorOrderId);
+        final var responseDto = orderService.denyReturnRequest(requestDto);
+        return ResponseEntity.ok(CommonResponse.success(responseDto));
+    }
 
-  @PatchMapping("/{orderId}/return/{vendorOrderId}")
-  public ResponseEntity<CommonResponse<ReturnOrderResponseDto>> returnOrder(
-      @PathVariable final UUID orderId,
-      @PathVariable final UUID vendorOrderId
-  ) {
-    final var requestDto = ReturnOrderRequestDto.of(orderId, vendorOrderId);
-    final var responseDto = orderService.returnOrder(requestDto);
-    return ResponseEntity.ok(CommonResponse.success(responseDto));
-  }
+    @PatchMapping("/{orderId}/return/{vendorOrderId}")
+    public ResponseEntity<CommonResponse<ReturnOrderResponseDto>> returnOrder(
+        @PathVariable final UUID orderId,
+        @PathVariable final UUID vendorOrderId
+    ) {
+        final var requestDto = ReturnOrderRequestDto.of(orderId, vendorOrderId);
+        final var responseDto = orderService.returnOrder(requestDto);
+        return ResponseEntity.ok(CommonResponse.success(responseDto));
+    }
 }

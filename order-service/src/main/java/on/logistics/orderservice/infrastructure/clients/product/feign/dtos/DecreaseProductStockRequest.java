@@ -6,7 +6,7 @@ public record DecreaseProductStockRequest(
     Long productQuantity
 ) {
 
-  public static DecreaseProductStockRequest from(DecreaseProductStockRequestDto requestDto) {
-    return new DecreaseProductStockRequest(requestDto.quantity());
-  }
+    public static DecreaseProductStockRequest from(DecreaseProductStockRequestDto requestDto) {
+        return new DecreaseProductStockRequest(requestDto.quantity());
+    }
 }

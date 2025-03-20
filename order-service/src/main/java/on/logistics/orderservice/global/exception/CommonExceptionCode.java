@@ -8,11 +8,11 @@ import org.springframework.http.HttpStatus;
 @RequiredArgsConstructor
 public enum CommonExceptionCode implements ExceptionCode {
 
-  ILLEGAL_ARGUMENT(HttpStatus.BAD_REQUEST, "잘못된 매개변수입니다."),
-  INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버에서 문제가 발생되었습니다."),
-  IO_EXCEPTION(HttpStatus.INTERNAL_SERVER_ERROR, "파일을 읽는 중에 문제가 발생되었습니다."),
-  ;
+    ILLEGAL_ARGUMENT(HttpStatus.BAD_REQUEST, "잘못된 매개변수입니다."),
+    INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버에서 문제가 발생되었습니다."),
+    IO_EXCEPTION(HttpStatus.INTERNAL_SERVER_ERROR, "파일을 읽는 중에 문제가 발생되었습니다."),
+    ;
 
-  private final HttpStatus httpStatus;
-  private final String message;
+    private final HttpStatus httpStatus;
+    private final String message;
 }

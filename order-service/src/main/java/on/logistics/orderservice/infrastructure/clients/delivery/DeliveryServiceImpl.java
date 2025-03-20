@@ -15,13 +15,13 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class DeliveryServiceImpl implements DeliveryService {
 
-  private final DeliveryServiceFeignClient deliveryServiceFeignClient;
+    private final DeliveryServiceFeignClient deliveryServiceFeignClient;
 
-  @Override
-  public void deliveryRequest(DeliveryRequestDto requestDto) {
-    log.info("Delivery request: {}", requestDto);
-    DeliveryRequest request = DeliveryRequest.from(requestDto);
-    Response response = deliveryServiceFeignClient.deliveryRequest(request);
-    FeignClientResponseUtils.validateResponseStatus(response);
-  }
+    @Override
+    public void deliveryRequest(DeliveryRequestDto requestDto) {
+        log.info("Delivery request: {}", requestDto);
+        DeliveryRequest request = DeliveryRequest.from(requestDto);
+        Response response = deliveryServiceFeignClient.deliveryRequest(request);
+        FeignClientResponseUtils.validateResponseStatus(response);
+    }
 }

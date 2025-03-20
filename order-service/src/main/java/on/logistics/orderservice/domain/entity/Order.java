@@ -32,67 +32,67 @@ import org.hibernate.annotations.SQLRestriction;
 @SQLDelete(sql = "UPDATE p_orders SET is_deleted = true WHERE id = ?")
 public class Order extends BaseEntity {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.UUID)
-  @Column(name = "productId", updatable = false, nullable = false)
-  private UUID id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(name = "productId", updatable = false, nullable = false)
+    private UUID id;
 
-  @Column(name = "total_amount", nullable = false)
-  private Long totalAmount;
+    @Column(name = "total_amount", nullable = false)
+    private Long totalAmount;
 
-  @Column(name = "destination", nullable = false, length = 500)
-  private String destination;
+    @Column(name = "destination", nullable = false, length = 500)
+    private String destination;
 
-  @OneToOne(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-  private Orderer orderer;
+    @OneToOne(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Orderer orderer;
 
-  @OneToMany(mappedBy = "order", cascade = CascadeType.ALL,
-      fetch = FetchType.LAZY, orphanRemoval = true)
-  private List<VendorOrder> vendorOrders;
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL,
+        fetch = FetchType.LAZY, orphanRemoval = true)
+    private List<VendorOrder> vendorOrders;
 
-  public static Order create(CreateOrderDto createOrderDto) {
-    return Order.builder()
-        .totalAmount(createOrderDto.totalAmount())
-        .destination(createOrderDto.destination())
-        .build();
-  }
+    public static Order create(CreateOrderDto createOrderDto) {
+        return Order.builder()
+            .totalAmount(createOrderDto.totalAmount())
+            .destination(createOrderDto.destination())
+            .build();
+    }
 
-  public static Order create(Orderer orderer, VendorOrder vendorOrder) {
-    Order returnedOrder =  Order.builder()
-        .totalAmount(vendorOrder.getTotalAmount())
-        .destination(vendorOrder.getVendor().getVendorHubName().getValue())
-        .build();
+    public static Order create(Orderer orderer, VendorOrder vendorOrder) {
+        Order returnedOrder = Order.builder()
+            .totalAmount(vendorOrder.getTotalAmount())
+            .destination(vendorOrder.getVendor().getVendorHubName().getValue())
+            .build();
 
-    Orderer returnedOrderer = Orderer.create(returnedOrder, vendorOrder.getVendor());
+        Orderer returnedOrderer = Orderer.create(returnedOrder, vendorOrder.getVendor());
 
-    VendorOrder returnedVendorOrder = createReturnedVendorOrder(
-        orderer, vendorOrder, returnedOrder);
+        VendorOrder returnedVendorOrder = createReturnedVendorOrder(
+            orderer, vendorOrder, returnedOrder);
 
-    returnedOrder.addDependencies(returnedOrderer, List.of(returnedVendorOrder));
-    return returnedOrder;
-  }
+        returnedOrder.addDependencies(returnedOrderer, List.of(returnedVendorOrder));
+        return returnedOrder;
+    }
 
-  private static VendorOrder createReturnedVendorOrder(
-      Orderer orderer,
-      VendorOrder vendorOrder,
-      Order returnedOrder
-  ) {
-    VendorOrder returnedVendorOrder = VendorOrder.create(returnedOrder);
+    private static VendorOrder createReturnedVendorOrder(
+        Orderer orderer,
+        VendorOrder vendorOrder,
+        Order returnedOrder
+    ) {
+        VendorOrder returnedVendorOrder = VendorOrder.create(returnedOrder);
 
-    Vendor returnedVendor = Vendor.create(orderer, returnedVendorOrder);
-    List<OrderProduct> orderProducts = vendorOrder.getOrderProducts().stream()
-        .map(orderProduct -> OrderProduct.create(orderProduct, returnedVendorOrder))
-        .toList();
-    returnedVendorOrder.addDependencies(returnedVendor, orderProducts);
-    return returnedVendorOrder;
-  }
+        Vendor returnedVendor = Vendor.create(orderer, returnedVendorOrder);
+        List<OrderProduct> orderProducts = vendorOrder.getOrderProducts().stream()
+            .map(orderProduct -> OrderProduct.create(orderProduct, returnedVendorOrder))
+            .toList();
+        returnedVendorOrder.addDependencies(returnedVendor, orderProducts);
+        return returnedVendorOrder;
+    }
 
-  public void addDependencies(Orderer orderer, List<VendorOrder> vendorOrders) {
-    this.orderer = orderer;
-    this.vendorOrders = vendorOrders;
-  }
+    public void addDependencies(Orderer orderer, List<VendorOrder> vendorOrders) {
+        this.orderer = orderer;
+        this.vendorOrders = vendorOrders;
+    }
 
-  public void removeVendorOrder(VendorOrder vendorOrder) {
-    vendorOrders.remove(vendorOrder);
-  }
+    public void removeVendorOrder(VendorOrder vendorOrder) {
+        vendorOrders.remove(vendorOrder);
+    }
 }

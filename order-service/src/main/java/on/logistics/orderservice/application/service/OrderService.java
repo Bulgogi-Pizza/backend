@@ -21,21 +21,22 @@ import on.logistics.orderservice.presentation.dtos.delete.DeleteOrderRequestDto;
 
 public interface OrderService {
 
-  CreateOrderResponseDto createOrder(final CreateOrderRequestDto requestDto);
+    CreateOrderResponseDto createOrder(final CreateOrderRequestDto requestDto);
 
-  PageDto<SearchOrderPageResponseDto> searchOrderPage(final SearchOrderPageRequestDto requestDto);
+    PageDto<SearchOrderPageResponseDto> searchOrderPage(final SearchOrderPageRequestDto requestDto);
 
-  GetOrderDetailResponseDto getOrderDetail(final GetOrderDetailRequestDto requestDto);
+    GetOrderDetailResponseDto getOrderDetail(final GetOrderDetailRequestDto requestDto);
 
-  UpdateOrderResponseDto updateOrder(final UpdateOrderRequestDto requestDto);
+    UpdateOrderResponseDto updateOrder(final UpdateOrderRequestDto requestDto);
 
-  CancelOrderResponseDto cancelVendorOrder(final CancelOrderRequestDto requestDto);
+    CancelOrderResponseDto cancelVendorOrder(final CancelOrderRequestDto requestDto);
 
-  void deleteVendorOrder(final DeleteOrderRequestDto requestDto);
+    void deleteVendorOrder(final DeleteOrderRequestDto requestDto);
 
-  ReturnRequestResponseDto requestReturn(final ReturnRequestRequestDto requestDto);
+    ReturnRequestResponseDto requestReturn(final ReturnRequestRequestDto requestDto);
 
-  ReturnRequestDeniedResponseDto denyReturnRequest(final ReturnRequestDeniedRequestDto requestDto);
+    ReturnRequestDeniedResponseDto denyReturnRequest(
+        final ReturnRequestDeniedRequestDto requestDto);
 
-  ReturnOrderResponseDto returnOrder(final ReturnOrderRequestDto requestDto);
+    ReturnOrderResponseDto returnOrder(final ReturnOrderRequestDto requestDto);
 }

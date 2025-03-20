@@ -14,18 +14,18 @@ public record CreateOrdererDto(
     Order order
 ) {
 
-  public static CreateOrdererDto of(
-      CreateOrderRequestDto requestDto,
-      Order order
-  ) {
-    return new CreateOrdererDto(
-        requestDto.OrdererId(),
-        requestDto.ordererName(),
-        requestDto.ordererUserId(),
-        requestDto.ordererUserNickname(),
-        requestDto.ordererHubId(),
-        requestDto.ordererHubName(),
-        order
-    );
-  }
+    public static CreateOrdererDto of(
+        CreateOrderRequestDto requestDto,
+        Order order
+    ) {
+        return new CreateOrdererDto(
+            requestDto.OrdererId(),
+            requestDto.ordererName(),
+            requestDto.ordererUserId(),
+            requestDto.ordererUserNickname(),
+            requestDto.ordererHubId(),
+            requestDto.ordererHubName(),
+            order
+        );
+    }
 }

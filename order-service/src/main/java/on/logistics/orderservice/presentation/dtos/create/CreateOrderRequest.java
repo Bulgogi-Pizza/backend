@@ -18,24 +18,24 @@ public record CreateOrderRequest(
     @NotNull List<OrdersByVendor> ordersByVendor
 ) {
 
-  public record OrdersByVendor(
-      @NotNull UUID vendorId,
-      @NotBlank String vendorName,
-      @NotNull UUID vendorHubId,
-      @NotBlank String vendorHubName,
-      @NotNull @PositiveOrZero Long totalAmount,
-      @NotNull @Future LocalDateTime arrivalDeadline,
-      @NotNull List<OrderedProduct> orderedProducts
-  ) {
-
-    public record OrderedProduct(
-        @NotNull UUID productId,
-        @NotBlank String name,
-        @NotNull Long quantity,
-        @NotNull Long price
+    public record OrdersByVendor(
+        @NotNull UUID vendorId,
+        @NotBlank String vendorName,
+        @NotNull UUID vendorHubId,
+        @NotBlank String vendorHubName,
+        @NotNull @PositiveOrZero Long totalAmount,
+        @NotNull @Future LocalDateTime arrivalDeadline,
+        @NotNull List<OrderedProduct> orderedProducts
     ) {
 
+        public record OrderedProduct(
+            @NotNull UUID productId,
+            @NotBlank String name,
+            @NotNull Long quantity,
+            @NotNull Long price
+        ) {
+
+        }
     }
-  }
 
 }

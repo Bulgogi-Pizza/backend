@@ -29,44 +29,44 @@ import on.logistics.orderservice.domain.vo.HubName;
 @Getter
 public class Vendor {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.UUID)
-  private UUID id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
 
-  @Column(name = "company_id", nullable = false)
-  private UUID companyId;
+    @Column(name = "company_id", nullable = false)
+    private UUID companyId;
 
-  @Embedded
-  private CompanyName name;
+    @Embedded
+    private CompanyName name;
 
-  @Column(name = "hub_id", nullable = false)
-  private UUID vendorHubId;
+    @Column(name = "hub_id", nullable = false)
+    private UUID vendorHubId;
 
-  @Embedded
-  private HubName vendorHubName;
+    @Embedded
+    private HubName vendorHubName;
 
-  @OneToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "vendor_order_id", nullable = false)
-  private VendorOrder vendorOrder;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "vendor_order_id", nullable = false)
+    private VendorOrder vendorOrder;
 
-  public static Vendor create(CreateVendorDto createVendorDto) {
-    return Vendor.builder()
-        .vendorOrder(createVendorDto.vendorOrder())
-        .companyId(createVendorDto.vendorId())
-        .name(new CompanyName(createVendorDto.vendorName()))
-        .vendorHubName(new HubName(createVendorDto.vendorHubName()))
-        .vendorHubId(createVendorDto.vendorHubId())
-        .build();
-  }
+    public static Vendor create(CreateVendorDto createVendorDto) {
+        return Vendor.builder()
+            .vendorOrder(createVendorDto.vendorOrder())
+            .companyId(createVendorDto.vendorId())
+            .name(new CompanyName(createVendorDto.vendorName()))
+            .vendorHubName(new HubName(createVendorDto.vendorHubName()))
+            .vendorHubId(createVendorDto.vendorHubId())
+            .build();
+    }
 
-  public static Vendor create(Orderer orderer, VendorOrder vendorOrder) {
-    return Vendor.builder()
-        .companyId(orderer.getCompanyId())
-        .name(orderer.getCompanyName())
-        .vendorHubId(orderer.getOrdererHubId())
-        .vendorHubName(orderer.getOrdererHubName())
-        .vendorOrder(vendorOrder)
-        .build();
-  }
+    public static Vendor create(Orderer orderer, VendorOrder vendorOrder) {
+        return Vendor.builder()
+            .companyId(orderer.getCompanyId())
+            .name(orderer.getCompanyName())
+            .vendorHubId(orderer.getOrdererHubId())
+            .vendorHubName(orderer.getOrdererHubName())
+            .vendorOrder(vendorOrder)
+            .build();
+    }
 }

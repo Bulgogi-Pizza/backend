@@ -29,50 +29,50 @@ import on.logistics.orderservice.domain.vo.ProductQuantity;
 @Getter
 public class OrderProduct {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.UUID)
-  private UUID id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "vendor_order_id", nullable = false)
-  private VendorOrder vendorOrder;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "vendor_order_id", nullable = false)
+    private VendorOrder vendorOrder;
 
-  @Column(name = "product_id", nullable = false)
-  private UUID productId;
+    @Column(name = "product_id", nullable = false)
+    private UUID productId;
 
-  @Embedded
-  private ProductName name;
+    @Embedded
+    private ProductName name;
 
-  @Embedded
-  private ProductQuantity quantity;
+    @Embedded
+    private ProductQuantity quantity;
 
-  @Embedded
-  private ProductPrice price;
+    @Embedded
+    private ProductPrice price;
 
-  public static OrderProduct create(CreateOrderProductDto createOrderProductDto) {
-    return OrderProduct.builder()
-        .vendorOrder(createOrderProductDto.vendorOrder())
-        .productId(createOrderProductDto.productId())
-        .name(new ProductName(createOrderProductDto.name()))
-        .quantity(new ProductQuantity(createOrderProductDto.quantity()))
-        .price(new ProductPrice(createOrderProductDto.price()))
-        .build();
-  }
+    public static OrderProduct create(CreateOrderProductDto createOrderProductDto) {
+        return OrderProduct.builder()
+            .vendorOrder(createOrderProductDto.vendorOrder())
+            .productId(createOrderProductDto.productId())
+            .name(new ProductName(createOrderProductDto.name()))
+            .quantity(new ProductQuantity(createOrderProductDto.quantity()))
+            .price(new ProductPrice(createOrderProductDto.price()))
+            .build();
+    }
 
-  public static OrderProduct create(
-      OrderProduct orderProduct,
-      VendorOrder returnedVendorOrder
-  ) {
-    return OrderProduct.builder()
-        .vendorOrder(returnedVendorOrder)
-        .productId(orderProduct.getProductId())
-        .name(orderProduct.getName())
-        .quantity(orderProduct.getQuantity())
-        .price(orderProduct.getPrice())
-        .build();
-  }
+    public static OrderProduct create(
+        OrderProduct orderProduct,
+        VendorOrder returnedVendorOrder
+    ) {
+        return OrderProduct.builder()
+            .vendorOrder(returnedVendorOrder)
+            .productId(orderProduct.getProductId())
+            .name(orderProduct.getName())
+            .quantity(orderProduct.getQuantity())
+            .price(orderProduct.getPrice())
+            .build();
+    }
 
-  public void updateQuantity(Long quantity) {
-    this.quantity = new ProductQuantity(quantity);
-  }
+    public void updateQuantity(Long quantity) {
+        this.quantity = new ProductQuantity(quantity);
+    }
 }
