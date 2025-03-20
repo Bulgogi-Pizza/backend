@@ -43,8 +43,8 @@ public class UserController {
     public ResponseEntity<CommonResponse<CreateUserResponse>> createUser(
         @RequestBody CreateUserRequest request
     ) {
-        final var dto = CreateUserDto.from(request);
-        final var response = userService.createUser(dto);
+        CreateUserDto dto = CreateUserDto.from(request);
+        CreateUserResponse response = userService.createUser(dto);
         return ResponseEntity.ok(CommonResponse.success(response));
     }
 
@@ -62,7 +62,7 @@ public class UserController {
     public ResponseEntity<CommonResponse<FindMyUserResponse>> findMyUser(
         HttpServletRequest request
     ) {
-        final var response = userService.findMyUser(request);
+        FindMyUserResponse response = userService.findMyUser(request);
         return ResponseEntity.ok(CommonResponse.success(response));
     }
 
@@ -70,7 +70,7 @@ public class UserController {
     public ResponseEntity<CommonResponse<FindByIdUserResponse>> findUserById(
         @PathVariable("id") String id
     ) {
-        final var response = userService.findUserById(UUID.fromString(id));
+        FindByIdUserResponse response = userService.findUserById(UUID.fromString(id));
         return ResponseEntity.ok(CommonResponse.success(response));
     }
 
@@ -85,6 +85,7 @@ public class UserController {
         return ResponseEntity.ok(CommonResponse.success(response));
     }
 
+    // TODO: 사용자 ID 암호화 필요
     @PatchMapping("/{id}")
     public ResponseEntity<CommonResponse<UpdateUserAdminResponse>> updateUserAdmin(
         @PathVariable UUID id,
@@ -95,6 +96,7 @@ public class UserController {
         return ResponseEntity.ok(CommonResponse.success(response));
     }
 
+    // TODO: 사용자 탈퇴 -> 패스포트 삭제, auth 삭제 필요
     @DeleteMapping("/{id}")
     public ResponseEntity<CommonResponse<Void>> deleteUser(
         @PathVariable UUID id

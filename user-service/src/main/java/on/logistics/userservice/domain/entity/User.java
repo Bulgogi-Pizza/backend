@@ -46,13 +46,13 @@ public class User extends BaseEntity {
     }
 
     public void updateNickname(String nickname) {
-        if (this.nickname.equals(nickname) || nickname == null) {
+        if (!this.nickname.equals(nickname) && nickname != null) {
             this.nickname = nickname;
         }
     }
 
     public void updateSlackEmail(SlackEmail slackEmail) {
-        if (this.slackEmail.equals(slackEmail) || slackEmail.toString() == null) {
+        if (!this.slackEmail.equals(slackEmail) && slackEmail.toString() != null) {
             this.slackEmail = slackEmail;
         }
     }

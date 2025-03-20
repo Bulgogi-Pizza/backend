@@ -6,7 +6,7 @@ spring:
     name: user-service
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/onlogistics
+    url: jdbc:postgresql://localhost:15432/onlogistics
     username: ENC(SzFNDgC//YBbb9TJ7Bne4Cv1KM24A8WX)
     password: ENC(SzFNDgC//YBbb9TJ7Bne4Cv1KM24A8WX)
 
@@ -16,10 +16,10 @@ spring:
 
   data:
     redis:
-      username: ENC(BFWqJNte+k89HBmq+7Q9nw==)
-      password: ENC(QBL7vn8XxPlqYUlcp2WNCA==)
-      host: localhost
-      port: 6379
+      host: ENC(WCP+8mkysXzEV+eZ1E5A9+XQsysXwDwz)
+      port: 16371
+      username: ENC(hK+1LVIhvsPYxTR80FgHp15Fhz64VZWX)
+      password: ENC(hK+1LVIhvsPYxTR80FgHp15Fhz64VZWX)
 
 eureka:
   client:
