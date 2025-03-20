@@ -1,5 +1,6 @@
 package on.logistics.deliveryservice.application.service;
 
+import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,9 +17,15 @@ import on.logistics.deliveryservice.exception.DeliveryException;
 import on.logistics.deliveryservice.exception.DeliveryExceptionCode;
 import on.logistics.deliveryservice.global.application.dtos.PageDto;
 import on.logistics.deliveryservice.infrastructure.clients.hub.HubServiceClient;
+import on.logistics.deliveryservice.infrastructure.clients.hub.feign.dtos.GetMiddleHubPageInfo;
+import on.logistics.deliveryservice.infrastructure.clients.hub.feign.dtos.GetSpokeHubInfo;
+import on.logistics.deliveryservice.infrastructure.clients.hub.feign.dtos.HubInfo;
+import on.logistics.deliveryservice.infrastructure.clients.hub.feign.dtos.HubType;
 import on.logistics.deliveryservice.infrastructure.clients.hubTransit.HubTransitServiceClient;
+import on.logistics.deliveryservice.infrastructure.clients.hubTransit.feign.dtos.CreateHubTransitRouteRequest;
 import on.logistics.deliveryservice.infrastructure.clients.map.MapServiceClient;
 import on.logistics.deliveryservice.infrastructure.clients.map.feign.dtos.GetDestinationInfo;
+import on.logistics.deliveryservice.infrastructure.clients.map.feign.dtos.GetHubRouteInfo;
 import on.logistics.deliveryservice.presentation.dtos.response.CreateDeliveryResponse;
 import on.logistics.deliveryservice.presentation.dtos.response.GetDeliveryResponse;
 import on.logistics.deliveryservice.presentation.dtos.response.SearchDeliveryResponse;
@@ -47,24 +54,23 @@ public class DeliveryServiceImpl implements DeliveryService {
     @Override
     @Transactional
     public CreateDeliveryResponse createDelivery(CreateDeliveryRequestDto requestDto) {
-        DeliveryHubInfoDto hubInfo = deliveryHubInfo(requestDto.description());
+        DeliveryHubInfoDto hubInfo = deliveryHubInfo(requestDto.destination());
         DeliveryUserInfoDto userInfo = deliveryUserInfo();
         CreateDeliveryDto entityRequestDto = CreateDeliveryDto.from(requestDto, hubInfo, userInfo);
         Delivery saved = Delivery.create(entityRequestDto);
         deliveryRepository.save(saved);
         // todo : 비동기 고민
-        // createHubTransitRouteRequest(requestDto, hubInfo, saved);
+        createHubTransitRouteRequest(requestDto, hubInfo, saved);
         return CreateDeliveryResponse.of(saved.getId());
     }
 
-    /*
-    private void createHubTransitRouteRequest(CreateDeliveryRequestDto requestDto, DeliveryHubInfoDto hubInfo,
+    private void createHubTransitRouteRequest(CreateDeliveryRequestDto requestDto,
+        DeliveryHubInfoDto hubInfo,
         Delivery saved) {
         CreateHubTransitRouteRequest createHubTransitRouteRequest = CreateHubTransitRouteRequest.of(
             requestDto.startHubId(), hubInfo.endHubId(), saved.getId());
         hubTransitServiceClient.createHubTransitRoute(createHubTransitRouteRequest);
     }
-     */
 
     @Override
     public PageDto<SearchDeliveryResponse> searchDelivery(SearchDeliveryRequestDto requestDto) {
@@ -82,9 +88,9 @@ public class DeliveryServiceImpl implements DeliveryService {
     @Override
     @Transactional
     public UpdateDeliveryResponse updateDelivery(UpdateDeliveryRequestDto requestDto) {
-        DeliveryHubInfoDto hubInfo = deliveryHubInfo(requestDto.description());
+        DeliveryHubInfoDto hubInfo = deliveryHubInfo(requestDto.destination());
         Delivery delivery = getOrElseThrow(requestDto.deliveryId());
-        delivery.update(requestDto.description(), hubInfo);
+        delivery.update(requestDto.destination(), hubInfo);
         return UpdateDeliveryResponse.of(delivery.getId());
     }
 
@@ -144,10 +150,10 @@ public class DeliveryServiceImpl implements DeliveryService {
         return UpdateDeliveryStatusCancelResponse.of(delivery.getId());
     }
 
-    public DeliveryHubInfoDto deliveryHubInfo(String description) {
-        GetDestinationInfo geocode = mapServiceClient.getGeocode(description);
+    public DeliveryHubInfoDto deliveryHubInfo(String destination) {
+        GetDestinationInfo geocode = mapServiceClient.getGeocode(destination);
         String start = "" + geocode.longitude() + "" + "," + geocode.latitude();
-        /*
+
         GetMiddleHubPageInfo getMiddleHubPageInfo = typeHubInfoList();
         GetHubRouteInfo middleRoute = middleRouteInfo(start, getMiddleHubPageInfo);
 
@@ -155,12 +161,11 @@ public class DeliveryServiceImpl implements DeliveryService {
         GetSpokeHubInfo getSpokeHubInfo = typeSpokeInfoList(middleRouteHubId);
         GetHubRouteInfo endRoute = endRouteInfo(start, getSpokeHubInfo);
         UUID endHubId = endRouteHubId(getSpokeHubInfo, endRoute);
-         */
-        UUID tmp = UUID.randomUUID();
-        return DeliveryHubInfoDto.of(tmp);
+
+        return DeliveryHubInfoDto.of(endHubId);
     }
 
-    /*
+
     private UUID endRouteHubId(GetSpokeHubInfo getSpokeHubInfo, GetHubRouteInfo endRoute) {
         List<HubInfo> hubs = getSpokeHubInfo.data();
         String middleRouteHubLongitude = String.valueOf(
@@ -179,7 +184,6 @@ public class DeliveryServiceImpl implements DeliveryService {
     }
 
     private GetHubRouteInfo endRouteInfo(String start, GetSpokeHubInfo getSpokeHubInfo) {
-
         String end = "";
         List<HubInfo> hubs = getSpokeHubInfo.data();
         for (HubInfo typeHubInfo : hubs) {
@@ -224,7 +228,6 @@ public class DeliveryServiceImpl implements DeliveryService {
         return UUID.fromString(middleRouteId);
     }
 
-
     public GetMiddleHubPageInfo typeHubInfoList() {
         return hubServiceClient.searchHubs(HubType.HUB);
     }
@@ -232,8 +235,6 @@ public class DeliveryServiceImpl implements DeliveryService {
     public GetSpokeHubInfo typeSpokeInfoList(UUID middleHubId) {
         return hubServiceClient.getSpokeHubInfo(middleHubId);
     }
-
-    */
 
     public DeliveryUserInfoDto deliveryUserInfo() {
         // todo: 요청이 들어온 패스포트에서 유저 이름 및 정보 확인

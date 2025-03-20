@@ -11,7 +11,7 @@ public record CreateDeliveryDto(UUID orderId, UUID startHubId, UUID endHubId, St
     public static CreateDeliveryDto from(CreateDeliveryRequestDto request,
         DeliveryHubInfoDto hubInfo, DeliveryUserInfoDto userInfo) {
         return new CreateDeliveryDto(request.orderId(), request.startHubId(), hubInfo.endHubId(),
-            request.description(), userInfo.recipient(), userInfo.recipientSlackEmail());
+            request.destination(), userInfo.recipient(), userInfo.recipientSlackEmail());
     }
 
 }
