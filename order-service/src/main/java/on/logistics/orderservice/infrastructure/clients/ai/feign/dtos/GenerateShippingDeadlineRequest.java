@@ -2,18 +2,18 @@ package on.logistics.orderservice.infrastructure.clients.ai.feign.dtos;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.UUID;
 import on.logistics.orderservice.infrastructure.clients.ai.dtos.GenerateShippingDeadlineRequestDto;
 
 public record GenerateShippingDeadlineRequest(
     List<Product> products,
     LocalDateTime arrivalDeadline,
-    UUID startHubId,
+    String startHubName,
+    String endHubName,
     String destination
 ) {
 
   public record Product(
-      UUID productId,
+      String name,
       Long quantity
   ) {
 
@@ -25,11 +25,12 @@ public record GenerateShippingDeadlineRequest(
     return new GenerateShippingDeadlineRequest(
         requestDto.products().stream()
             .map(product -> new Product(
-                product.productId(),
+                product.name(),
                 product.quantity()
             )).toList(),
         requestDto.arrivalDeadline(),
-        requestDto.startHubId(),
+        requestDto.startHubName(),
+        requestDto.endHubName(),
         requestDto.destination()
     );
   }

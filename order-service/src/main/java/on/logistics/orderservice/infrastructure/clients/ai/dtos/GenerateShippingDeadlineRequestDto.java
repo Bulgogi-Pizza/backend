@@ -2,18 +2,18 @@ package on.logistics.orderservice.infrastructure.clients.ai.dtos;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.UUID;
 import on.logistics.orderservice.domain.entity.VendorOrder;
 
 public record GenerateShippingDeadlineRequestDto(
     List<Product> products,
     LocalDateTime arrivalDeadline,
-    UUID startHubId,
+    String startHubName,
+    String endHubName,
     String destination
 ) {
 
   public record Product(
-      UUID productId,
+      String name,
       Long quantity
   ) {
 
@@ -23,11 +23,12 @@ public record GenerateShippingDeadlineRequestDto(
     return new GenerateShippingDeadlineRequestDto(
         createdVendorOrder.getOrderProducts().stream()
             .map(orderProduct -> new Product(
-                orderProduct.getProductId(),
+                orderProduct.getName().getValue(),
                 orderProduct.getQuantity().getValue()
             )).toList(),
         createdVendorOrder.getArrivalDeadline(),
-        createdVendorOrder.getVendor().getVendorHubId(),
+        createdVendorOrder.getVendor().getVendorHubName().getValue(),
+        createdVendorOrder.getOrder().getOrderer().getOrdererHubName().getValue(),
         createdVendorOrder.getOrder().getDestination()
     );
   }
