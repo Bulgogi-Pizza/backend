@@ -1,7 +1,9 @@
 package on.logistics.deliverymanagerservice.application.service;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import on.logistics.deliverymanagerservice.application.dtos.AssignDeliveryManagerRequestDto;
 import on.logistics.deliverymanagerservice.application.dtos.CreateDeliveryManagerRequestDto;
 import on.logistics.deliverymanagerservice.application.dtos.UpdateDeliveryManagerRequestDto;
 import on.logistics.deliverymanagerservice.domain.entity.DeliveryManager;
@@ -10,6 +12,7 @@ import on.logistics.deliverymanagerservice.domain.entity.dtos.CreateDeliveryMana
 import on.logistics.deliverymanagerservice.domain.entity.repository.DeliveryManagerRepository;
 import on.logistics.deliverymanagerservice.exception.DeliveryManagerException;
 import on.logistics.deliverymanagerservice.exception.DeliveryManagerExceptionCode;
+import on.logistics.deliverymanagerservice.presentation.dtos.response.AssignDeliveryManagerResponse;
 import on.logistics.deliverymanagerservice.presentation.dtos.response.CreateDeliveryManagerResponse;
 import on.logistics.deliverymanagerservice.presentation.dtos.response.GetDeliveryManagerResponse;
 import on.logistics.deliverymanagerservice.presentation.dtos.response.UpdateDeliveryManagerResponse;
@@ -59,6 +62,26 @@ public class DeliveryManagerService {
         deliveryManager.delete();
     }
 
+    @Transactional
+    public AssignDeliveryManagerResponse assignDeliveryManager(
+        AssignDeliveryManagerRequestDto requestDto) {
+        DeliveryManager lastAssigned = deliveryManagerRepository
+            .findLastAssignedManager(requestDto.hubId(), requestDto.type())
+            .orElse(null);
+
+        DeliveryManager nextManager;
+        if (lastAssigned != null) {
+            nextManager = deliveryManagerRepository.findNextDeliveryManager(requestDto.hubId(), lastAssigned.getSequence())
+                .orElseGet(() -> findFirstByHubIdOrderBySequenceAsc(requestDto.hubId(), requestDto.type()));
+        } else {
+            nextManager = findFirstByHubIdOrderBySequenceAsc(requestDto.hubId(), requestDto.type());
+        }
+
+        nextManager.updateLastAssignedAt(LocalDateTime.now());
+        deliveryManagerRepository.save(nextManager);
+        return AssignDeliveryManagerResponse.of(nextManager.getId());
+    }
+
     private DeliveryManager findDeliveryManagerById(UUID id) {
         return deliveryManagerRepository.findByIdAndIsDeleted(id, false)
             .orElseThrow(() -> new DeliveryManagerException(
@@ -71,5 +94,10 @@ public class DeliveryManagerService {
             .orElse(null);
         int maxSequence = (maxDeliveryManager == null) ? 0 : maxDeliveryManager.getSequence();
         return maxSequence + 1;
+    }
+
+    private DeliveryManager findFirstByHubIdOrderBySequenceAsc(UUID hubId, DeliveryType type) {
+        return deliveryManagerRepository.findFirstByHubIdOrderBySequenceAsc(hubId, type)
+            .orElseThrow(() -> new DeliveryManagerException(DeliveryManagerExceptionCode.DELIVERY_MANAGER_NOT_FOUND));
     }
 }

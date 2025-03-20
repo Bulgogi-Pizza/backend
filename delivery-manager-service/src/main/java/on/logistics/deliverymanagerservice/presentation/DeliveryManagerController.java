@@ -3,12 +3,15 @@ package on.logistics.deliverymanagerservice.presentation;
 import jakarta.validation.Valid;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import on.logistics.deliverymanagerservice.application.dtos.AssignDeliveryManagerRequestDto;
 import on.logistics.deliverymanagerservice.application.dtos.CreateDeliveryManagerRequestDto;
 import on.logistics.deliverymanagerservice.application.dtos.UpdateDeliveryManagerRequestDto;
 import on.logistics.deliverymanagerservice.application.service.DeliveryManagerService;
 import on.logistics.deliverymanagerservice.global.presentation.dtos.CommonResponse;
+import on.logistics.deliverymanagerservice.presentation.dtos.request.AssignDeliveryManagerRequest;
 import on.logistics.deliverymanagerservice.presentation.dtos.request.CreateDeliveryManagerRequest;
 import on.logistics.deliverymanagerservice.presentation.dtos.request.UpdateDeliveryManagerRequest;
+import on.logistics.deliverymanagerservice.presentation.dtos.response.AssignDeliveryManagerResponse;
 import on.logistics.deliverymanagerservice.presentation.dtos.response.CreateDeliveryManagerResponse;
 import on.logistics.deliverymanagerservice.presentation.dtos.response.GetDeliveryManagerResponse;
 import on.logistics.deliverymanagerservice.presentation.dtos.response.UpdateDeliveryManagerResponse;
@@ -20,6 +23,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -57,5 +61,13 @@ public class DeliveryManagerController {
     public ResponseEntity<CommonResponse<Void>> deleteDeliveryManager(@PathVariable UUID id) {
         deliveryManagerService.deleteDeliveryManager(id);
         return ResponseEntity.ok(CommonResponse.success());
+    }
+
+    @PostMapping("/assign")
+    public ResponseEntity<CommonResponse<AssignDeliveryManagerResponse>> assignDeliveryManager(
+        @RequestBody @Valid AssignDeliveryManagerRequest assignDeliveryManagerRequest) {
+        final var requestDto = AssignDeliveryManagerRequestDto.of(assignDeliveryManagerRequest);
+        final var responseDto = deliveryManagerService.assignDeliveryManager(requestDto);
+        return ResponseEntity.ok(CommonResponse.success(responseDto));
     }
 }

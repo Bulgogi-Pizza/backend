@@ -14,4 +14,10 @@ public interface DeliveryManagerRepository {
     Optional<DeliveryManager> findMaxSequenceByHubIdAndType(UUID hubId, DeliveryType deliveryType);
 
     Optional<DeliveryManager> findByIdAndIsDeleted(UUID id, boolean isDeleted);
+
+    Optional<DeliveryManager> findLastAssignedManager(UUID hubId, DeliveryType type);
+
+    Optional<DeliveryManager> findNextDeliveryManager(UUID hubId, Integer lastSequence);
+
+    Optional<DeliveryManager> findFirstByHubIdOrderBySequenceAsc(UUID hubId, DeliveryType type);
 }

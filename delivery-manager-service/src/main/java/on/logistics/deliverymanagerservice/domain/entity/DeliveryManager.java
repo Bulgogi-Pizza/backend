@@ -69,4 +69,8 @@ public class DeliveryManager extends BaseEntity {
     public void delete() {
         deleteSoftly();
     }
+
+    public void updateLastAssignedAt(LocalDateTime assignedAt) {
+        this.lastAssignedAt = assignedAt;
+    }
 }
