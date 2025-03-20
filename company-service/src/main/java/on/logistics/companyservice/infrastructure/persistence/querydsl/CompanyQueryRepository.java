@@ -1,4 +1,4 @@
-package on.logistics.companyservice.infrastructure.querydsl;
+package on.logistics.companyservice.infrastructure.persistence.querydsl;
 
 import on.logistics.companyservice.application.dtos.request.SearchCompanyRequestDto;
 import on.logistics.companyservice.domain.entity.Company;
