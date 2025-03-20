@@ -1,6 +1,7 @@
 package on.logistics.hubservice.application.service;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import on.logistics.hubservice.application.clients.map.MapServiceClient;
@@ -15,6 +16,7 @@ import on.logistics.hubservice.exception.HubExceptionCode;
 import on.logistics.hubservice.global.application.dtos.PageDto;
 import on.logistics.hubservice.presentation.dtos.response.CreateHubResponse;
 import on.logistics.hubservice.presentation.dtos.response.GetHubResponse;
+import on.logistics.hubservice.presentation.dtos.response.GetSpokesLinkedToCenterResponse;
 import on.logistics.hubservice.presentation.dtos.response.SearchHubResponse;
 import on.logistics.hubservice.presentation.dtos.response.UpdateHubResponse;
 import org.springframework.stereotype.Service;
@@ -60,6 +62,13 @@ public class HubService {
     public void deleteHub(final UUID id) {
         Hub hub = findHubById(id);
         hub.delete();
+    }
+
+    @Transactional(readOnly = true)
+    public List<GetSpokesLinkedToCenterResponse> getSpokesLinkedToCenter(final UUID centerId) {
+        Hub centerHub = findHubById(centerId);
+        final var response = hubRepository.findSpokesLinkedToCenter(centerHub.getId());
+        return response;
     }
 
     private Hub findHubById(UUID id) {
