@@ -18,5 +18,5 @@ public interface HubServiceFeignClient {
     Response searchHubs(@RequestParam("type") HubType type);
 
     @GetMapping("/api/v1/hubs/link")
-    Response getSpokeHubInfo(@RequestParam("hub") UUID hubId);
+    Response getSpokeHubInfo(@RequestParam("centerId") UUID centerId);
 }

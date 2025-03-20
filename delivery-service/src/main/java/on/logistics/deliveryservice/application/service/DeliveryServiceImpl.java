@@ -199,7 +199,7 @@ public class DeliveryServiceImpl implements DeliveryService {
         GetMiddleHubPageInfo getMiddleHubPageInfo) {
 
         String end = "";
-        List<HubInfo> hubs = getMiddleHubPageInfo.data();
+        List<HubInfo> hubs = getMiddleHubPageInfo.content();
         for (HubInfo typeHubInfo : hubs) {
             end += ("" + typeHubInfo.longitude() + "" + typeHubInfo.latitude() + ":");
         }
@@ -212,7 +212,7 @@ public class DeliveryServiceImpl implements DeliveryService {
 
     public UUID middleRouteHubId(GetMiddleHubPageInfo getMiddleHubPageInfo,
         GetHubRouteInfo middleRoute) {
-        List<HubInfo> hubs = getMiddleHubPageInfo.data();
+        List<HubInfo> hubs = getMiddleHubPageInfo.content();
         String middleRouteHubLongitude = String.valueOf(
             middleRoute.summary().end().location().get(0));
         String middleRouteHubLatitude = String.valueOf(
