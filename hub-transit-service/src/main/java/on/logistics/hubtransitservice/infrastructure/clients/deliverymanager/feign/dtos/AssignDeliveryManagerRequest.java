@@ -8,12 +8,4 @@ public record AssignDeliveryManagerRequest(
     String nextDestinationType
 ) {
 
-    public static AssignDeliveryManagerRequest forFinalDestination(UUID deliveryId) {
-        return new AssignDeliveryManagerRequest(
-            deliveryId,
-            UUID.fromString("00000000-0000-0000-0000-00000000"),
-            "COMPANY"
-        );
-    }
-
 }
