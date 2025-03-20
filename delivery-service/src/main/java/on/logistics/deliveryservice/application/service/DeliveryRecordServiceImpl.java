@@ -16,6 +16,7 @@ import on.logistics.deliveryservice.exception.DeliveryRecordException;
 import on.logistics.deliveryservice.exception.DeliveryRecordExceptionCode;
 import on.logistics.deliveryservice.global.application.dtos.PageDto;
 import on.logistics.deliveryservice.infrastructure.clients.hub.HubServiceClient;
+import on.logistics.deliveryservice.infrastructure.clients.hub.feign.dtos.GetHubInfo;
 import on.logistics.deliveryservice.infrastructure.clients.map.MapServiceClient;
 import on.logistics.deliveryservice.infrastructure.clients.map.feign.dtos.GetEstimateInfo;
 import on.logistics.deliveryservice.presentation.dtos.response.CreateDeliveryRecordResponse;
@@ -122,15 +123,11 @@ public class DeliveryRecordServiceImpl implements DeliveryRecordService {
     }
 
     public GetEstimateInfo getEstimateInfo(UUID startHubId, UUID endHubId) {
-        /*
+
         GetHubInfo startHubInfo = hubServiceClient.getHubInfo(startHubId);
         GetHubInfo endHubInfo = hubServiceClient.getHubInfo(endHubId);
         String start = "" + startHubInfo.longitude() + "," + startHubInfo.latitude();
         String end = "" + endHubInfo.longitude() + "," + endHubInfo.latitude();
-        */
-
-        String start = "126.8737955,37.6403771";
-        String end = "127.12345,37.12345";
 
         return mapServiceClient.getEstimate(start, end);
     }
