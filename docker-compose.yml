@@ -28,6 +28,22 @@ services:
     platform: linux/amd64
     restart: always
 
+  hub-transit-route-service:
+    depends_on:
+      - eureka-server
+    build:
+      context: ./hub-transit-route-service
+      dockerfile: Dockerfile
+    container_name: hub-transit-route-service
+    ports:
+      - "8903:8903"
+    networks:
+      o-n-logistics:
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+    platform: linux/amd64
+    restart: always
+
 networks:
   o-n-logistics:
     driver: bridge
