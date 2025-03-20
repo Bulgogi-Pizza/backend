@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class HubServiceClientImpl implements HubServiceClient {
 
-    private HubServiceFeignClient hubServiceFeignClient;
+    private final HubServiceFeignClient hubServiceFeignClient;
 
     @Override
     public GetHubInfo getHubInfo(UUID hubId) {
