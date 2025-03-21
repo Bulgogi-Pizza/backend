@@ -1,9 +1,10 @@
-package on.logistics.hubservice.global.utills;
+package on.logistics.hubservice.global.util;
 
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = lombok.AccessLevel.PRIVATE)
 public class HttpStatusUtils {
+
     public static boolean is2xxSuccessful(int statusCode) {
         return statusCode >= 200 && statusCode < 300;
     }

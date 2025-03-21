@@ -3,7 +3,7 @@ package on.logistics.hubservice.infrastructure.clients.deliverymanager;
 import feign.Response;
 import lombok.RequiredArgsConstructor;
 import on.logistics.hubservice.application.dtos.request.AssignDeliveryManagerRequestDto;
-import on.logistics.hubservice.global.utills.FeignClientResponseUtils;
+import on.logistics.hubservice.global.util.FeignClientResponseUtils;
 import on.logistics.hubservice.infrastructure.clients.deliverymanager.feign.DeliveryManagerServiceFeignClient;
 import on.logistics.hubservice.infrastructure.clients.deliverymanager.feign.dtos.request.AssignDeliveryManagerRequest;
 import on.logistics.hubservice.infrastructure.clients.deliverymanager.feign.dtos.response.AssignDeliveryManagerResponse;

@@ -1,4 +1,4 @@
-package on.logistics.hubservice.global.utills;
+package on.logistics.hubservice.global.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import feign.Response;
