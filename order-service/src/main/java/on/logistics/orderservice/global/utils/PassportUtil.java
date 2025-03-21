@@ -43,5 +43,10 @@ public class PassportUtil {
         return getPassportBy(passportId);
     }
 
+    public void hasRole(Passport passport, String role) {
+        if (!passport.getRole().equals(role)) {
+            throw new PassportValidationFailedException();
+        }
+    }
 }
 
