@@ -15,6 +15,8 @@ import on.logistics.productservice.domain.repository.ProductRepository;
 import on.logistics.productservice.exception.ProductException;
 import on.logistics.productservice.exception.ProductExceptionCode;
 import on.logistics.productservice.global.application.dtos.PageDto;
+import on.logistics.productservice.infrastructure.clients.company.CompanyServiceClient;
+import on.logistics.productservice.infrastructure.clients.company.feign.dtos.GetCompanyInfo;
 import on.logistics.productservice.presentation.dtos.response.CreateProductResponse;
 import on.logistics.productservice.presentation.dtos.response.GetProductResponse;
 import on.logistics.productservice.presentation.dtos.response.SearchProductResponse;
@@ -32,14 +34,19 @@ import org.springframework.transaction.annotation.Transactional;
 public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository productRepository;
+    private final CompanyServiceClient companyServiceClient;
 
     @Override
     @Transactional
     public CreateProductResponse createProduct(CreateProductRequestDto requestDto) {
 
         // todo : 유저의 아이디 정보를 받아와서 권한 체크 필요
-        CreateProductDto createProductDto = CreateProductDto.from(requestDto);
+        GetCompanyInfo companyInfo = companyServiceClient.getCompanyInfo(requestDto.companyId());
+        if (companyInfo == null) {
+            throw new ProductException(ProductExceptionCode.PRODUCT_COMPANY_IS_NOT_FOUND);
+        }
 
+        CreateProductDto createProductDto = CreateProductDto.from(requestDto, companyInfo);
         Product product = Product.create(createProductDto);
         Product saved = productRepository.save(product);
         return CreateProductResponse.of(saved.getId());
@@ -103,7 +110,6 @@ public class ProductServiceImpl implements ProductService {
 
     private Product getOrElseThrow(UUID id) {
         return productRepository.findById(id)
-            .orElseThrow(() -> new ProductException(
-                ProductExceptionCode.PRODUCT_IS_NOT_FOUND));
+            .orElseThrow(() -> new ProductException(ProductExceptionCode.PRODUCT_IS_NOT_FOUND));
     }
 }

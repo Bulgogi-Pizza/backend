@@ -23,12 +23,12 @@ import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
 @Getter
-@Entity
+@Entity(name = "p_company")
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @SQLRestriction("is_deleted = false")
-@SQLDelete(sql = "UPDATE company SET is_deleted = true WHERE id = ?")
+@SQLDelete(sql = "UPDATE p_company SET is_deleted = true WHERE id = ?")
 public class Company extends BaseEntity {
 
     @Id
@@ -51,12 +51,9 @@ public class Company extends BaseEntity {
     private Address address;
 
     public static Company create(CreateCompanyDto createCompanyDto) {
-        return Company.builder()
-            .userId(createCompanyDto.userId())
-            .name(new Name(createCompanyDto.companyName()))
-            .type(createCompanyDto.type())
-            .address(new Address(createCompanyDto.companyAddress()))
-            .build();
+        return Company.builder().userId(createCompanyDto.userId())
+            .name(new Name(createCompanyDto.companyName())).type(createCompanyDto.type())
+            .address(new Address(createCompanyDto.companyAddress())).build();
     }
 
     public void update(String companyName, String companyAddress) {
@@ -70,5 +67,13 @@ public class Company extends BaseEntity {
 
     public void updateHub(UUID managedHubId) {
         this.managedHubId = managedHubId;
+    }
+
+    public void updateCompanyType(CompanyType companyType) {
+        this.type = companyType;
+    }
+
+    public void updateCompanyUser(UUID userId) {
+        this.userId = userId;
     }
 }
