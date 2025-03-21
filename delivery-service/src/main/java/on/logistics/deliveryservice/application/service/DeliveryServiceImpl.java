@@ -151,12 +151,11 @@ public class DeliveryServiceImpl implements DeliveryService {
     }
 
     public DeliveryHubInfoDto deliveryHubInfo(String destination) {
+        // todo: 목적지 위도, 경도 받아옴.
         GetDestinationInfo geocode = mapServiceClient.getGeocode(destination);
         String start = "" + geocode.longitude() + "" + "," + geocode.latitude();
-
         GetMiddleHubPageInfo getMiddleHubPageInfo = typeHubInfoList();
         GetHubRouteInfo middleRoute = middleRouteInfo(start, getMiddleHubPageInfo);
-
         UUID middleRouteHubId = middleRouteHubId(getMiddleHubPageInfo, middleRoute);
         GetSpokeHubInfo getSpokeHubInfo = typeSpokeInfoList(middleRouteHubId);
         GetHubRouteInfo endRoute = endRouteInfo(start, getSpokeHubInfo);
@@ -168,14 +167,16 @@ public class DeliveryServiceImpl implements DeliveryService {
 
     private UUID endRouteHubId(GetSpokeHubInfo getSpokeHubInfo, GetHubRouteInfo endRoute) {
         List<HubInfo> hubs = getSpokeHubInfo.data();
-        String middleRouteHubLongitude = String.valueOf(
-            endRoute.summary().end().location().get(0));
-        String middleRouteHubLatitude = String.valueOf(
-            endRoute.summary().end().location().get(1));
+        String spiltEndRouteHubLongitude = String.valueOf(
+            endRoute.summary().end().location().get(0)).substring(0, 6);
+        String spiltEndRouteHubLatitude = String.valueOf(
+            endRoute.summary().end().location().get(1)).substring(0, 6);
         String endHubId = "";
         for (HubInfo typeHubInfo : hubs) {
-            if (typeHubInfo.longitude().equals(middleRouteHubLongitude) && typeHubInfo.latitude()
-                .equals(middleRouteHubLatitude)) {
+            String splitHubLongitude = typeHubInfo.longitude().substring(0, 6);
+            String splitHubLatitude = typeHubInfo.latitude().substring(0, 6);
+            if (splitHubLongitude.equals(spiltEndRouteHubLongitude) && splitHubLatitude
+                .equals(spiltEndRouteHubLatitude)) {
                 endHubId = typeHubInfo.id();
                 break;
             }
@@ -187,7 +188,7 @@ public class DeliveryServiceImpl implements DeliveryService {
         String end = "";
         List<HubInfo> hubs = getSpokeHubInfo.data();
         for (HubInfo typeHubInfo : hubs) {
-            end += ("" + typeHubInfo.longitude() + "" + typeHubInfo.latitude() + ":");
+            end += ("" + typeHubInfo.longitude() + "," + typeHubInfo.latitude() + ":");
         }
         if (end.endsWith(":")) {
             end = end.substring(0, end.length() - 1);
@@ -201,7 +202,7 @@ public class DeliveryServiceImpl implements DeliveryService {
         String end = "";
         List<HubInfo> hubs = getMiddleHubPageInfo.content();
         for (HubInfo typeHubInfo : hubs) {
-            end += ("" + typeHubInfo.longitude() + "" + typeHubInfo.latitude() + ":");
+            end += ("" + typeHubInfo.longitude() + "," + typeHubInfo.latitude() + ":");
         }
         if (end.endsWith(":")) {
             end = end.substring(0, end.length() - 1);
@@ -213,14 +214,16 @@ public class DeliveryServiceImpl implements DeliveryService {
     public UUID middleRouteHubId(GetMiddleHubPageInfo getMiddleHubPageInfo,
         GetHubRouteInfo middleRoute) {
         List<HubInfo> hubs = getMiddleHubPageInfo.content();
-        String middleRouteHubLongitude = String.valueOf(
-            middleRoute.summary().end().location().get(0));
-        String middleRouteHubLatitude = String.valueOf(
-            middleRoute.summary().end().location().get(1));
+        String spiltMiddleRouteHubLongitude = String.valueOf(
+            middleRoute.summary().end().location().get(0)).substring(0, 6);
+        String spiltMiddleRouteHubLatitude = String.valueOf(
+            middleRoute.summary().end().location().get(1)).substring(0, 6);
         String middleRouteId = "";
         for (HubInfo typeHubInfo : hubs) {
-            if (typeHubInfo.longitude().equals(middleRouteHubLongitude) && typeHubInfo.latitude()
-                .equals(middleRouteHubLatitude)) {
+            String splitHubLongitude = typeHubInfo.longitude().substring(0, 6);
+            String splitHubLatitude = typeHubInfo.latitude().substring(0, 6);
+            if (splitHubLongitude.equals(spiltMiddleRouteHubLongitude) && splitHubLatitude
+                .equals(spiltMiddleRouteHubLatitude)) {
                 middleRouteId = typeHubInfo.id();
                 break;
             }
