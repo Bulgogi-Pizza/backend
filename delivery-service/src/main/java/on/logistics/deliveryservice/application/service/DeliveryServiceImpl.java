@@ -190,29 +190,15 @@ public class DeliveryServiceImpl implements DeliveryService {
     }
 
     private GetHubRouteInfo endRouteInfo(String start, GetSpokeHubInfo getSpokeHubInfo) {
-        String end = "";
         List<HubInfo> hubs = getSpokeHubInfo.data();
-        for (HubInfo typeHubInfo : hubs) {
-            end += ("" + typeHubInfo.longitude() + "," + typeHubInfo.latitude() + ":");
-        }
-        if (end.endsWith(":")) {
-            end = end.substring(0, end.length() - 1);
-        }
+        String end = getMapApiEndSerchingString(hubs);
         return mapServiceClient.getRoute(start, end);
     }
 
     public GetHubRouteInfo middleRouteInfo(String start,
         GetMiddleHubPageInfo getMiddleHubPageInfo) {
-
-        String end = "";
         List<HubInfo> hubs = getMiddleHubPageInfo.content();
-        for (HubInfo typeHubInfo : hubs) {
-            end += ("" + typeHubInfo.longitude() + "," + typeHubInfo.latitude() + ":");
-        }
-        if (end.endsWith(":")) {
-            end = end.substring(0, end.length() - 1);
-        }
-
+        String end = getMapApiEndSerchingString(hubs);
         return mapServiceClient.getRoute(start, end);
     }
 
@@ -249,6 +235,17 @@ public class DeliveryServiceImpl implements DeliveryService {
         String recipient = "임시";
         String recipientSlackEmail = "user@slack.com";
         return DeliveryUserInfoDto.of(recipient, recipientSlackEmail);
+    }
+
+    private String getMapApiEndSerchingString(List<HubInfo> hubs) {
+        String end = "";
+        for (HubInfo typeHubInfo : hubs) {
+            end += ("" + typeHubInfo.longitude() + "," + typeHubInfo.latitude() + ":");
+        }
+        if (end.endsWith(":")) {
+            end = end.substring(0, end.length() - 1);
+        }
+        return end;
     }
 
     public Delivery getOrElseThrow(UUID deliveryId) {
