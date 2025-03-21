@@ -25,6 +25,12 @@ spring:
   cloud:
     discovery:
       enabled: true
+  data:
+    redis:
+      host: localhost
+      port: 16371
+      username: ENC(hK+1LVIhvsPYxTR80FgHp15Fhz64VZWX)
+      password: ENC(hK+1LVIhvsPYxTR80FgHp15Fhz64VZWX)
 
 eureka:
   client:
