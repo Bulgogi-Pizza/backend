@@ -7,9 +7,15 @@ spring:
     url: ENC(LF1EYTubGmz9oUtP1dsRBB57YRt7yiGk89cwn2ZZGYSjuiCwBuLEIcvnhI14ajzva6JpCnKfFK4=)
     username: ENC(SxLjFrGaBdXilneU8KB5/MHMAa0wlH48)
     password: ENC(G3qnSA/3v8HGtR1FkXoJW6PcEjd2nYdC)
+  data:
+    redis:
+      host: localhost
+      port: 16371
+      username: ENC(hK+1LVIhvsPYxTR80FgHp15Fhz64VZWX)
+      password: ENC(hK+1LVIhvsPYxTR80FgHp15Fhz64VZWX)
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create-drop
     properties:
       hibernate:
         format_sql: true
