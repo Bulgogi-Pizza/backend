@@ -17,6 +17,8 @@ import on.logistics.productservice.exception.ProductExceptionCode;
 import on.logistics.productservice.global.application.dtos.PageDto;
 import on.logistics.productservice.infrastructure.clients.company.CompanyServiceClient;
 import on.logistics.productservice.infrastructure.clients.company.feign.dtos.GetCompanyInfo;
+import on.logistics.productservice.infrastructure.clients.hub.HubServiceClient;
+import on.logistics.productservice.infrastructure.clients.hub.feign.dtos.GetHubInfo;
 import on.logistics.productservice.presentation.dtos.response.CreateProductResponse;
 import on.logistics.productservice.presentation.dtos.response.GetProductResponse;
 import on.logistics.productservice.presentation.dtos.response.SearchProductResponse;
@@ -35,6 +37,7 @@ public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository productRepository;
     private final CompanyServiceClient companyServiceClient;
+    private final HubServiceClient hubServiceClient;
 
     @Override
     @Transactional
@@ -42,8 +45,15 @@ public class ProductServiceImpl implements ProductService {
 
         // todo : 유저의 아이디 정보를 받아와서 권한 체크 필요
         GetCompanyInfo companyInfo = companyServiceClient.getCompanyInfo(requestDto.companyId());
+
         if (companyInfo == null) {
             throw new ProductException(ProductExceptionCode.PRODUCT_COMPANY_IS_NOT_FOUND);
+        }
+
+        GetHubInfo hubInfo = hubServiceClient.getHubInfo(companyInfo.managedHubId());
+
+        if (hubInfo == null) {
+            throw new ProductException(ProductExceptionCode.PRODUCT_HUB_IS_NOT_FOUND);
         }
 
         CreateProductDto createProductDto = CreateProductDto.from(requestDto, companyInfo);
