@@ -1,0 +1,53 @@
+server:
+  port: 19700
+
+spring:
+  application:
+    name: slack-service
+  datasource:
+    url: ENC(zCXCf21d6/sbYBRshj56KCVNhFTE/DVVJyGjEVuAiIVS+QFRW8qR26VM+0ePzAxR)
+    username: ENC(ugicKpQxJTRwWL2uJlHsHcnE1IoFxlpw)
+    password: ENC(w/Uvf6+6YwWFLqbPrkYK/Il7BQapHT3x)
+  sql:
+    init:
+      mode: always
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        #        format_sql: true
+        highlight_sql: true
+        use_sql_comments: true
+    #        show_sql: true
+    open-in-view: false
+    defer-datasource-initialization: true
+  cloud:
+    discovery:
+      enabled: true
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: ENC(pE+ObRJ5vJodpHwNRvnO+k3uBqCCklUVcZyXZs5xp+PuM5PhYeD4KA==)
+  instance:
+    prefer-ip-address: true
+
+logging:
+  level:
+    root: INFO
+
+jasypt:
+  encryptor:
+    password: ${jasypt.encryptor.password}
+
+decorator:
+  datasource:
+    p6spy:
+      enable-logging: true
+
+slack:
+  bot:
+    token: ENC(lVVaE64TwLIF2Mu/8UD3Ec+hvvgqFLvlnfMzm/6X3OQ9aTz9oKb5SMf1PNdm9DlD/EfBOaloJgbmwDIVZqWVhNnmlQpGFR1H)
