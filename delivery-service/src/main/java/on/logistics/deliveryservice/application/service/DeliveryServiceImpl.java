@@ -17,6 +17,7 @@ import on.logistics.deliveryservice.exception.DeliveryException;
 import on.logistics.deliveryservice.exception.DeliveryExceptionCode;
 import on.logistics.deliveryservice.global.application.dtos.PageDto;
 import on.logistics.deliveryservice.infrastructure.clients.hub.HubServiceClient;
+import on.logistics.deliveryservice.infrastructure.clients.hub.feign.dtos.GetHubInfo;
 import on.logistics.deliveryservice.infrastructure.clients.hub.feign.dtos.GetMiddleHubPageInfo;
 import on.logistics.deliveryservice.infrastructure.clients.hub.feign.dtos.GetSpokeHubInfo;
 import on.logistics.deliveryservice.infrastructure.clients.hub.feign.dtos.HubInfo;
@@ -54,6 +55,10 @@ public class DeliveryServiceImpl implements DeliveryService {
     @Override
     @Transactional
     public CreateDeliveryResponse createDelivery(CreateDeliveryRequestDto requestDto) {
+        GetHubInfo startHubInfo = hubServiceClient.getHubInfo(requestDto.startHubId());
+        if (startHubInfo == null) {
+            throw new DeliveryException(DeliveryExceptionCode.DELIVERY_START_HUB_NOT_FOUND);
+        }
         DeliveryHubInfoDto hubInfo = deliveryHubInfo(requestDto.destination());
         DeliveryUserInfoDto userInfo = deliveryUserInfo();
         CreateDeliveryDto entityRequestDto = CreateDeliveryDto.from(requestDto, hubInfo, userInfo);
