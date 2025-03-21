@@ -1,7 +1,6 @@
 package on.logistics.orderservice.global.exception.passport;
 
 import on.logistics.orderservice.global.exception.CustomException;
-import on.logistics.orderservice.global.exception.ExceptionCode;
 
 public class PassportException extends CustomException {
 
