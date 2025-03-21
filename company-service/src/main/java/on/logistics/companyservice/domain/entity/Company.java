@@ -57,7 +57,7 @@ public class Company extends BaseEntity {
     public static Company create(CreateCompanyDto createCompanyDto) {
         return Company.builder().userId(createCompanyDto.userId())
             .name(new Name(createCompanyDto.companyName())).type(createCompanyDto.type())
-            .status(CompanyStatus.PENDING)
+            .managedHubId(createCompanyDto.managedHubId()).status(CompanyStatus.APPROVED)
             .address(new Address(createCompanyDto.companyAddress())).build();
     }
 

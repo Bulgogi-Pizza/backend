@@ -1,5 +1,6 @@
 package on.logistics.companyservice.presentation;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -49,9 +50,10 @@ public class CompanyController {
 
     @PostMapping
     public ResponseEntity<CommonResponse<CreateCompanyResponse>> createCompany(
-        @Valid @RequestBody CreateCompanyRequest createCompanyRequest) {
+        @Valid @RequestBody CreateCompanyRequest createCompanyRequest,
+        HttpServletRequest passportRequest) {
         final CreateCompanyRequestDto requestDto = CreateCompanyRequestDto.from(
-            createCompanyRequest);
+            createCompanyRequest, passportRequest);
         CreateCompanyResponse response = companyService.createCompany(requestDto);
         return ResponseEntity.ok(CommonResponse.success(response));
     }
@@ -60,8 +62,7 @@ public class CompanyController {
     public ResponseEntity<CommonResponse<PageDto<SearchCompanyResponse>>> searchCompany(
         @RequestParam(required = false) String name,
         @RequestParam(required = false) CompanyType type,
-        @RequestParam(required = false) CompanyStatus status,
-        @PageableDefault Pageable pageable) {
+        @RequestParam(required = false) CompanyStatus status, @PageableDefault Pageable pageable) {
         final SearchCompanyRequestDto requestDto = SearchCompanyRequestDto.from(name, type, status,
             pageable);
         PageDto<SearchCompanyResponse> response = companyService.searchCompany(requestDto);
@@ -103,8 +104,7 @@ public class CompanyController {
     @PatchMapping("/type/{id}")
     public ResponseEntity<CommonResponse<UpdateCompanyTypeResponse>> updateCompanyType(
         @PathVariable UUID id,
-        @Valid @RequestBody UpdateCompanyTypeRequest updateCompanyTypeRequest
-    ) {
+        @Valid @RequestBody UpdateCompanyTypeRequest updateCompanyTypeRequest) {
         final UpdateCompanyTypeRequestDto requestDto = UpdateCompanyTypeRequestDto.from(id,
             updateCompanyTypeRequest.companyType());
         UpdateCompanyTypeResponse response = companyService.updateCompanyType(requestDto);
@@ -114,8 +114,7 @@ public class CompanyController {
     @PatchMapping("/user/{id}")
     public ResponseEntity<CommonResponse<UpdateCompanyUserResponse>> updateCompanyUser(
         @PathVariable UUID id,
-        @Valid @RequestBody UpdateCompanyUserRequest updateCompanyUserRequest
-    ) {
+        @Valid @RequestBody UpdateCompanyUserRequest updateCompanyUserRequest) {
         final UpdateCompanyUserRequestDto requestDto = UpdateCompanyUserRequestDto.of(id,
             updateCompanyUserRequest.userId());
         UpdateCompanyUserResponse response = companyService.updateCompanyUser(requestDto);

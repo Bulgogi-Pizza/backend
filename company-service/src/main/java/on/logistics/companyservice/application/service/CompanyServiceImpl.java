@@ -15,6 +15,9 @@ import on.logistics.companyservice.domain.repository.CompanyRepository;
 import on.logistics.companyservice.exception.CompanyException;
 import on.logistics.companyservice.exception.CompanyExceptionCode;
 import on.logistics.companyservice.global.application.dtos.PageDto;
+import on.logistics.companyservice.global.domain.Passport;
+import on.logistics.companyservice.global.enums.AuthRole;
+import on.logistics.companyservice.global.utils.PassportUtil;
 import on.logistics.companyservice.infrastructure.clients.hub.HubServiceClient;
 import on.logistics.companyservice.infrastructure.clients.hub.feign.dtos.GetHubInfo;
 import on.logistics.companyservice.presentation.dtos.response.CreateCompanyResponse;
@@ -36,19 +39,27 @@ public class CompanyServiceImpl implements CompanyService {
 
     private final CompanyRepository companyRepository;
     private final HubServiceClient hubServiceClient;
+    private final PassportUtil passportUtil;
 
     @Override
     @Transactional
     public CreateCompanyResponse createCompany(CreateCompanyRequestDto requestDto) {
         // todo : 임시 유저 아이디 발급. 패스포트로 받아서 넣기
         UUID userId = UUID.randomUUID();
+        Passport passport = passportUtil.getPassportByHttpServletRequest(
+            requestDto.passportRequest());
+
+        if (!passport.getRole().equals(AuthRole.MASTER.name()) && !passport.getRole()
+            .equals(AuthRole.HUB_MANAGER.name())) {
+            throw new CompanyException(CompanyExceptionCode.COMPANY_ACCESS_DENIED);
+        }
 
         companyRepository.findByUserId(userId).ifPresent(company -> {
             throw new CompanyException(CompanyExceptionCode.COMPANY_USER_ID_DUPLICATE);
         });
 
         CreateCompanyDto createCompanyDto = CreateCompanyDto.from(userId, requestDto.companyName(),
-            requestDto.companyType(), requestDto.companyAddress());
+            requestDto.companyType(), requestDto.companyAddress(), requestDto.managedHubId());
         Company company = Company.create(createCompanyDto);
         Company saved = companyRepository.save(company);
         return CreateCompanyResponse.of(saved.getId());
