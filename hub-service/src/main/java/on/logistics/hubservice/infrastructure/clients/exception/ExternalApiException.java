@@ -1,4 +1,4 @@
-package on.logistics.hubservice.application.clients.exception;
+package on.logistics.hubservice.infrastructure.clients.exception;
 
 import on.logistics.hubservice.global.exception.CustomException;
 

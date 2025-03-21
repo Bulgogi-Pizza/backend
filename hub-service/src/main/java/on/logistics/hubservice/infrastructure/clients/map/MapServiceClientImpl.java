@@ -1,10 +1,10 @@
-package on.logistics.hubservice.application.clients.map;
+package on.logistics.hubservice.infrastructure.clients.map;
 
 import feign.Response;
 import lombok.RequiredArgsConstructor;
-import on.logistics.hubservice.application.clients.map.feign.MapServiceFeignClient;
-import on.logistics.hubservice.application.clients.map.feign.dtos.GetGeocodeResponse;
 import on.logistics.hubservice.global.utills.FeignClientResponseUtils;
+import on.logistics.hubservice.infrastructure.clients.map.feign.MapServiceFeignClient;
+import on.logistics.hubservice.infrastructure.clients.map.feign.dtos.GetGeocodeResponse;
 import org.springframework.stereotype.Service;
 
 @Service

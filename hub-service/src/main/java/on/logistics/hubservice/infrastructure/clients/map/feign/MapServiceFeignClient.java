@@ -1,4 +1,4 @@
-package on.logistics.hubservice.application.clients.map.feign;
+package on.logistics.hubservice.infrastructure.clients.map.feign;
 
 import feign.Response;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 @FeignClient(name = "map-service")
 public interface MapServiceFeignClient {
-    
+
     @GetMapping("/api/v1/maps/geocode")
     Response getGeocode(@RequestParam String query);
 }

@@ -1,4 +1,4 @@
-package on.logistics.hubservice.infrastructure.jpa.querydsl;
+package on.logistics.hubservice.infrastructure.persistence.jpa.querydsl;
 
 import static on.logistics.hubservice.domain.entity.QCenterSpokeHubLink.centerSpokeHubLink;
 import static on.logistics.hubservice.domain.entity.QHub.hub;

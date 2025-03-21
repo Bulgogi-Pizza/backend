@@ -1,4 +1,4 @@
-package on.logistics.hubservice.application.clients.exception;
+package on.logistics.hubservice.infrastructure.clients.exception;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

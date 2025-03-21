@@ -7,8 +7,8 @@ import lombok.RequiredArgsConstructor;
 import on.logistics.hubservice.application.dtos.request.SearchHubRequestDto;
 import on.logistics.hubservice.domain.entity.Hub;
 import on.logistics.hubservice.global.application.dtos.PageDto;
-import on.logistics.hubservice.infrastructure.jpa.HubJpaRepository;
-import on.logistics.hubservice.infrastructure.jpa.querydsl.HubRepositoryCustom;
+import on.logistics.hubservice.infrastructure.persistence.jpa.HubJpaRepository;
+import on.logistics.hubservice.infrastructure.persistence.jpa.querydsl.HubRepositoryCustom;
 import on.logistics.hubservice.presentation.dtos.response.GetSpokesLinkedToCenterResponse;
 import on.logistics.hubservice.presentation.dtos.response.SearchHubResponse;
 import org.springframework.stereotype.Repository;
@@ -39,6 +39,7 @@ public class HubRepositoryImpl implements HubRepository {
     public PageDto<SearchHubResponse> searchHub(SearchHubRequestDto requestDto) {
         return hubRepositoryCustom.searchHub(requestDto);
     }
+
     @Override
     public List<GetSpokesLinkedToCenterResponse> findSpokesLinkedToCenter(UUID centerId) {
         return hubRepositoryCustom.getSpokesLinkedToCenter(centerId);

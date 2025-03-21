@@ -1,4 +1,4 @@
-package on.logistics.hubservice.infrastructure.jpa.querydsl;
+package on.logistics.hubservice.infrastructure.persistence.jpa.querydsl;
 
 import java.util.List;
 import java.util.UUID;

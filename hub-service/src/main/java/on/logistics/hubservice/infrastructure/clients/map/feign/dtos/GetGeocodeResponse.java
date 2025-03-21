@@ -1,4 +1,4 @@
-package on.logistics.hubservice.application.clients.map.feign.dtos;
+package on.logistics.hubservice.infrastructure.clients.map.feign.dtos;
 
 public record GetGeocodeResponse(
     String roadAddress,

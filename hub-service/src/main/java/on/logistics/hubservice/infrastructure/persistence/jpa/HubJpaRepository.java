@@ -1,4 +1,4 @@
-package on.logistics.hubservice.infrastructure.jpa;
+package on.logistics.hubservice.infrastructure.persistence.jpa;
 
 import java.util.Optional;
 import java.util.UUID;
