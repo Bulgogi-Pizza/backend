@@ -1,0 +1,24 @@
+server:
+  port: 8088
+spring:
+  application:
+    name: order-service
+
+  datasource:
+    url: ENC(NPJQVzywseDK5fvzPMms1CWd2dlt84ikWyCIQXKt0qxvvn0wGj+11Wgt4zCuFpmqn9phsKTgSEd+e2gTQPQ9s1M1a9Ct2kWYkOtipZwIU0CCGWZiPv7jOi7fKOhCUvZWXPfx1pF0b6M=)
+    username: ENC(R806XDgVl0uvipypT5G88k3P/C3yp4sW)
+    password: ENC(b5+nWwWC/nm5V7oHaHfP86SzCG3AZSQJ)
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+        highlight_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        default_batch_fetch_size: 100
+    show-sql: true
+eureka:
+  client:
+    service-url:
+      defaultZone: ENC(0INt2I/CAtE1X08bNkkPEirxAEH+Pz0zP3o9mIU/SX1Cc0tPwgZ9Rw==)
