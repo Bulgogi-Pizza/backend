@@ -28,6 +28,7 @@ ext {
 }
 
 dependencies {
+    implementation 'org.json:json:20250107'
     implementation("com.slack.api:bolt-socket-mode:1.45.3")
     implementation("javax.websocket:javax.websocket-api:1.1")
     implementation("org.glassfish.tyrus.bundles:tyrus-standalone-client:1.20")
