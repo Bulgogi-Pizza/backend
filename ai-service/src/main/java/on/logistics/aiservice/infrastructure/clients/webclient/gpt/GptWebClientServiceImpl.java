@@ -22,6 +22,8 @@ public class GptWebClientServiceImpl implements GptWebClientService {
 
     private static final String BASE_URL = "https://api.openai.com/v1";
     private static final String MODEL = "gpt-3.5-turbo";
+    private static final int TEMPERATURE = 1;
+    private static final int MAX_TOKEN = 12;
 
     private final WebClient webClient;
 
@@ -48,7 +50,7 @@ public class GptWebClientServiceImpl implements GptWebClientService {
             .uri(BASE_URL + "/chat/completions")
             .header("Authorization", "Bearer " + apiKey)
             .header("Content-Type", "application/json")
-            .bodyValue(GptAIDto.from(MODEL, prompt))
+            .bodyValue(GptAIDto.from(MODEL, prompt, TEMPERATURE, MAX_TOKEN))
             .retrieve()
             .bodyToMono(GptResponseDto.class)
             .block();
@@ -66,15 +68,6 @@ public class GptWebClientServiceImpl implements GptWebClientService {
 
     private LocalDateTime convertToLocalDateTime(String text) {
         // 텍스트에서 날짜와 시간을 추출하는 정규식 패턴
-        String pattern = "(\\d{4}년 \\d{1,2}월 \\d{1,2}일 \\d{1,2}시)";
-        java.util.regex.Matcher matcher = java.util.regex.Pattern.compile(pattern).matcher(text);
-
-        if (matcher.find()) {
-            String dateText = matcher.group();
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 HH시");
-            return LocalDateTime.parse(dateText, formatter);
-        } else {
-            throw new DateTimeParseException("날짜 및 시간 형식이 올바르지 않습니다.", text, 0);
-        }
+        return LocalDateTime.parse(text);
     }
 }

@@ -35,7 +35,8 @@ public class AIServiceImpl implements AIService {
 
         String role = "당신은 물류 및 배송 최적화 전문가입니다. "
             + "다음 배송 데이터를 분석하여 도착 시한을 맞추기 위한 "
-            + "최종 발송 시한(출발 허브에서 출발해야 하는 마감시간)을 결정해 주세요.\n\n";
+            + "최종 발송 시한(출발 허브에서 출발해야 하는 마감시간)을 결정해 주세요."
+            + "또한, 정해진 응답 형식만을 무조건 맞춰주셔야 합니다.\n\n";
 
         String request = "[분석 요청 사항]\n"
             + "1. 허브 간 이동 시간과 각 허브에서의 처리 시간을 고려해 주세요\n"
@@ -48,9 +49,12 @@ public class AIServiceImpl implements AIService {
             + "- 날씨 조건(비, 눈, 폭염 등)이 배송 시간에 미치는 영향\n";
 
         String responseType = "[응답 형식]\n"
-            + "응답 형식은 무조건 YYYY-MM-DDTHH:MM:SS 형식을 따라야 합니다.\n"
-            + "이외의 형식은 인식하지 않으며, 이외의 정보는 필요 없습니다.\n"
-            + "- 최종 발송 시한: Java의 LocalDateTime 형식 [YYYY-MM-DDTHH:MM:SS]\n\n";
+            + "YYYY-MM-DDTHH:MM:SS\n\n"
+            + "[응답 예시]"
+            + "예시 1: 2022-12-31T23:59:59\n"
+            + "예시 2: 2022-12-31T23:59:59\n"
+            + "예시 3: 2022-12-31T23:59:59\n";
+
 
         return sb
             .append(data)
