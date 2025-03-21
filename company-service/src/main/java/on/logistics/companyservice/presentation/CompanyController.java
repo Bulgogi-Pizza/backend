@@ -70,8 +70,9 @@ public class CompanyController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CommonResponse<GetCompanyResponse>> getCompany(@PathVariable UUID id) {
-        GetCompanyResponse response = companyService.getCompany(id);
+    public ResponseEntity<CommonResponse<GetCompanyResponse>> getCompany(@PathVariable UUID id,
+        HttpServletRequest passportRequest) {
+        GetCompanyResponse response = companyService.getCompany(id, passportRequest);
         return ResponseEntity.ok(CommonResponse.success(response));
     }
 

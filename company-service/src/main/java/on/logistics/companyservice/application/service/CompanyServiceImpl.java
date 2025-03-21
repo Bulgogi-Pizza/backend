@@ -1,5 +1,6 @@
 package on.logistics.companyservice.application.service;
 
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -44,8 +45,6 @@ public class CompanyServiceImpl implements CompanyService {
     @Override
     @Transactional
     public CreateCompanyResponse createCompany(CreateCompanyRequestDto requestDto) {
-        // todo : 임시 유저 아이디 발급. 패스포트로 받아서 넣기
-        UUID userId = UUID.randomUUID();
         Passport passport = passportUtil.getPassportByHttpServletRequest(
             requestDto.passportRequest());
 
@@ -54,11 +53,12 @@ public class CompanyServiceImpl implements CompanyService {
             throw new CompanyException(CompanyExceptionCode.COMPANY_ACCESS_DENIED);
         }
 
-        companyRepository.findByUserId(userId).ifPresent(company -> {
+        companyRepository.findByUserId(passport.getUserId()).ifPresent(company -> {
             throw new CompanyException(CompanyExceptionCode.COMPANY_USER_ID_DUPLICATE);
         });
 
-        CreateCompanyDto createCompanyDto = CreateCompanyDto.from(userId, requestDto.companyName(),
+        CreateCompanyDto createCompanyDto = CreateCompanyDto.from(passport.getUserId(),
+            requestDto.companyName(),
             requestDto.companyType(), requestDto.companyAddress(), requestDto.managedHubId());
         Company company = Company.create(createCompanyDto);
         Company saved = companyRepository.save(company);
@@ -73,7 +73,8 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     @Override
-    public GetCompanyResponse getCompany(UUID id) {
+    public GetCompanyResponse getCompany(UUID id, HttpServletRequest passportRequest) {
+
         Company company = getOrElseThrow(id);
         return GetCompanyResponse.of(company.getId(), company.getName().getValue(),
             company.getType(), company.getStatus(), company.getManagedHubId(),

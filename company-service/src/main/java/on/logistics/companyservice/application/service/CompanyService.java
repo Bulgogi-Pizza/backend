@@ -1,5 +1,6 @@
 package on.logistics.companyservice.application.service;
 
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.UUID;
 import on.logistics.companyservice.application.dtos.request.CreateCompanyRequestDto;
 import on.logistics.companyservice.application.dtos.request.SearchCompanyRequestDto;
@@ -22,7 +23,7 @@ public interface CompanyService {
 
     PageDto<SearchCompanyResponse> searchCompany(SearchCompanyRequestDto requestDto);
 
-    GetCompanyResponse getCompany(UUID id);
+    GetCompanyResponse getCompany(UUID id, HttpServletRequest passportRequest);
 
     UpdateCompanyResponse updateCompany(UUID id, UpdateCompanyRequestDto requestDto);
 
