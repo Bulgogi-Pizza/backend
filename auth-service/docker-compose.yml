@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: ENC(SzFNDgC//YBbb9TJ7Bne4Cv1KM24A8WX)
+      POSTGRES_PASSWORD: ENC(SzFNDgC//YBbb9TJ7Bne4Cv1KM24A8WX)
+      POSTGRES_DB: ENC(SzFNDgC//YBbb9TJ7Bne4Cv1KM24A8WX)
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - o-n-logistics
+
+  redis:
+    image: redis:7
+    container_name: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    command: redis-server --appendonly yes
+    networks:
+      - o-n-logistics
+
+volumes:
+  postgres-data:
+  redis-data:
+
+networks:
+  o-n-logistics:
+    driver: bridge
