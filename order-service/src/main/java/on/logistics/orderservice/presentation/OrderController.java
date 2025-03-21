@@ -1,5 +1,6 @@
 package on.logistics.orderservice.presentation;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -22,8 +23,10 @@ import on.logistics.orderservice.application.service.dtos.returns.request.Return
 import on.logistics.orderservice.application.service.dtos.update.UpdateOrderRequestDto;
 import on.logistics.orderservice.application.service.dtos.update.UpdateOrderResponseDto;
 import on.logistics.orderservice.global.application.dtos.PageDto;
+import on.logistics.orderservice.global.domain.Passport;
 import on.logistics.orderservice.global.enums.AuthRole;
 import on.logistics.orderservice.global.presentation.dtos.CommonResponse;
+import on.logistics.orderservice.global.utils.PassportUtil;
 import on.logistics.orderservice.presentation.dtos.create.CreateOrderRequest;
 import on.logistics.orderservice.presentation.dtos.delete.DeleteOrderRequestDto;
 import on.logistics.orderservice.presentation.dtos.update.UpdateOrderRequest;
@@ -46,16 +49,15 @@ import org.springframework.web.bind.annotation.RestController;
 public class OrderController {
 
     private final OrderService orderService;
+    private final PassportUtil passportUtil;
 
     @PostMapping
     public ResponseEntity<CommonResponse<CreateOrderResponseDto>> createOrder(
-        @RequestBody @Valid final CreateOrderRequest request
+        @RequestBody @Valid final CreateOrderRequest request,
+        HttpServletRequest servletRequest
     ) {
-        log.warn("패스포트 토큰을 사용하도록 해야합니다!!");
-        final UUID ordererUserId = UUID.fromString("29547e69-f33a-430d-b9a6-75e2b265585c");
-        final String ordererUserNickname = "userNickname";
-        final var requestDto = CreateOrderRequestDto.of(request, ordererUserId,
-            ordererUserNickname);
+        final Passport passport = passportUtil.getPassportBy(servletRequest);
+        final var requestDto = CreateOrderRequestDto.of(request, passport);
         final var responseDto = orderService.createOrder(requestDto);
         return ResponseEntity.ok(CommonResponse.success(responseDto));
     }
@@ -68,11 +70,12 @@ public class OrderController {
         @RequestParam(required = false) final String ordererCompanyName,
         @RequestParam(required = false) final UUID vendorCompanyId,
         @RequestParam(required = false) final String vendorCompanyName,
-        final Pageable pageable
+        final Pageable pageable,
+        HttpServletRequest servletRequest
     ) {
-        log.warn("패스포트 토큰을 사용하도록 해야합니다!!");
-        final UUID userId = UUID.fromString("29547e69-f33a-430d-b9a6-75e2b265585c");
-        final AuthRole userRole = AuthRole.MASTER;
+        final Passport passport = passportUtil.getPassportBy(servletRequest);
+        final UUID userId = passport.getUserId();
+        final AuthRole userRole = AuthRole.valueOf(passport.getRole());
         final var requestDto = SearchOrderPageRequestDto.of(
             pageable, userId, userRole, ordererUserId, userNickname,
             ordererCompanyId, ordererCompanyName, vendorCompanyId, vendorCompanyName
