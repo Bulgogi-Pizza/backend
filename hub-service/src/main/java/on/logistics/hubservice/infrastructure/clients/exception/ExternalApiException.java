@@ -11,21 +11,21 @@ public class ExternalApiException extends CustomException {
     public static class ExternalApiNotFoundException extends ExternalApiException {
 
         public ExternalApiNotFoundException() {
-            super(ExternalApiExceptionCode.MAP_NOT_FOUND);
+            super(ExternalApiExceptionCode.NOT_FOUND_RESPONSE);
         }
     }
 
     public static class ExternalApiBadRequestException extends ExternalApiException {
 
         public ExternalApiBadRequestException() {
-            super(ExternalApiExceptionCode.MAP_BAD_REQUEST);
+            super(ExternalApiExceptionCode.BAD_REQUEST_RESPONSE);
         }
     }
 
     public static class ExternalApiClientException extends ExternalApiException {
 
         public ExternalApiClientException() {
-            super(ExternalApiExceptionCode.MAP_CLIENT_ERROR);
+            super(ExternalApiExceptionCode.CLIENT_ERROR_RESPONSE);
         }
 
     }
@@ -33,7 +33,7 @@ public class ExternalApiException extends CustomException {
     public static class ExternalApiServerException extends ExternalApiException {
 
         public ExternalApiServerException() {
-            super(ExternalApiExceptionCode.MAP_SERVER_ERROR);
+            super(ExternalApiExceptionCode.SERVER_ERROR_RESPONSE);
         }
     }
 
