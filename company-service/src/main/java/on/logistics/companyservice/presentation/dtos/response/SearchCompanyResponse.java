@@ -5,8 +5,7 @@ import on.logistics.companyservice.domain.entity.Company;
 import on.logistics.companyservice.domain.entity.enums.CompanyStatus;
 
 public record SearchCompanyResponse(UUID companyId, UUID userId, String companyName,
-                                    CompanyStatus status,
-                                    UUID managedHubId) {
+                                    CompanyStatus companyStatus, UUID managedHubId) {
 
     public static SearchCompanyResponse from(Company company) {
         return new SearchCompanyResponse(company.getId(), company.getUserId(),
