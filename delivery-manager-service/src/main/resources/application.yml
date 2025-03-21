@@ -2,6 +2,13 @@ spring:
   application:
     name: delivery-manager-service
 
+  data:
+    redis:
+      host: ENC(WCP+8mkysXzEV+eZ1E5A9+XQsysXwDwz)
+      port: 16371
+      username: ENC(hK+1LVIhvsPYxTR80FgHp15Fhz64VZWX)
+      password: ENC(hK+1LVIhvsPYxTR80FgHp15Fhz64VZWX)
+
   datasource:
     url: ENC(FWTpgqN/ecUdslZLRbpZsjIlvzNhK8HgBUPKlyWzTO1T13K5g02NkorMDQHYnT61hQIRIfbtjKKmaprYsm5zSw==)
     username: ENC(QMAWl0YgoBa9M9qnDp4+wglVvgY22uoi)
