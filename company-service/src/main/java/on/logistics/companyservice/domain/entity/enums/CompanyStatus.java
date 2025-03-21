@@ -1,5 +1,5 @@
 package on.logistics.companyservice.domain.entity.enums;
 
 public enum CompanyStatus {
-    PENDING, APPROVED
+    PENDING, APPROVED, REJECTED
 }
