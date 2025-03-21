@@ -1,4 +1,4 @@
-package on.logistics.slackservice.exception;
+package on.logistics.slackservice.infrastructure.clients.exception;
 
 import on.logistics.slackservice.global.exception.CustomException;
 

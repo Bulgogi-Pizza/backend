@@ -1,4 +1,4 @@
-package on.logistics.slackservice.exception;
+package on.logistics.slackservice.infrastructure.clients.exception;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
