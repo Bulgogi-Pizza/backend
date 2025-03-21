@@ -6,9 +6,11 @@ import lombok.RequiredArgsConstructor;
 import on.logistics.deliverymanagerservice.application.dtos.AssignDeliveryManagerRequestDto;
 import on.logistics.deliverymanagerservice.application.dtos.CreateDeliveryManagerRequestDto;
 import on.logistics.deliverymanagerservice.application.dtos.UpdateDeliveryManagerRequestDto;
+import on.logistics.deliverymanagerservice.domain.entity.DeliveryAssignment;
 import on.logistics.deliverymanagerservice.domain.entity.DeliveryManager;
 import on.logistics.deliverymanagerservice.domain.entity.DeliveryType;
 import on.logistics.deliverymanagerservice.domain.entity.dtos.CreateDeliveryManagerDto;
+import on.logistics.deliverymanagerservice.domain.entity.repository.DeliveryAssignmentRepository;
 import on.logistics.deliverymanagerservice.domain.entity.repository.DeliveryManagerRepository;
 import on.logistics.deliverymanagerservice.exception.DeliveryManagerException;
 import on.logistics.deliverymanagerservice.exception.DeliveryManagerExceptionCode;
@@ -24,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class DeliveryManagerService {
 
     private final DeliveryManagerRepository deliveryManagerRepository;
+    private final DeliveryAssignmentRepository deliveryAssignmentRepository;
 
     @Transactional(readOnly = true)
     public GetDeliveryManagerResponse getDeliveryManager(UUID id) {
@@ -81,6 +84,11 @@ public class DeliveryManagerService {
 
         nextManager.updateLastAssignedAt(LocalDateTime.now());
         deliveryManagerRepository.save(nextManager);
+        DeliveryAssignment deliveryAssignment = DeliveryAssignment.create(
+            requestDto.hubId(),
+            nextManager.getId()
+        );
+        deliveryAssignmentRepository.save(deliveryAssignment);
         return AssignDeliveryManagerResponse.of(nextManager.getId());
     }
 

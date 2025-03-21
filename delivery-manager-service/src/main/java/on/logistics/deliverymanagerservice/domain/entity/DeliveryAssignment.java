@@ -41,4 +41,12 @@ public class DeliveryAssignment extends BaseEntity {
         this.deliveryManagerId = deliveryManagerId;
         this.status = status;
     }
+
+    public static DeliveryAssignment create(UUID hubId, UUID deliveryManagerId) {
+        return DeliveryAssignment.builder()
+            .hubId(hubId)
+            .deliveryManagerId(deliveryManagerId)
+            .status(LogisticsStatus.TAKE_OVER)
+            .build();
+    }
 }
