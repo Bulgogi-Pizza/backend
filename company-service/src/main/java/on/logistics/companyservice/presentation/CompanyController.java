@@ -10,6 +10,7 @@ import on.logistics.companyservice.application.dtos.request.UpdateCompanyRequest
 import on.logistics.companyservice.application.dtos.request.UpdateCompanyTypeRequestDto;
 import on.logistics.companyservice.application.dtos.request.UpdateCompanyUserRequestDto;
 import on.logistics.companyservice.application.service.CompanyService;
+import on.logistics.companyservice.domain.entity.enums.CompanyStatus;
 import on.logistics.companyservice.domain.entity.enums.CompanyType;
 import on.logistics.companyservice.global.application.dtos.PageDto;
 import on.logistics.companyservice.global.presentation.dtos.CommonResponse;
@@ -58,8 +59,10 @@ public class CompanyController {
     @GetMapping("/search")
     public ResponseEntity<CommonResponse<PageDto<SearchCompanyResponse>>> searchCompany(
         @RequestParam(required = false) String name,
-        @RequestParam(required = false) CompanyType type, @PageableDefault Pageable pageable) {
-        final SearchCompanyRequestDto requestDto = SearchCompanyRequestDto.from(name, type,
+        @RequestParam(required = false) CompanyType type,
+        @RequestParam(required = false) CompanyStatus status,
+        @PageableDefault Pageable pageable) {
+        final SearchCompanyRequestDto requestDto = SearchCompanyRequestDto.from(name, type, status,
             pageable);
         PageDto<SearchCompanyResponse> response = companyService.searchCompany(requestDto);
         return ResponseEntity.ok(CommonResponse.success(response));

@@ -36,9 +36,8 @@ public class CompanyQueryRepositoryImpl implements CompanyQueryRepository {
 
     private List<Company> searchCompanyList(BooleanBuilder builder, Pageable pageable) {
         OrderSpecifier<?>[] orderSpecifiers = getOrderSpecifiers(pageable);
-        return queryFactory.selectFrom(company).where(builder)
-            .orderBy(orderSpecifiers).offset(pageable.getOffset()).limit(pageable.getPageSize())
-            .fetch();
+        return queryFactory.selectFrom(company).where(builder).orderBy(orderSpecifiers)
+            .offset(pageable.getOffset()).limit(pageable.getPageSize()).fetch();
     }
 
     private BooleanBuilder getSearchCompanyQuery(SearchCompanyRequestDto cond) {
@@ -46,7 +45,9 @@ public class CompanyQueryRepositoryImpl implements CompanyQueryRepository {
         if (cond.name() != null) {
             builder.and(company.name.value.contains(cond.name()));
         }
-
+        if (cond.status() != null) {
+            builder.and(company.status.eq(cond.status()));
+        }
         if (cond.type() != null) {
             builder.and(company.type.eq(cond.type()));
         }

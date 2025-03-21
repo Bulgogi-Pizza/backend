@@ -15,7 +15,7 @@ spring:
       password: ENC(hK+1LVIhvsPYxTR80FgHp15Fhz64VZWX)
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
     properties:
       hibernate:
         format_sql: true
