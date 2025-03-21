@@ -5,12 +5,12 @@ import feign.Response;
 import java.io.IOException;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import on.logistics.slackservice.exception.ExternalApiException.ExternalApiBadRequestException;
-import on.logistics.slackservice.exception.ExternalApiException.ExternalApiClientException;
-import on.logistics.slackservice.exception.ExternalApiException.ExternalApiNotFoundException;
-import on.logistics.slackservice.exception.ExternalApiException.ExternalApiServerException;
-import on.logistics.slackservice.exception.ExternalApiException.WrongResponseTypeApiException;
 import on.logistics.slackservice.global.presentation.dtos.CommonResponse;
+import on.logistics.slackservice.infrastructure.clients.exception.ExternalApiException.ExternalApiBadRequestException;
+import on.logistics.slackservice.infrastructure.clients.exception.ExternalApiException.ExternalApiClientException;
+import on.logistics.slackservice.infrastructure.clients.exception.ExternalApiException.ExternalApiNotFoundException;
+import on.logistics.slackservice.infrastructure.clients.exception.ExternalApiException.ExternalApiServerException;
+import on.logistics.slackservice.infrastructure.clients.exception.ExternalApiException.WrongResponseTypeApiException;
 
 @NoArgsConstructor(access = lombok.AccessLevel.PRIVATE)
 @Slf4j
