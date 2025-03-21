@@ -72,32 +72,35 @@ public class CompanyController {
     @GetMapping("/{id}")
     public ResponseEntity<CommonResponse<GetCompanyResponse>> getCompany(@PathVariable UUID id,
         HttpServletRequest passportRequest) {
-        GetCompanyResponse response = companyService.getCompany(id, passportRequest);
+        GetCompanyResponse response = companyService.getCompany(id);
         return ResponseEntity.ok(CommonResponse.success(response));
     }
 
 
     @PutMapping("/{id}")
     public ResponseEntity<CommonResponse<UpdateCompanyResponse>> updateCompany(
-        @PathVariable UUID id, @Valid @RequestBody UpdateCompanyRequest updateCompanyRequest) {
-        final UpdateCompanyRequestDto requestDto = UpdateCompanyRequestDto.from(
-            updateCompanyRequest);
-        UpdateCompanyResponse response = companyService.updateCompany(id, requestDto);
+        @PathVariable UUID id, @Valid @RequestBody UpdateCompanyRequest updateCompanyRequest,
+        HttpServletRequest passportRequest) {
+        final UpdateCompanyRequestDto requestDto = UpdateCompanyRequestDto.from(id,
+            updateCompanyRequest, passportRequest);
+        UpdateCompanyResponse response = companyService.updateCompany(requestDto);
         return ResponseEntity.ok(CommonResponse.success(response));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<CommonResponse<Void>> deleteCompany(@PathVariable UUID id) {
-        companyService.deleteCompany(id);
+    public ResponseEntity<CommonResponse<Void>> deleteCompany(@PathVariable UUID id,
+        HttpServletRequest passportRequest) {
+        companyService.deleteCompany(id, passportRequest);
         return ResponseEntity.ok(CommonResponse.success());
     }
 
     @PatchMapping("/hub/{id}")
     public ResponseEntity<CommonResponse<UpdateCompanyHubResponse>> updateCompanyHub(
         @PathVariable UUID id,
-        @Valid @RequestBody UpdateCompanyHubRequest updateCompanyHubRequest) {
+        @Valid @RequestBody UpdateCompanyHubRequest updateCompanyHubRequest,
+        HttpServletRequest passportRequest) {
         final UpdateCompanyHubRequestDto requestDto = UpdateCompanyHubRequestDto.from(
-            updateCompanyHubRequest);
+            updateCompanyHubRequest, passportRequest);
         UpdateCompanyHubResponse response = companyService.updateCompanyHub(id, requestDto);
         return ResponseEntity.ok(CommonResponse.success(response));
     }

@@ -23,11 +23,11 @@ public interface CompanyService {
 
     PageDto<SearchCompanyResponse> searchCompany(SearchCompanyRequestDto requestDto);
 
-    GetCompanyResponse getCompany(UUID id, HttpServletRequest passportRequest);
+    GetCompanyResponse getCompany(UUID id);
 
-    UpdateCompanyResponse updateCompany(UUID id, UpdateCompanyRequestDto requestDto);
+    UpdateCompanyResponse updateCompany(UpdateCompanyRequestDto requestDto);
 
-    void deleteCompany(UUID id);
+    void deleteCompany(UUID id, HttpServletRequest passportRequest);
 
     UpdateCompanyHubResponse updateCompanyHub(UUID id, UpdateCompanyHubRequestDto requestDto);
 

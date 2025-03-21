@@ -57,9 +57,14 @@ public class CompanyServiceImpl implements CompanyService {
             throw new CompanyException(CompanyExceptionCode.COMPANY_USER_ID_DUPLICATE);
         });
 
+        GetHubInfo hubInfo = hubServiceClient.getHubInfo(requestDto.managedHubId());
+        if (hubInfo == null) {
+            throw new CompanyException(CompanyExceptionCode.COMPANY_HUB_NOT_FOUND);
+        }
+
         CreateCompanyDto createCompanyDto = CreateCompanyDto.from(passport.getUserId(),
-            requestDto.companyName(),
-            requestDto.companyType(), requestDto.companyAddress(), requestDto.managedHubId());
+            requestDto.companyName(), requestDto.companyType(), requestDto.companyAddress(),
+            requestDto.managedHubId());
         Company company = Company.create(createCompanyDto);
         Company saved = companyRepository.save(company);
         return CreateCompanyResponse.of(saved.getId());
@@ -73,8 +78,7 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     @Override
-    public GetCompanyResponse getCompany(UUID id, HttpServletRequest passportRequest) {
-
+    public GetCompanyResponse getCompany(UUID id) {
         Company company = getOrElseThrow(id);
         return GetCompanyResponse.of(company.getId(), company.getName().getValue(),
             company.getType(), company.getStatus(), company.getManagedHubId(),
@@ -83,18 +87,38 @@ public class CompanyServiceImpl implements CompanyService {
 
     @Override
     @Transactional
-    public UpdateCompanyResponse updateCompany(UUID id, UpdateCompanyRequestDto requestDto) {
-        // todo : 유저의 아이디 정보를 받아와서 본인 회사인지 체크하는 로직 필요
-        Company company = getOrElseThrow(id);
+    public UpdateCompanyResponse updateCompany(UpdateCompanyRequestDto requestDto) {
+        Passport passport = passportUtil.getPassportByHttpServletRequest(
+            requestDto.passportRequest());
+
+        if (passport.getRole().equals(AuthRole.DELIVERY_MANAGER.name())) {
+            throw new CompanyException(CompanyExceptionCode.COMPANY_ACCESS_DENIED);
+        }
+
+        Company company = getOrElseThrow(requestDto.companyId());
+        // todo : 허브 매니저 검증 로직 추가
+        if (!company.getId().equals(passport.getUserId())) {
+            throw new CompanyException(CompanyExceptionCode.COMPANY_ACCESS_DENIED);
+        }
+
         company.update(requestDto.companyName(), requestDto.companyAddress());
         return UpdateCompanyResponse.of(company.getId());
     }
 
     @Override
     @Transactional
-    public void deleteCompany(UUID id) {
-        // todo : 유저의 아이디 정보를 받아와서 본인 회사인지 체크하는 로직 필요
+    public void deleteCompany(UUID id, HttpServletRequest passportRequest) {
+        Passport passport = passportUtil.getPassportByHttpServletRequest(
+            passportRequest);
+
+        if (!passport.getRole().equals(AuthRole.MASTER.name()) && !passport.getRole()
+            .equals(AuthRole.HUB_MANAGER.name())) {
+            throw new CompanyException(CompanyExceptionCode.COMPANY_ACCESS_DENIED);
+        }
+
         Company company = getOrElseThrow(id);
+
+        // todo : 권한 체크 로직 필요
         companyRepository.delete(company);
     }
 
@@ -102,7 +126,15 @@ public class CompanyServiceImpl implements CompanyService {
     @Transactional
     public UpdateCompanyHubResponse updateCompanyHub(UUID id,
         UpdateCompanyHubRequestDto requestDto) {
-        // todo : 허브 매니저 및 마스터만 이용 가능
+
+        Passport passport = passportUtil.getPassportByHttpServletRequest(
+            requestDto.passportRequest());
+
+        if (!passport.getRole().equals(AuthRole.MASTER.name()) && !passport.getRole()
+            .equals(AuthRole.HUB_MANAGER.name())) {
+            throw new CompanyException(CompanyExceptionCode.COMPANY_ACCESS_DENIED);
+        }
+
         Company company = getOrElseThrow(id);
         GetHubInfo hubInfo = hubServiceClient.getHubInfo(requestDto.managedHubId());
         if (hubInfo == null) {
