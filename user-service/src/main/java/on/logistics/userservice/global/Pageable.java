@@ -1,0 +1,1 @@
+package on.logistics.userservice.global;
