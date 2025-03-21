@@ -16,6 +16,7 @@ import on.logistics.productservice.exception.ProductException;
 import on.logistics.productservice.exception.ProductExceptionCode;
 import on.logistics.productservice.global.application.dtos.PageDto;
 import on.logistics.productservice.infrastructure.clients.company.CompanyServiceClient;
+import on.logistics.productservice.infrastructure.clients.company.feign.dtos.CompanyStatus;
 import on.logistics.productservice.infrastructure.clients.company.feign.dtos.GetCompanyInfo;
 import on.logistics.productservice.infrastructure.clients.hub.HubServiceClient;
 import on.logistics.productservice.infrastructure.clients.hub.feign.dtos.GetHubInfo;
@@ -46,12 +47,11 @@ public class ProductServiceImpl implements ProductService {
         // todo : 유저의 아이디 정보를 받아와서 권한 체크 필요
         GetCompanyInfo companyInfo = companyServiceClient.getCompanyInfo(requestDto.companyId());
 
-        if (companyInfo == null) {
+        if (companyInfo == null || companyInfo.companyStatus() != CompanyStatus.APPROVED) {
             throw new ProductException(ProductExceptionCode.PRODUCT_COMPANY_IS_NOT_FOUND);
         }
 
         GetHubInfo hubInfo = hubServiceClient.getHubInfo(companyInfo.managedHubId());
-
         if (hubInfo == null) {
             throw new ProductException(ProductExceptionCode.PRODUCT_HUB_IS_NOT_FOUND);
         }
