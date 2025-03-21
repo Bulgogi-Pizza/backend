@@ -48,6 +48,8 @@ public class AIServiceImpl implements AIService {
             + "- 날씨 조건(비, 눈, 폭염 등)이 배송 시간에 미치는 영향\n";
 
         String responseType = "[응답 형식]\n"
+            + "응답 형식은 무조건 YYYY-MM-DDTHH:MM:SS 형식을 따라야 합니다.\n"
+            + "이외의 형식은 인식하지 않으며, 이외의 정보는 필요 없습니다.\n"
             + "- 최종 발송 시한: Java의 LocalDateTime 형식 [YYYY-MM-DDTHH:MM:SS]\n\n";
 
         return sb

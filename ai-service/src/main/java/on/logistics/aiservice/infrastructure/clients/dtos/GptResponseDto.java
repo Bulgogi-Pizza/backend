@@ -11,11 +11,17 @@ public record GptResponseDto(
 ) {
 
     public record Choice(
-        String text,
         int index,
+        Message message,
         Object logprobs,
         String finishReason
     ) {
 
+        public record Message(
+            String role,
+            String content
+        ) {
+
+        }
     }
 }

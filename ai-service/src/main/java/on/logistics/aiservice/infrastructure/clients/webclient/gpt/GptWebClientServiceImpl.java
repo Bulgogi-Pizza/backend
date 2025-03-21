@@ -9,9 +9,8 @@ import lombok.extern.slf4j.Slf4j;
 import on.logistics.aiservice.exception.AIException;
 import on.logistics.aiservice.exception.AIExceptionCode;
 import on.logistics.aiservice.infrastructure.clients.dtos.GptResponseDto;
-import on.logistics.aiservice.infrastructure.clients.dtos.GptResponseDto.Choice;
-import on.logistics.aiservice.infrastructure.clients.webclient.gpt.dtos.GptAIDto;
 import on.logistics.aiservice.infrastructure.clients.dtos.ShippingDeadlineResponseDto;
+import on.logistics.aiservice.infrastructure.clients.webclient.gpt.dtos.GptAIDto;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -34,7 +33,9 @@ public class GptWebClientServiceImpl implements GptWebClientService {
         log.info("chat() 호출: {}", prompt);
         for (int i = 10; i > 0; i--) {
             GptResponseDto response = send(prompt);
-            Optional<ShippingDeadlineResponseDto> optionalChatResponseDto = findAnswer(response);
+            log.info("chat() 응답: {}", response);
+            Optional<ShippingDeadlineResponseDto> optionalChatResponseDto =
+                tryConvertToLocalDateTime(response.choices().get(0).message().content());
             if (optionalChatResponseDto.isPresent()) {
                 return optionalChatResponseDto.get();
             }
@@ -51,17 +52,6 @@ public class GptWebClientServiceImpl implements GptWebClientService {
             .retrieve()
             .bodyToMono(GptResponseDto.class)
             .block();
-    }
-
-    private Optional<ShippingDeadlineResponseDto> findAnswer(GptResponseDto response) {
-        for (Choice choice : response.choices()) {
-            Optional<ShippingDeadlineResponseDto> optionalChatResponseDto =
-                tryConvertToLocalDateTime(choice.text());
-            if (optionalChatResponseDto.isPresent()) {
-                return optionalChatResponseDto;
-            }
-        }
-        return Optional.empty();
     }
 
     private Optional<ShippingDeadlineResponseDto> tryConvertToLocalDateTime(String response) {
