@@ -6,6 +6,8 @@ import java.time.format.DateTimeParseException;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import on.logistics.aiservice.exception.AIException;
+import on.logistics.aiservice.exception.AIExceptionCode;
 import on.logistics.aiservice.infrastructure.clients.dtos.GptResponseDto;
 import on.logistics.aiservice.infrastructure.clients.dtos.GptResponseDto.Choice;
 import on.logistics.aiservice.infrastructure.clients.webclient.gpt.dtos.GptAIDto;
@@ -37,7 +39,7 @@ public class GptWebClientServiceImpl implements GptWebClientService {
                 return optionalChatResponseDto.get();
             }
         }
-        throw new RuntimeException("날짜 및 시간을 추출할 수 없습니다.");
+        throw new AIException(AIExceptionCode.AI_SERVICE_INTERNAL_SERVER_ERROR);
     }
 
     private GptResponseDto send(String prompt) {
@@ -74,7 +76,7 @@ public class GptWebClientServiceImpl implements GptWebClientService {
 
     private LocalDateTime convertToLocalDateTime(String text) {
         // 텍스트에서 날짜와 시간을 추출하는 정규식 패턴
-        String pattern = "(\\d{4}년 \\d{1,2}월 \\d{1,2}일 \\d{1,2}시";
+        String pattern = "(\\d{4}년 \\d{1,2}월 \\d{1,2}일 \\d{1,2}시)";
         java.util.regex.Matcher matcher = java.util.regex.Pattern.compile(pattern).matcher(text);
 
         if (matcher.find()) {
