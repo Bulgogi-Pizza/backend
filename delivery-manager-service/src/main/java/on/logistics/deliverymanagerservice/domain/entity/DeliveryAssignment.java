@@ -31,21 +31,27 @@ public class DeliveryAssignment extends BaseEntity {
     @Column(nullable = false)
     private UUID deliveryManagerId;
 
+    @Column(nullable = false)
+    private UUID deliveryId;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private LogisticsStatus status;
 
     @Builder
-    private DeliveryAssignment(UUID hubId, UUID deliveryManagerId, LogisticsStatus status) {
+    private DeliveryAssignment(UUID hubId, UUID deliveryManagerId, UUID deliveryId,
+        LogisticsStatus status) {
         this.hubId = hubId;
         this.deliveryManagerId = deliveryManagerId;
+        this.deliveryId = deliveryId;
         this.status = status;
     }
 
-    public static DeliveryAssignment create(UUID hubId, UUID deliveryManagerId) {
+    public static DeliveryAssignment create(UUID hubId, UUID deliveryManagerId, UUID deliveryId) {
         return DeliveryAssignment.builder()
             .hubId(hubId)
             .deliveryManagerId(deliveryManagerId)
+            .deliveryId(deliveryId)
             .status(LogisticsStatus.TAKE_OVER)
             .build();
     }

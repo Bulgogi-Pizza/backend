@@ -86,7 +86,8 @@ public class DeliveryManagerService {
         deliveryManagerRepository.save(nextManager);
         DeliveryAssignment deliveryAssignment = DeliveryAssignment.create(
             requestDto.hubId(),
-            nextManager.getId()
+            nextManager.getId(),
+            requestDto.deliveryId()
         );
         deliveryAssignmentRepository.save(deliveryAssignment);
         return AssignDeliveryManagerResponse.of(nextManager.getId());
