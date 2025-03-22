@@ -108,9 +108,10 @@ public class CompanyController {
     @PatchMapping("/type/{id}")
     public ResponseEntity<CommonResponse<UpdateCompanyTypeResponse>> updateCompanyType(
         @PathVariable UUID id,
-        @Valid @RequestBody UpdateCompanyTypeRequest updateCompanyTypeRequest) {
+        @Valid @RequestBody UpdateCompanyTypeRequest updateCompanyTypeRequest,
+        HttpServletRequest passportRequest) {
         final UpdateCompanyTypeRequestDto requestDto = UpdateCompanyTypeRequestDto.from(id,
-            updateCompanyTypeRequest.companyType());
+            updateCompanyTypeRequest.companyType(), passportRequest);
         UpdateCompanyTypeResponse response = companyService.updateCompanyType(requestDto);
         return ResponseEntity.ok(CommonResponse.success(response));
     }
@@ -118,9 +119,10 @@ public class CompanyController {
     @PatchMapping("/user/{id}")
     public ResponseEntity<CommonResponse<UpdateCompanyUserResponse>> updateCompanyUser(
         @PathVariable UUID id,
-        @Valid @RequestBody UpdateCompanyUserRequest updateCompanyUserRequest) {
+        @Valid @RequestBody UpdateCompanyUserRequest updateCompanyUserRequest,
+        HttpServletRequest passportRequest) {
         final UpdateCompanyUserRequestDto requestDto = UpdateCompanyUserRequestDto.of(id,
-            updateCompanyUserRequest.userId());
+            updateCompanyUserRequest.userId(), passportRequest);
         UpdateCompanyUserResponse response = companyService.updateCompanyUser(requestDto);
         return ResponseEntity.ok(CommonResponse.success(response));
     }

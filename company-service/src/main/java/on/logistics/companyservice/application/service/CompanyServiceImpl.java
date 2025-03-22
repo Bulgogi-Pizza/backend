@@ -21,6 +21,8 @@ import on.logistics.companyservice.global.enums.AuthRole;
 import on.logistics.companyservice.global.utils.PassportUtil;
 import on.logistics.companyservice.infrastructure.clients.hub.HubServiceClient;
 import on.logistics.companyservice.infrastructure.clients.hub.feign.dtos.GetHubInfo;
+import on.logistics.companyservice.infrastructure.clients.hub.feign.dtos.GetHubManagerBooleanResponse;
+import on.logistics.companyservice.infrastructure.clients.hub.feign.dtos.HubManagerBooleanRequest;
 import on.logistics.companyservice.presentation.dtos.response.CreateCompanyResponse;
 import on.logistics.companyservice.presentation.dtos.response.GetCompanyResponse;
 import on.logistics.companyservice.presentation.dtos.response.SearchCompanyResponse;
@@ -45,13 +47,9 @@ public class CompanyServiceImpl implements CompanyService {
     @Override
     @Transactional
     public CreateCompanyResponse createCompany(CreateCompanyRequestDto requestDto) {
-        Passport passport = passportUtil.getPassportByHttpServletRequest(
-            requestDto.passportRequest());
+        Passport passport = getPassport(requestDto.passportRequest());
 
-        if (!passport.getRole().equals(AuthRole.MASTER.name()) && !passport.getRole()
-            .equals(AuthRole.HUB_MANAGER.name())) {
-            throw new CompanyException(CompanyExceptionCode.COMPANY_ACCESS_DENIED);
-        }
+        notMasterAndNotHubManagerValid(passport);
 
         companyRepository.findByUserId(passport.getUserId()).ifPresent(company -> {
             throw new CompanyException(CompanyExceptionCode.COMPANY_USER_ID_DUPLICATE);
@@ -60,6 +58,15 @@ public class CompanyServiceImpl implements CompanyService {
         GetHubInfo hubInfo = hubServiceClient.getHubInfo(requestDto.managedHubId());
         if (hubInfo == null) {
             throw new CompanyException(CompanyExceptionCode.COMPANY_HUB_NOT_FOUND);
+        }
+
+        HubManagerBooleanRequest hubManagerBooleanRequest = HubManagerBooleanRequest.of(
+            passport.getUserId(), hubInfo.id());
+        GetHubManagerBooleanResponse hubManagerBoolean = hubServiceClient.getHubManagerBoolean(
+            hubManagerBooleanRequest);
+
+        if (Boolean.FALSE.equals(hubManagerBoolean.isExist())) {
+            throw new CompanyException(CompanyExceptionCode.COMPANY_ACCESS_DENIED);
         }
 
         CreateCompanyDto createCompanyDto = CreateCompanyDto.from(passport.getUserId(),
@@ -88,18 +95,15 @@ public class CompanyServiceImpl implements CompanyService {
     @Override
     @Transactional
     public UpdateCompanyResponse updateCompany(UpdateCompanyRequestDto requestDto) {
-        Passport passport = passportUtil.getPassportByHttpServletRequest(
-            requestDto.passportRequest());
+        Passport passport = getPassport(requestDto.passportRequest());
 
         if (passport.getRole().equals(AuthRole.DELIVERY_MANAGER.name())) {
             throw new CompanyException(CompanyExceptionCode.COMPANY_ACCESS_DENIED);
         }
 
         Company company = getOrElseThrow(requestDto.companyId());
-        // todo : 허브 매니저 검증 로직 추가
-        if (!company.getId().equals(passport.getUserId())) {
-            throw new CompanyException(CompanyExceptionCode.COMPANY_ACCESS_DENIED);
-        }
+
+        hubManagerHubAndCompanyManagerValid(passport, company);
 
         company.update(requestDto.companyName(), requestDto.companyAddress());
         return UpdateCompanyResponse.of(company.getId());
@@ -108,8 +112,7 @@ public class CompanyServiceImpl implements CompanyService {
     @Override
     @Transactional
     public void deleteCompany(UUID id, HttpServletRequest passportRequest) {
-        Passport passport = passportUtil.getPassportByHttpServletRequest(
-            passportRequest);
+        Passport passport = getPassport(passportRequest);
 
         if (!passport.getRole().equals(AuthRole.MASTER.name()) && !passport.getRole()
             .equals(AuthRole.HUB_MANAGER.name())) {
@@ -118,7 +121,14 @@ public class CompanyServiceImpl implements CompanyService {
 
         Company company = getOrElseThrow(id);
 
-        // todo : 권한 체크 로직 필요
+        HubManagerBooleanRequest hubManagerBooleanRequest = HubManagerBooleanRequest.of(
+            passport.getUserId(), company.getManagedHubId());
+        GetHubManagerBooleanResponse hubManagerBoolean = hubServiceClient.getHubManagerBoolean(
+            hubManagerBooleanRequest);
+        if (Boolean.FALSE.equals(hubManagerBoolean.isExist())) {
+            throw new CompanyException(CompanyExceptionCode.COMPANY_ACCESS_DENIED);
+        }
+
         companyRepository.delete(company);
     }
 
@@ -127,8 +137,7 @@ public class CompanyServiceImpl implements CompanyService {
     public UpdateCompanyHubResponse updateCompanyHub(UUID id,
         UpdateCompanyHubRequestDto requestDto) {
 
-        Passport passport = passportUtil.getPassportByHttpServletRequest(
-            requestDto.passportRequest());
+        Passport passport = getPassport(requestDto.passportRequest());
 
         if (!passport.getRole().equals(AuthRole.MASTER.name()) && !passport.getRole()
             .equals(AuthRole.HUB_MANAGER.name())) {
@@ -140,6 +149,7 @@ public class CompanyServiceImpl implements CompanyService {
         if (hubInfo == null) {
             throw new CompanyException(CompanyExceptionCode.COMPANY_HUB_NOT_FOUND);
         }
+
         company.updateHub(requestDto.managedHubId());
         return UpdateCompanyHubResponse.of(company.getId());
     }
@@ -147,8 +157,14 @@ public class CompanyServiceImpl implements CompanyService {
     @Override
     @Transactional
     public UpdateCompanyTypeResponse updateCompanyType(UpdateCompanyTypeRequestDto requestDto) {
-        // todo : 유저의 아이디 정보를 받아와서 본인 회사인지 체크하는 로직 필요
+        Passport passport = getPassport(requestDto.passportRequest());
+
+        if (passport.getRole().equals(AuthRole.DELIVERY_MANAGER.name())) {
+            throw new CompanyException(CompanyExceptionCode.COMPANY_ACCESS_DENIED);
+        }
+
         Company company = getOrElseThrow(requestDto.companyId());
+        hubManagerHubAndCompanyManagerValid(passport, company);
         company.updateCompanyType(requestDto.companyType());
         return UpdateCompanyTypeResponse.of(company.getId());
     }
@@ -156,9 +172,35 @@ public class CompanyServiceImpl implements CompanyService {
     @Override
     @Transactional
     public UpdateCompanyUserResponse updateCompanyUser(UpdateCompanyUserRequestDto requestDto) {
+        Passport passport = getPassport(requestDto.passportRequest());
+        notMasterAndNotHubManagerValid(passport);
         Company company = getOrElseThrow(requestDto.companyId());
+        hubManagerHubAndCompanyManagerValid(passport, company);
         company.updateCompanyUser(requestDto.userId());
         return UpdateCompanyUserResponse.of(company.getId());
+    }
+
+    private Passport getPassport(HttpServletRequest passportRequest) {
+        return passportUtil.getPassportByHttpServletRequest(passportRequest);
+    }
+
+    private void notMasterAndNotHubManagerValid(Passport passport) {
+        if (passport.getRole().equals(AuthRole.COMPANY_MANAGER.name()) || passport.getRole()
+            .equals(AuthRole.DELIVERY_MANAGER.name())) {
+            throw new CompanyException(CompanyExceptionCode.COMPANY_ACCESS_DENIED);
+        }
+    }
+
+    private void hubManagerHubAndCompanyManagerValid(Passport passport, Company company) {
+        HubManagerBooleanRequest hubManagerBooleanRequest = HubManagerBooleanRequest.of(
+            passport.getUserId(), company.getManagedHubId());
+        GetHubManagerBooleanResponse hubManagerBoolean = hubServiceClient.getHubManagerBoolean(
+            hubManagerBooleanRequest);
+
+        if (!company.getUserId().equals(passport.getUserId()) || Boolean.FALSE.equals(
+            hubManagerBoolean.isExist())) {
+            throw new CompanyException(CompanyExceptionCode.COMPANY_ACCESS_DENIED);
+        }
     }
 
     private Company getOrElseThrow(UUID id) {
