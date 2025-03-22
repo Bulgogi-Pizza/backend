@@ -16,7 +16,9 @@ public enum ProductExceptionCode implements ExceptionCode {
     PRODUCT_BUNDLE_SIZE_MIN(HttpStatus.BAD_REQUEST, "번들 사이즈는 0개 이하일 수 없습니다."),
     PRODUCT_IS_NOT_FOUND(HttpStatus.NOT_FOUND, "상품을 찾을 수 없습니다."),
     PRODUCT_COMPANY_IS_NOT_FOUND(HttpStatus.NOT_FOUND, "회사 정보를 찾지 못해 상품을 등록할 수 없습니다."),
-    PRODUCT_HUB_IS_NOT_FOUND(HttpStatus.NOT_FOUND, "허브 정보를 찾지 못해 상품을 등록할 수 없습니다.");
+    PRODUCT_HUB_IS_NOT_FOUND(HttpStatus.NOT_FOUND, "허브 정보를 찾지 못해 상품을 등록할 수 없습니다."),
+    PRODUCT_ACCESS_DENIED(HttpStatus.FORBIDDEN, "권한이 없습니다."),
+    ;
     private final HttpStatus httpStatus;
     private final String message;
 }

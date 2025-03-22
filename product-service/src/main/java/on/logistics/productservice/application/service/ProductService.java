@@ -1,5 +1,6 @@
 package on.logistics.productservice.application.service;
 
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.UUID;
 import on.logistics.productservice.application.dto.CreateProductRequestDto;
 import on.logistics.productservice.application.dto.SearchProductRequestDto;
@@ -24,7 +25,7 @@ public interface ProductService {
 
     UpdateProductResponse updateProduct(UpdateProductRequestDto requestDto);
 
-    void deleteProduct(UUID id);
+    void deleteProduct(UUID id, HttpServletRequest httpServletRequest);
 
     UpdateReduceProductQuantityResponse updateReduceProductQuantity(
         UpdateReduceProductQuantityRequestDto requestDto);
