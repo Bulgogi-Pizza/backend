@@ -92,7 +92,9 @@ public class DeliveryServiceImpl implements DeliveryService {
 
     @Override
     public GetDeliveryResponse getDelivery(UUID id, HttpServletRequest httpServletRequest) {
+        Passport passport = getPassport(httpServletRequest);
         Delivery delivery = getOrElseThrow(id);
+        validDeliveryManager(passport, delivery);
         return GetDeliveryResponse.from(delivery);
     }
 
@@ -316,10 +318,13 @@ public class DeliveryServiceImpl implements DeliveryService {
 
     private void validHubManagerHubAndDeliveryManager(Passport passport, Delivery delivery) {
         validHubManagerHub(passport, delivery);
-        if (passport.getRole().equals(AuthRole.DELIVERY_MANAGER.name())) {
-            if (!delivery.getUserId().equals(passport.getUserId())) {
-                throw new DeliveryException(DeliveryExceptionCode.DELIVERY_ACCESS_DENIED);
-            }
+        validDeliveryManager(passport, delivery);
+    }
+
+    private void validDeliveryManager(Passport passport, Delivery delivery) {
+        if (passport.getRole().equals(AuthRole.DELIVERY_MANAGER.name()) && !delivery.getUserId()
+            .equals(passport.getUserId())) {
+            throw new DeliveryException(DeliveryExceptionCode.DELIVERY_ACCESS_DENIED);
         }
     }
 
