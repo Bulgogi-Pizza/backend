@@ -50,7 +50,7 @@ public class DeliveryQueryRepositoryImpl implements DeliveryQueryRepository {
             builder.and(delivery.status.eq(cond.status()));
         }
         if (cond.companyDeliveryManagerId() != null) {
-            builder.and(delivery.companyDeliveryManagerId.eq(cond.companyDeliveryManagerId()));
+            builder.and(delivery.userId.eq(cond.companyDeliveryManagerId()));
         }
         return builder;
     }

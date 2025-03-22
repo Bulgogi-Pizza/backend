@@ -62,8 +62,8 @@ public class Delivery extends BaseEntity {
     @Column(nullable = false)
     private RecipientSlackEmail recipientSlackEmail;
 
-    @Column(name = "company_delivery_managed_id")
-    private UUID companyDeliveryManagerId;
+    @Column(name = "user_id")
+    private UUID userId;
 
     public static Delivery create(CreateDeliveryDto entityRequestDto) {
         return builder().orderId(entityRequestDto.orderId()).status(DeliveryStatus.HUB_WAITING)
@@ -83,8 +83,8 @@ public class Delivery extends BaseEntity {
         }
     }
 
-    public void updateAssignManager(UUID companyDeliveryManagerId) {
-        this.companyDeliveryManagerId = companyDeliveryManagerId;
+    public void updateAssignManager(UUID userId) {
+        this.userId = userId;
     }
 
     public void updateDeliveryStatusHubMoving() {

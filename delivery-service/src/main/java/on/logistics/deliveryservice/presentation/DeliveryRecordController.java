@@ -54,10 +54,10 @@ public class DeliveryRecordController {
         @RequestParam(required = false) UUID deliveryId,
         @RequestParam(required = false) UUID startHubId,
         @RequestParam(required = false) UUID endHubId,
-        @RequestParam(required = false) UUID deliveryManagerId,
+        @RequestParam(required = false) UUID userId,
         @PageableDefault Pageable pageable) {
         SearchDeliveryRecordRequestDto requestDto = SearchDeliveryRecordRequestDto.from(deliveryId,
-            startHubId, endHubId, deliveryManagerId, pageable);
+            startHubId, endHubId, userId, pageable);
         PageDto<SearchDeliveryRecordResponse> response = deliveryRecordService.searchDeliveryRecord(
             requestDto);
         return ResponseEntity.ok(CommonResponse.success(response));

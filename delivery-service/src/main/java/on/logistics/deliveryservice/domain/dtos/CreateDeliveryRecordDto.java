@@ -7,13 +7,13 @@ import on.logistics.deliveryservice.infrastructure.clients.map.feign.dtos.GetEst
 
 public record CreateDeliveryRecordDto(UUID deliveryId, Long sequence, DeliveryRecordStatus status,
                                       UUID startHubId, UUID endHubId, Long estimatedDistance,
-                                      Long estimatedDuration, UUID deliveryManagerId) {
+                                      Long estimatedDuration, UUID userId) {
 
     public static CreateDeliveryRecordDto from(CreateDeliveryRecordRequestDto requestDto,
         Long sequence, DeliveryRecordStatus status, GetEstimateInfo getEstimateInfo) {
         return new CreateDeliveryRecordDto(requestDto.deliveryId(), sequence, status,
             requestDto.deliveryRecordStartHubId(), requestDto.deliveryRecordEndHubId(),
             getEstimateInfo.summary().distance(),
-            getEstimateInfo.summary().duration(), requestDto.deliveryManagerId());
+            getEstimateInfo.summary().duration(), requestDto.userId());
     }
 }

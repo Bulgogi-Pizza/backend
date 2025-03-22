@@ -46,8 +46,8 @@ public class DeliveryRecordQueryRepositoryImpl implements DeliveryRecordQueryRep
 
     private BooleanBuilder getSearchDeliveryRecordQuery(SearchDeliveryRecordRequestDto cond) {
         BooleanBuilder builder = new BooleanBuilder();
-        if (cond.deliveryManagerId() != null) {
-            builder.and(deliveryRecord.deliveryManagerId.eq(cond.deliveryManagerId()));
+        if (cond.userId() != null) {
+            builder.and(deliveryRecord.userId.eq(cond.userId()));
         }
         if (cond.deliveryId() != null) {
             builder.and(deliveryRecord.delivery.id.eq(cond.deliveryId()));

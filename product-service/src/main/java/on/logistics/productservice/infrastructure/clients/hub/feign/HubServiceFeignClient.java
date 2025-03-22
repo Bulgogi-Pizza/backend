@@ -6,6 +6,7 @@ import on.logistics.productservice.infrastructure.clients.hub.feign.dtos.HubMana
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 @FeignClient(name = "hub-service")
@@ -14,7 +15,7 @@ public interface HubServiceFeignClient {
     @GetMapping("/api/v1/hubs/{hubId}")
     Response getHubInfo(@PathVariable UUID hubId);
 
-    @GetMapping("/api/v1/hubs/manager/valid")
+    @PostMapping("/api/v1/hubs/manager/valid")
     Response validHubManager(@RequestBody HubManagerBooleanRequest request);
 
 }

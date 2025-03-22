@@ -51,7 +51,7 @@ public class ProductServiceImpl implements ProductService {
     @Transactional
     public CreateProductResponse createProduct(CreateProductRequestDto requestDto) {
         Passport passport = getPassport(requestDto.httpServletRequest());
-        deliveryManagerValid(passport);
+        validDeliveryManager(passport);
 
         // todo : 유저의 아이디 정보를 받아와서 권한 체크 필요
         GetCompanyInfo companyInfo = companyServiceClient.getCompanyInfo(requestDto.companyId());
@@ -90,7 +90,7 @@ public class ProductServiceImpl implements ProductService {
     @Transactional
     public UpdateProductResponse updateProduct(UpdateProductRequestDto requestDto) {
         Passport passport = getPassport(requestDto.httpServletRequest());
-        deliveryManagerValid(passport);
+        validDeliveryManager(passport);
 
         UpdateProductDto updateProductDto = UpdateProductDto.from(requestDto);
         Product product = getOrElseThrow(updateProductDto.productId());
@@ -154,7 +154,7 @@ public class ProductServiceImpl implements ProductService {
         return passportUtil.getPassportByHttpServletRequest(passportRequest);
     }
 
-    private void deliveryManagerValid(Passport passport) {
+    private void validDeliveryManager(Passport passport) {
         if (passport.getRole().equals(AuthRole.DELIVERY_MANAGER.name())) {
             throw new ProductException(ProductExceptionCode.PRODUCT_ACCESS_DENIED);
         }

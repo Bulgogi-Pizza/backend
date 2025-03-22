@@ -1,5 +1,6 @@
 package on.logistics.deliveryservice.application.service;
 
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.UUID;
 import on.logistics.deliveryservice.application.dtos.request.CreateDeliveryRequestDto;
 import on.logistics.deliveryservice.application.dtos.request.SearchDeliveryRequestDto;
@@ -24,24 +25,29 @@ public interface DeliveryService {
 
     PageDto<SearchDeliveryResponse> searchDelivery(SearchDeliveryRequestDto requestDto);
 
-    GetDeliveryResponse getDelivery(UUID id);
+    GetDeliveryResponse getDelivery(UUID id, HttpServletRequest httpServletRequest);
 
     UpdateDeliveryResponse updateDelivery(UpdateDeliveryRequestDto requestDto);
 
-    void deleteDelivery(UUID id);
+    void deleteDelivery(UUID id, HttpServletRequest httpServletRequest);
 
     UpdateAssignManagerResponse updateAssignManager(
         UpdateAssignManagerRequestDto updateAssignManagerRequestDto);
 
-    UpdateDeliveryStatusHubMovingResponse updateDeliveryStatusHubMoving(UUID id);
+    UpdateDeliveryStatusHubMovingResponse updateDeliveryStatusHubMoving(UUID id,
+        HttpServletRequest httpServletRequest);
 
-    UpdateDeliveryStatusHubArriveResponse updateDeliveryStatusHubArrive(UUID id);
+    UpdateDeliveryStatusHubArriveResponse updateDeliveryStatusHubArrive(UUID id,
+        HttpServletRequest httpServletRequest);
 
-    UpdateDeliveryStatusCompanyMovingResponse updateDeliveryStatusCompanyMoving(UUID id);
+    UpdateDeliveryStatusCompanyMovingResponse updateDeliveryStatusCompanyMoving(UUID id,
+        HttpServletRequest httpServletRequest);
 
-    UpdateDeliveryStatusCompanyArriveResponse updateDeliveryStatusCompanyArrive(UUID id);
+    UpdateDeliveryStatusCompanyArriveResponse updateDeliveryStatusCompanyArrive(UUID id,
+        HttpServletRequest httpServletRequest);
 
-    UpdateDeliveryStatusCancelResponse updateDeliveryStatusCancel(UUID id);
+    UpdateDeliveryStatusCancelResponse updateDeliveryStatusCancel(UUID id,
+        HttpServletRequest httpServletRequest);
 
     Delivery getOrElseThrow(UUID deliveryId);
 

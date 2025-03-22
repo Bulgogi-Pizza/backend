@@ -7,9 +7,11 @@ import lombok.RequiredArgsConstructor;
 import on.logistics.deliveryservice.global.utils.FeignClientResponseUtils;
 import on.logistics.deliveryservice.infrastructure.clients.hub.feign.HubServiceFeignClient;
 import on.logistics.deliveryservice.infrastructure.clients.hub.feign.dtos.GetHubInfo;
+import on.logistics.deliveryservice.infrastructure.clients.hub.feign.dtos.GetHubManagerBooleanResponse;
 import on.logistics.deliveryservice.infrastructure.clients.hub.feign.dtos.GetMiddleHubPageInfo;
 import on.logistics.deliveryservice.infrastructure.clients.hub.feign.dtos.GetSpokeHubInfo;
 import on.logistics.deliveryservice.infrastructure.clients.hub.feign.dtos.HubInfo;
+import on.logistics.deliveryservice.infrastructure.clients.hub.feign.dtos.HubManagerBooleanRequest;
 import on.logistics.deliveryservice.infrastructure.clients.hub.feign.dtos.HubType;
 import org.springframework.stereotype.Service;
 
@@ -37,5 +39,11 @@ public class HubServiceClientImpl implements HubServiceClient {
         List<HubInfo> hubInfos = (List<HubInfo>) FeignClientResponseUtils.getListBody(response,
             HubInfo.class);
         return GetSpokeHubInfo.from(hubInfos);
+    }
+
+    @Override
+    public GetHubManagerBooleanResponse getHubManagerBoolean(HubManagerBooleanRequest request) {
+        Response response = hubServiceFeignClient.validHubManager(request);
+        return FeignClientResponseUtils.getBody(response, GetHubManagerBooleanResponse.class);
     }
 }
