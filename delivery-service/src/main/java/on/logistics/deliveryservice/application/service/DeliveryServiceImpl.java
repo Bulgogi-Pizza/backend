@@ -118,7 +118,7 @@ public class DeliveryServiceImpl implements DeliveryService {
         Passport passport = getPassport(httpServletRequest);
         validCompanyMangerAndDeliveryManager(passport);
         Delivery delivery = getOrElseThrow(id);
-        validHubManagerHubAndDeliveryManager(passport, delivery);
+        validHubManagerHub(passport, delivery);
         deliveryRepository.delete(delivery);
     }
 
@@ -127,9 +127,9 @@ public class DeliveryServiceImpl implements DeliveryService {
     public UpdateAssignManagerResponse updateAssignManager(
         UpdateAssignManagerRequestDto updateAssignManagerRequestDto) {
         Passport passport = getPassport(updateAssignManagerRequestDto.httpServletRequest());
-        validCompanyMangerAndDeliveryManager(passport);
+        validCompanyManager(passport);
         Delivery delivery = getOrElseThrow(updateAssignManagerRequestDto.deliveryId());
-        validHubManagerHub(passport, delivery);
+        validHubManagerHubAndDeliveryManager(passport, delivery);
         delivery.updateAssignManager(updateAssignManagerRequestDto.userId());
         return UpdateAssignManagerResponse.of(delivery.getId());
     }
@@ -139,6 +139,7 @@ public class DeliveryServiceImpl implements DeliveryService {
     public UpdateDeliveryStatusHubMovingResponse updateDeliveryStatusHubMoving(UUID id,
         HttpServletRequest httpServletRequest) {
         Passport passport = getPassport(httpServletRequest);
+        validCompanyManager(passport);
         Delivery delivery = getOrElseThrow(id);
         validHubManagerHubAndDeliveryManager(passport, delivery);
         delivery.updateDeliveryStatusHubMoving();
@@ -150,6 +151,7 @@ public class DeliveryServiceImpl implements DeliveryService {
     public UpdateDeliveryStatusHubArriveResponse updateDeliveryStatusHubArrive(UUID id,
         HttpServletRequest httpServletRequest) {
         Passport passport = getPassport(httpServletRequest);
+        validCompanyManager(passport);
         Delivery delivery = getOrElseThrow(id);
         validHubManagerHubAndDeliveryManager(passport, delivery);
         delivery.updateDeliveryStatusHubArrive();
@@ -161,6 +163,7 @@ public class DeliveryServiceImpl implements DeliveryService {
     public UpdateDeliveryStatusCompanyMovingResponse updateDeliveryStatusCompanyMoving(UUID id,
         HttpServletRequest httpServletRequest) {
         Passport passport = getPassport(httpServletRequest);
+        validCompanyManager(passport);
         Delivery delivery = getOrElseThrow(id);
         validHubManagerHubAndDeliveryManager(passport, delivery);
         delivery.updateDeliveryStatusCompanyMoving();
@@ -172,6 +175,7 @@ public class DeliveryServiceImpl implements DeliveryService {
     public UpdateDeliveryStatusCompanyArriveResponse updateDeliveryStatusCompanyArrive(UUID id,
         HttpServletRequest httpServletRequest) {
         Passport passport = getPassport(httpServletRequest);
+        validCompanyManager(passport);
         Delivery delivery = getOrElseThrow(id);
         validHubManagerHubAndDeliveryManager(passport, delivery);
         delivery.updateDeliveryStatusCompanyArrive();
@@ -183,6 +187,7 @@ public class DeliveryServiceImpl implements DeliveryService {
     public UpdateDeliveryStatusCancelResponse updateDeliveryStatusCancel(UUID id,
         HttpServletRequest httpServletRequest) {
         Passport passport = getPassport(httpServletRequest);
+        validCompanyManager(passport);
         Delivery delivery = getOrElseThrow(id);
         validHubManagerHubAndDeliveryManager(passport, delivery);
         delivery.updateDeliveryStatusCancel();
