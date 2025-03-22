@@ -9,4 +9,6 @@ public interface DeliveryManagerJpaRepository extends JpaRepository<DeliveryMana
 
     Optional<DeliveryManager> findByIdAndIsDeleted(UUID id, boolean isDeleted);
 
+    Optional<DeliveryManager> findByIdAndUserId(UUID deliveryManagerId, UUID userId);
+
 }

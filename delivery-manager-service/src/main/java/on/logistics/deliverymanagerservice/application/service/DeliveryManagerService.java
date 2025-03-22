@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import on.logistics.deliverymanagerservice.application.dtos.AssignDeliveryManagerRequestDto;
 import on.logistics.deliverymanagerservice.application.dtos.CreateDeliveryManagerRequestDto;
 import on.logistics.deliverymanagerservice.application.dtos.UpdateDeliveryManagerRequestDto;
+import on.logistics.deliverymanagerservice.application.dtos.ValidDeliveryManagerRequestDto;
 import on.logistics.deliverymanagerservice.domain.entity.DeliveryAssignment;
 import on.logistics.deliverymanagerservice.domain.entity.DeliveryManager;
 import on.logistics.deliverymanagerservice.domain.entity.DeliveryType;
@@ -18,6 +19,7 @@ import on.logistics.deliverymanagerservice.presentation.dtos.response.AssignDeli
 import on.logistics.deliverymanagerservice.presentation.dtos.response.CreateDeliveryManagerResponse;
 import on.logistics.deliverymanagerservice.presentation.dtos.response.GetDeliveryManagerResponse;
 import on.logistics.deliverymanagerservice.presentation.dtos.response.UpdateDeliveryManagerResponse;
+import on.logistics.deliverymanagerservice.presentation.dtos.response.ValidDeliveryManagerResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -91,6 +93,14 @@ public class DeliveryManagerService {
         );
         deliveryAssignmentRepository.save(deliveryAssignment);
         return AssignDeliveryManagerResponse.of(nextManager.getId());
+    }
+
+    @Transactional
+    public ValidDeliveryManagerResponse validDeliveryManager(
+        ValidDeliveryManagerRequestDto requestDto) {
+        boolean isExistDeliveryManager = deliveryManagerRepository.findByIdAndUserId(
+            requestDto.deliveryManager(), requestDto.userId()).isPresent();
+        return ValidDeliveryManagerResponse.of(isExistDeliveryManager);
     }
 
     private DeliveryManager findDeliveryManagerById(UUID id) {

@@ -49,4 +49,10 @@ public class DeliveryManagerRepositoryImpl implements DeliveryManagerRepository 
         DeliveryType type) {
         return deliveryManagerRepositoryCustom.findFirstByHubIdOrderBySequenceAsc(hubId, type);
     }
+
+    @Override
+    public Optional<DeliveryManager> findByIdAndUserId(UUID deliveryManagerId,
+        UUID userId) {
+        return deliveryManagerJpaRepository.findByIdAndUserId(deliveryManagerId, userId);
+    }
 }

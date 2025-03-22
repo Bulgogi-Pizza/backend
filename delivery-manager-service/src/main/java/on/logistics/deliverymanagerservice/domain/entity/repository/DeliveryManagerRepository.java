@@ -20,4 +20,6 @@ public interface DeliveryManagerRepository {
     Optional<DeliveryManager> findNextDeliveryManager(UUID hubId, Integer lastSequence);
 
     Optional<DeliveryManager> findFirstByHubIdOrderBySequenceAsc(UUID hubId, DeliveryType type);
+
+    Optional<DeliveryManager> findByIdAndUserId(UUID deliveryManagerId, UUID userId);
 }

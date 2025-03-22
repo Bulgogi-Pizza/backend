@@ -11,7 +11,6 @@ import on.logistics.hubservice.presentation.dtos.request.ValidHubManagerRequest;
 import on.logistics.hubservice.presentation.dtos.response.CreateHubManagerResponse;
 import on.logistics.hubservice.presentation.dtos.response.ValidHubManagerResponse;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,7 +31,7 @@ public class HubManagerController {
         return ResponseEntity.ok(CommonResponse.success(responseDto));
     }
 
-    @GetMapping("/valid")
+    @PostMapping("/valid")
     public ResponseEntity<CommonResponse<ValidHubManagerResponse>> validHubManager(
         @RequestBody @Valid ValidHubManagerRequest validHubManagerRequest) {
         final var requestDto = ValidHubManagerRequestDto.of(validHubManagerRequest);
