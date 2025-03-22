@@ -35,4 +35,11 @@ public class OrderException extends CustomException {
             super(OrderExceptionCode.ORDER_PRODUCT_NOT_FOUND);
         }
     }
+
+    public static class OrderAccessDeniedException extends OrderException {
+
+        public OrderAccessDeniedException() {
+            super(OrderExceptionCode.ORDER_ACCESS_DENIED);
+        }
+    }
 }

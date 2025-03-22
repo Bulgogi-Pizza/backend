@@ -19,7 +19,7 @@ public record SearchOrderPageRequestDto(
     public static SearchOrderPageRequestDto of(
         Pageable pageable,
         UUID userId,
-        AuthRole userRole,
+        String userRole,
         UUID ordererUserId,
         String ordererUserNickname,
         UUID ordererCompanyId,
@@ -30,7 +30,7 @@ public record SearchOrderPageRequestDto(
         return new SearchOrderPageRequestDto(
             pageable,
             userId,
-            userRole,
+            AuthRole.valueOf(userRole),
             ordererUserId,
             ordererUserNickname,
             ordererCompanyId,

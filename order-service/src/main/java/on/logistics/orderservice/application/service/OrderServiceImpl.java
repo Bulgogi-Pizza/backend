@@ -38,10 +38,12 @@ import on.logistics.orderservice.domain.entity.dtos.CreateVendorOrderDto;
 import on.logistics.orderservice.domain.enums.OrderStatus;
 import on.logistics.orderservice.domain.repository.OrderRepository;
 import on.logistics.orderservice.domain.repository.dtos.SearchOrderPageDto;
+import on.logistics.orderservice.exception.OrderException.OrderAccessDeniedException;
 import on.logistics.orderservice.exception.OrderException.OrderNotFoundException;
 import on.logistics.orderservice.exception.OrderException.OrderProductNotFoundException;
 import on.logistics.orderservice.exception.OrderException.VendorOrderNotFoundException;
 import on.logistics.orderservice.global.application.dtos.PageDto;
+import on.logistics.orderservice.global.enums.AuthRole;
 import on.logistics.orderservice.infrastructure.clients.ai.dtos.GenerateShippingDeadlineRequestDto;
 import on.logistics.orderservice.infrastructure.clients.ai.feign.dtos.GenerateShippingDeadlineResponse;
 import on.logistics.orderservice.infrastructure.clients.company.dtos.GetCompanyResponseDto;
@@ -49,6 +51,7 @@ import on.logistics.orderservice.infrastructure.clients.delivery.dtos.DeliveryRe
 import on.logistics.orderservice.infrastructure.clients.exception.ExternalApiException;
 import on.logistics.orderservice.infrastructure.clients.exception.ExternalApiException.ExternalApiBadRequestException;
 import on.logistics.orderservice.infrastructure.clients.hub.dtos.GetHubByIdResponseDto;
+import on.logistics.orderservice.infrastructure.clients.hub.dtos.ValidateHubManagerResponseDto;
 import on.logistics.orderservice.infrastructure.clients.product.dtos.DecreaseProductStockRequestDto;
 import on.logistics.orderservice.infrastructure.clients.product.dtos.RollbackDecreaseProductStockRequestDto;
 import on.logistics.orderservice.presentation.dtos.delete.DeleteOrderRequestDto;
@@ -264,7 +267,41 @@ public class OrderServiceImpl implements OrderService {
         Order order = orderRepository.findOrderById(requestDto.orderId())
             .orElseThrow(OrderNotFoundException::new);
 
+        validateGetOrderDetailAccess(requestDto, order);
+
         return GetOrderDetailResponseDto.from(order);
+    }
+
+    private void validateGetOrderDetailAccess(
+        final GetOrderDetailRequestDto requestDto,
+        final Order order
+    ) {
+        log.warn("공급 업체는 본인 업체에 들어온 주문에 대해서 볼 수 있도록 개선되어야 합니다.");
+        validateOrderHubManagerAccess(requestDto.role(), requestDto.userId(), order);
+        validateOrdererAccess(requestDto.role(), requestDto.userId(), order);
+    }
+
+    private void validateOrderHubManagerAccess(
+        final AuthRole role,
+        final UUID userId,
+        final Order order
+    ) {
+        if (role.isHubManager()) {
+            ValidateHubManagerResponseDto responseDto = hubService.validateHubManager(
+                userId, order.getOrderer().getOrdererHubId());
+            isAccess(!responseDto.isExist());
+        }
+    }
+
+    private void validateOrdererAccess(
+        final AuthRole role,
+        final UUID userId,
+        final Order order
+    ) {
+        if (role.isCompanyManager() || role.isDeliveryManager()) {
+            GetCompanyResponseDto company = companyService.getCompanyById(userId);
+            isAccess(!company.companyId().equals(order.getOrderer().getCompanyId()));
+        }
     }
 
     @Transactional
@@ -275,9 +312,31 @@ public class OrderServiceImpl implements OrderService {
         Order order = orderRepository.findOrderById(requestDto.orderId())
             .orElseThrow(OrderNotFoundException::new);
 
+        validateUpdateOrderAccess(requestDto, order);
+
         updateVendorOrders(order, requestDto.ordersByVendor());
 
         return UpdateOrderResponseDto.from(order);
+    }
+
+    private void validateUpdateOrderAccess(
+        final UpdateOrderRequestDto requestDto,
+        final Order order
+    ) {
+        validateOrderHubManagerAccess(requestDto.role(), requestDto.userId(), order);
+        validateOrderOwnerDeniedAccess(requestDto.role());
+    }
+
+    private static void validateOrderOwnerDeniedAccess(
+        final AuthRole role
+    ) {
+        isAccess(role.isCompanyManager() || role.isDeliveryManager());
+    }
+
+    private static void isAccess(boolean isAccess) {
+        if (isAccess) {
+            throw new OrderAccessDeniedException();
+        }
     }
 
     private void updateVendorOrders(
@@ -319,8 +378,18 @@ public class OrderServiceImpl implements OrderService {
         VendorOrder vendorOrder = getIsBeforeShippedVendorOrder(
             order, requestDto.vendorOrderId());
 
+        validateCancelVendorOrderAccess(requestDto, order);
+
         vendorOrder.cancel();
         return CancelOrderResponseDto.from(vendorOrder);
+    }
+
+    private void validateCancelVendorOrderAccess(
+        final CancelOrderRequestDto requestDto,
+        final Order order
+    ) {
+        validateOrderHubManagerAccess(requestDto.role(), requestDto.userId(), order);
+        validateOrdererAccess(requestDto.role(), requestDto.userId(), order);
     }
 
     private static VendorOrder getIsBeforeShippedVendorOrder(
@@ -342,9 +411,19 @@ public class OrderServiceImpl implements OrderService {
         Order order = orderRepository.findOrderById(requestDto.orderId())
             .orElseThrow(OrderNotFoundException::new);
 
+        validateDeleteVendorOrderAccess(requestDto, order);
+
         VendorOrder vendorOrder = getIsAfterDeliveredVendorOrder(order, requestDto.vendorOrderId());
 
         order.removeVendorOrder(vendorOrder);
+    }
+
+    private void validateDeleteVendorOrderAccess(
+        final DeleteOrderRequestDto requestDto,
+        final Order order
+    ) {
+        validateOrderHubManagerAccess(requestDto.role(), requestDto.userId(), order);
+        validateOrderOwnerDeniedAccess(requestDto.role());
     }
 
     @Transactional
@@ -358,9 +437,18 @@ public class OrderServiceImpl implements OrderService {
         VendorOrder vendorOrder = getIsAfterDeliveredVendorOrder(
             order, requestDto.vendorOrderId());
 
+        validateRequestReturnAccess(requestDto, order);
+
         vendorOrder.requestReturn();
 
         return ReturnRequestResponseDto.from(vendorOrder);
+    }
+
+    private void validateRequestReturnAccess(
+        final ReturnRequestRequestDto requestDto,
+        final Order order
+    ) {
+        validateOrdererAccess(requestDto.role(), requestDto.userId(), order);
     }
 
     private static VendorOrder getIsAfterDeliveredVendorOrder(
@@ -384,11 +472,22 @@ public class OrderServiceImpl implements OrderService {
         Order order = orderRepository.findOrderById(requestDto.orderId())
             .orElseThrow(OrderNotFoundException::new);
 
-        VendorOrder vendorOrder = getIsReturnRequestedVendorOrder(requestDto.vendorOrderId(),
-            order);
+        VendorOrder vendorOrder = getIsReturnRequestedVendorOrder(
+            requestDto.vendorOrderId(), order);
+
+        validateDenyReturnRequestAccess(requestDto, order);
+
         vendorOrder.denyReturn();
 
         return ReturnRequestDeniedResponseDto.from(vendorOrder);
+    }
+
+    private void validateDenyReturnRequestAccess(
+        final ReturnRequestDeniedRequestDto requestDto,
+        final Order order
+    ) {
+        validateOrderHubManagerAccess(requestDto.role(), requestDto.userId(), order);
+        validateOrderOwnerDeniedAccess(requestDto.role());
     }
 
     @Transactional
@@ -399,8 +498,11 @@ public class OrderServiceImpl implements OrderService {
         Order order = orderRepository.findOrderById(requestDto.orderId())
             .orElseThrow(OrderNotFoundException::new);
 
-        VendorOrder vendorOrder = getIsReturnRequestedVendorOrder(requestDto.vendorOrderId(),
-            order);
+        VendorOrder vendorOrder = getIsReturnRequestedVendorOrder(
+            requestDto.vendorOrderId(), order);
+
+        validateReturnOrderAccess(requestDto, order);
+
         vendorOrder.returnOrder();
 
         Order returnedOrder = Order.create(order.getOrderer(), vendorOrder);
@@ -411,6 +513,14 @@ public class OrderServiceImpl implements OrderService {
 
         Order savedReturnOrder = orderRepository.save(returnedOrder);
         return ReturnOrderResponseDto.from(savedReturnOrder);
+    }
+
+    private void validateReturnOrderAccess(
+        final ReturnOrderRequestDto requestDto,
+        final Order order
+    ) {
+        validateOrderHubManagerAccess(requestDto.role(), requestDto.userId(), order);
+        validateOrderOwnerDeniedAccess(requestDto.role());
     }
 
     private static VendorOrder getIsReturnRequestedVendorOrder(

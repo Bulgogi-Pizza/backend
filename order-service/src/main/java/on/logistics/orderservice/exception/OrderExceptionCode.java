@@ -13,6 +13,7 @@ public enum OrderExceptionCode implements ExceptionCode {
     ORDER_NOT_FOUND(HttpStatus.NOT_FOUND, "주문을 찾을 수 없습니다."),
     VENDOR_ORDER_NOT_FOUND(HttpStatus.NOT_FOUND, "판매자 주문을 찾을 수 없습니다."),
     ORDER_PRODUCT_NOT_FOUND(HttpStatus.NOT_FOUND, "주문 상품을 찾을 수 없습니다."),
+    ORDER_ACCESS_DENIED(HttpStatus.FORBIDDEN, "권한이 없는 엔드포인트로의 접근이 거부되었습니다."),
     ;
 
     private final HttpStatus httpStatus;
