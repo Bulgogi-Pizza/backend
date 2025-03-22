@@ -11,6 +11,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import on.logistics.hubservice.application.dtos.request.CreateHubManagerRequestDto;
 import on.logistics.hubservice.global.domain.BaseEntity;
 
 @Getter
@@ -33,5 +34,12 @@ public class HubManager extends BaseEntity {
     private HubManager(UUID userId, UUID hubId) {
         this.userId = userId;
         this.hubId = hubId;
+    }
+
+    public static HubManager create(CreateHubManagerRequestDto dto) {
+        return HubManager.builder()
+            .userId(dto.userId())
+            .hubId(dto.userId())
+            .build();
     }
 }
