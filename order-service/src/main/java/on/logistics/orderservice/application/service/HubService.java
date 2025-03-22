@@ -2,8 +2,11 @@ package on.logistics.orderservice.application.service;
 
 import java.util.UUID;
 import on.logistics.orderservice.infrastructure.clients.hub.dtos.GetHubByIdResponseDto;
+import on.logistics.orderservice.infrastructure.clients.hub.dtos.ValidateHubManagerResponseDto;
 
 public interface HubService {
 
     GetHubByIdResponseDto getHubById(UUID userId);
+
+    ValidateHubManagerResponseDto validateHubManager(UUID companyId, UUID hubId);
 }
