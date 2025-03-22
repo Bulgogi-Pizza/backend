@@ -1,5 +1,7 @@
 package on.logistics.hubservice.domain.repository;
 
+import java.util.Optional;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import on.logistics.hubservice.domain.entity.HubManager;
 import on.logistics.hubservice.infrastructure.persistence.jpa.HubManagerJpaRepository;
@@ -14,5 +16,10 @@ public class HubManagerRepositoryImpl implements HubManagerRepository {
     @Override
     public HubManager save(HubManager hubManager) {
         return hubManagerJpaRepository.save(hubManager);
+    }
+
+    @Override
+    public Optional<HubManager> findByUserIdAndHubId(UUID userId, UUID hubId) {
+        return hubManagerJpaRepository.findByUserIdAndHubId(userId, hubId);
     }
 }
