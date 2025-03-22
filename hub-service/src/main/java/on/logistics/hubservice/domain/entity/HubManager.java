@@ -39,7 +39,7 @@ public class HubManager extends BaseEntity {
     public static HubManager create(CreateHubManagerRequestDto dto) {
         return HubManager.builder()
             .userId(dto.userId())
-            .hubId(dto.userId())
+            .hubId(dto.hubId())
             .build();
     }
 }
