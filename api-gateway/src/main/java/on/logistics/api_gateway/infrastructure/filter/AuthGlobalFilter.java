@@ -21,18 +21,18 @@ import reactor.core.publisher.Mono;
 @Slf4j(topic = "AuthGlobalFilter")
 public class AuthGlobalFilter implements GlobalFilter, Ordered {
 
-    @Value("${spring.cloud.gateway.auth_global_filter.login_url}")
+    @Value("${spring.cloud.gateway.auth.login.endpoint}")
     private String loginUrl;
-    @Value("${spring.cloud.gateway.auth_global_filter.signup_url}")
+    @Value("${spring.cloud.gateway.auth.signup.endpoint}")
     private String signupUrl;
-    @Value("${spring.cloud.gateway.auth_global_filter.validate_endpoint}")
+    @Value("${spring.cloud.gateway.auth.validate.endpoint}")
     private String validateEndpoint;
 
     private final WebClient webClient;
 
     public AuthGlobalFilter(
         WebClient.Builder webClientBuilder,
-        @Value("${spring.cloud.gateway.auth_global_filter.base_url}") String baseUrl
+        @Value("${spring.cloud.gateway.auth.base.url}") String baseUrl
     ) {
         this.webClient = webClientBuilder
             .baseUrl(baseUrl)
@@ -89,6 +89,8 @@ public class AuthGlobalFilter implements GlobalFilter, Ordered {
                 return chain.filter(exchange.mutate().request(mutatedRequest).build());
             })
             .onErrorResume(ex -> {
+                log.error("Request URL : {} ", exchange.getRequest().getURI());
+                log.error("WebClientInfo : {} ", validateEndpoint);
                 exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
                 return exchange.getResponse().setComplete();
             });
