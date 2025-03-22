@@ -87,9 +87,9 @@ public class CompanyServiceImpl implements CompanyService {
     @Override
     public GetCompanyResponse getCompany(UUID id) {
         Company company = getOrElseThrow(id);
-        return GetCompanyResponse.of(company.getId(), company.getName().getValue(),
-            company.getType(), company.getStatus(), company.getManagedHubId(),
-            company.getAddress().getValue());
+        return GetCompanyResponse.of(company.getId(), company.getUserId(),
+            company.getName().getValue(), company.getType(), company.getStatus(),
+            company.getManagedHubId(), company.getAddress().getValue());
     }
 
     @Override
