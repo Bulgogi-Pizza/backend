@@ -3,7 +3,6 @@ package on.logistics.orderservice.application.service.dtos.create;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
-import on.logistics.orderservice.global.domain.Passport;
 import on.logistics.orderservice.presentation.dtos.create.CreateOrderRequest;
 
 public record CreateOrderRequestDto(
@@ -11,8 +10,6 @@ public record CreateOrderRequestDto(
     String ordererName,
     UUID ordererUserId,
     String ordererUserNickname,
-    UUID ordererHubId,
-    String ordererHubName,
     String destination,
     Long totalAmount,
     List<OrdersByVendor> ordersByVendor
@@ -21,8 +18,6 @@ public record CreateOrderRequestDto(
     public record OrdersByVendor(
         UUID vendorId,
         String vendorName,
-        UUID vendorHubId,
-        String vendorHubName,
         Long totalAmount,
         LocalDateTime arrivalDeadline,
         List<OrderedProduct> orderItems
@@ -40,23 +35,20 @@ public record CreateOrderRequestDto(
 
     public static CreateOrderRequestDto of(
         CreateOrderRequest createOrderRequest,
-        Passport passport
+        UUID userId,
+        String nickname
     ) {
         return new CreateOrderRequestDto(
             createOrderRequest.ordererId(),
             createOrderRequest.ordererName(),
-            passport.getUserId(),
-            passport.getNickname(),
-            createOrderRequest.ordererHubId(),
-            createOrderRequest.ordererHubName(),
+            userId,
+            nickname,
             createOrderRequest.destination(),
             createOrderRequest.totalAmount(),
             createOrderRequest.ordersByVendor().stream()
                 .map(ordersByVendor -> new OrdersByVendor(
                     ordersByVendor.vendorId(),
                     ordersByVendor.vendorName(),
-                    ordersByVendor.vendorHubId(),
-                    ordersByVendor.vendorHubName(),
                     ordersByVendor.totalAmount(),
                     ordersByVendor.arrivalDeadline(),
                     ordersByVendor.orderedProducts().stream()

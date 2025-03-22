@@ -44,9 +44,11 @@ import on.logistics.orderservice.exception.OrderException.VendorOrderNotFoundExc
 import on.logistics.orderservice.global.application.dtos.PageDto;
 import on.logistics.orderservice.infrastructure.clients.ai.dtos.GenerateShippingDeadlineRequestDto;
 import on.logistics.orderservice.infrastructure.clients.ai.feign.dtos.GenerateShippingDeadlineResponse;
+import on.logistics.orderservice.infrastructure.clients.company.dtos.GetCompanyResponseDto;
 import on.logistics.orderservice.infrastructure.clients.delivery.dtos.DeliveryRequestDto;
 import on.logistics.orderservice.infrastructure.clients.exception.ExternalApiException;
 import on.logistics.orderservice.infrastructure.clients.exception.ExternalApiException.ExternalApiBadRequestException;
+import on.logistics.orderservice.infrastructure.clients.hub.dtos.GetHubByIdResponseDto;
 import on.logistics.orderservice.infrastructure.clients.product.dtos.DecreaseProductStockRequestDto;
 import on.logistics.orderservice.infrastructure.clients.product.dtos.RollbackDecreaseProductStockRequestDto;
 import on.logistics.orderservice.presentation.dtos.delete.DeleteOrderRequestDto;
@@ -65,6 +67,8 @@ public class OrderServiceImpl implements OrderService {
     private final ProductService productService;
     private final DeliveryService deliveryService;
     private final AIService aiService;
+    private final HubService hubService;
+    private final CompanyService companyService;
 
     @Transactional
     @Override
@@ -86,12 +90,22 @@ public class OrderServiceImpl implements OrderService {
         return CreateOrderResponseDto.from(savedOrder);
     }
 
-    private Orderer createOrderer(final Order createdOrder,
-        final CreateOrderRequestDto requestDto) {
+    private Orderer createOrderer(
+        final Order createdOrder,
+        final CreateOrderRequestDto requestDto
+    ) {
         log.info("주문자 엔티티 생성");
 
-        CreateOrdererDto createOrdererDto = CreateOrdererDto.of(requestDto, createdOrder);
+        GetHubByIdResponseDto hubByCompanyId = getGetHubByIdResponseDto(requestDto.OrdererId());
+
+        CreateOrdererDto createOrdererDto = CreateOrdererDto.of(
+            requestDto, createdOrder, hubByCompanyId);
         return Orderer.create(createOrdererDto);
+    }
+
+    private GetHubByIdResponseDto getGetHubByIdResponseDto(final UUID companyId) {
+        GetCompanyResponseDto company = companyService.getCompanyById(companyId);
+        return hubService.getHubById(company.managedHubId());
     }
 
     private List<VendorOrder> createVendorOrders(
@@ -135,7 +149,12 @@ public class OrderServiceImpl implements OrderService {
         final OrdersByVendor ordersByVendor
     ) {
         log.info("판매자 엔티티 생성");
-        var createVendorDto = CreateVendorDto.of(createdVendorOrder, ordersByVendor);
+
+        log.warn("공급 업체마다 2번의 API 호출이 발생합니다. 이는 N+1 문제를 발생시킬 수 있습니다.");
+        GetHubByIdResponseDto hubByCompanyId = getGetHubByIdResponseDto(ordersByVendor.vendorId());
+
+        var createVendorDto = CreateVendorDto.of(
+            createdVendorOrder, ordersByVendor, hubByCompanyId);
         return Vendor.create(createVendorDto);
     }
 
