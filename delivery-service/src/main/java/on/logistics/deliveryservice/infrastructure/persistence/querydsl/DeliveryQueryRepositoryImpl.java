@@ -33,7 +33,7 @@ public class DeliveryQueryRepositoryImpl implements DeliveryQueryRepository {
         BooleanBuilder builder = getSearchDeliveryQuery(requestDto);
         Passport passport = passportUtil.getPassportByHttpServletRequest(
             requestDto.httpServletRequest());
-        if (passport.getRole().equals(AuthRole.DELIVERY_MANAGER)) {
+        if (passport.getRole().equals(AuthRole.DELIVERY_MANAGER.name())) {
             List<Delivery> deliveryList = searchDeliveryManagerRoleList(passport, builder,
                 requestDto.pageable());
             Long total = totalCount(builder);

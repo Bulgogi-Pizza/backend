@@ -11,7 +11,10 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import on.logistics.deliveryservice.application.dtos.request.SearchDeliveryRecordRequestDto;
 import on.logistics.deliveryservice.domain.entity.DeliveryRecord;
+import on.logistics.deliveryservice.global.domain.Passport;
+import on.logistics.deliveryservice.global.enums.AuthRole;
 import on.logistics.deliveryservice.global.enums.PageSortBy;
+import on.logistics.deliveryservice.global.utils.PassportUtil;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -23,19 +26,40 @@ import org.springframework.stereotype.Repository;
 public class DeliveryRecordQueryRepositoryImpl implements DeliveryRecordQueryRepository {
 
     private final JPAQueryFactory queryFactory;
+    private final PassportUtil passportUtil;
 
     @Override
     public Page<DeliveryRecord> searchDeliveryRecord(SearchDeliveryRecordRequestDto requestDto) {
         BooleanBuilder builder = getSearchDeliveryRecordQuery(requestDto);
+        Passport passport = passportUtil.getPassportByHttpServletRequest(
+            requestDto.httpServletRequest());
+
+        if (passport.getRole().equals(AuthRole.DELIVERY_MANAGER.name())) {
+            List<DeliveryRecord> deliveryRecordList = searchDeliveryManagerRoleList(passport,
+                builder,
+                requestDto.pageable());
+            Long total = totalCount(builder);
+            return new PageImpl<>(deliveryRecordList, requestDto.pageable(), total);
+        }
+
         List<DeliveryRecord> deliveryRecordList = searchDeliveryList(builder,
             requestDto.pageable());
         Long total = totalCount(builder);
+
         return new PageImpl<>(deliveryRecordList, requestDto.pageable(), total);
     }
 
     private Long totalCount(BooleanBuilder builder) {
         return queryFactory.select(deliveryRecord.count()).from(deliveryRecord).where(builder)
             .fetchOne();
+    }
+
+    private List<DeliveryRecord> searchDeliveryManagerRoleList(Passport passport,
+        BooleanBuilder builder, Pageable pageable) {
+        OrderSpecifier<?>[] orderSpecifiers = getOrderSpecifiers(pageable);
+        return queryFactory.selectFrom(deliveryRecord)
+            .where(deliveryRecord.userId.eq(passport.getUserId()), builder).orderBy(orderSpecifiers)
+            .offset(pageable.getOffset()).limit(pageable.getPageSize()).fetch();
     }
 
     private List<DeliveryRecord> searchDeliveryList(BooleanBuilder builder, Pageable pageable) {

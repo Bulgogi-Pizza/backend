@@ -1,5 +1,6 @@
 package on.logistics.deliveryservice.presentation;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -41,9 +42,10 @@ public class DeliveryRecordController {
 
     @PostMapping
     public ResponseEntity<CommonResponse<CreateDeliveryRecordResponse>> createDeliveryRecord(
-        @Valid @RequestBody CreateDeliveryRecordRequest createDeliveryRecordRequest) {
+        @Valid @RequestBody CreateDeliveryRecordRequest createDeliveryRecordRequest,
+        HttpServletRequest httpServletRequest) {
         CreateDeliveryRecordRequestDto requestDto = CreateDeliveryRecordRequestDto.from(
-            createDeliveryRecordRequest);
+            createDeliveryRecordRequest, httpServletRequest);
         CreateDeliveryRecordResponse response = deliveryRecordService.createDeliveryRecord(
             requestDto);
         return ResponseEntity.ok(CommonResponse.success(response));
@@ -53,11 +55,10 @@ public class DeliveryRecordController {
     public ResponseEntity<CommonResponse<PageDto<SearchDeliveryRecordResponse>>> searchDeliveryRecord(
         @RequestParam(required = false) UUID deliveryId,
         @RequestParam(required = false) UUID startHubId,
-        @RequestParam(required = false) UUID endHubId,
-        @RequestParam(required = false) UUID userId,
-        @PageableDefault Pageable pageable) {
+        @RequestParam(required = false) UUID endHubId, @RequestParam(required = false) UUID userId,
+        @PageableDefault Pageable pageable, HttpServletRequest httpServletRequest) {
         SearchDeliveryRecordRequestDto requestDto = SearchDeliveryRecordRequestDto.from(deliveryId,
-            startHubId, endHubId, userId, pageable);
+            startHubId, endHubId, userId, pageable, httpServletRequest);
         PageDto<SearchDeliveryRecordResponse> response = deliveryRecordService.searchDeliveryRecord(
             requestDto);
         return ResponseEntity.ok(CommonResponse.success(response));
@@ -66,34 +67,38 @@ public class DeliveryRecordController {
 
     @GetMapping("/{id}")
     public ResponseEntity<CommonResponse<GetDeliveryRecordResponse>> getDeliveryRecord(
-        @PathVariable UUID id) {
-        GetDeliveryRecordResponse response = deliveryRecordService.getDeliveryRecord(id);
+        @PathVariable UUID id, HttpServletRequest httpServletRequest) {
+        GetDeliveryRecordResponse response = deliveryRecordService.getDeliveryRecord(id,
+            httpServletRequest);
         return ResponseEntity.ok(CommonResponse.success(response));
     }
 
     @PutMapping("/actual/{id}")
     public ResponseEntity<CommonResponse<UpdateDeliveryRecordResponse>> updateActualDeliveryRecord(
         @PathVariable UUID id,
-        @Valid @RequestBody UpdateDeliveryRecordRequest updateDeliveryRecordRequest) {
+        @Valid @RequestBody UpdateDeliveryRecordRequest updateDeliveryRecordRequest,
+        HttpServletRequest httpServletRequest) {
         UpdateDeliveryRecordRequestDto requestDto = UpdateDeliveryRecordRequestDto.from(id,
-            updateDeliveryRecordRequest);
+            updateDeliveryRecordRequest, httpServletRequest);
         UpdateDeliveryRecordResponse response = deliveryRecordService.updateActualDeliveryRecord(
             requestDto);
         return ResponseEntity.ok(CommonResponse.success(response));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<CommonResponse<Void>> deleteDeliveryRecord(@PathVariable UUID id) {
-        deliveryRecordService.deleteDeliveryRecord(id);
+    public ResponseEntity<CommonResponse<Void>> deleteDeliveryRecord(@PathVariable UUID id,
+        HttpServletRequest httpServletRequest) {
+        deliveryRecordService.deleteDeliveryRecord(id, httpServletRequest);
         return ResponseEntity.ok(CommonResponse.success());
     }
 
     @PatchMapping("/status/{id}")
     public ResponseEntity<CommonResponse<UpdateDeliveryRecordStatusResponse>> updateDeliveryRecordStatus(
         @PathVariable UUID id,
-        @Valid @RequestBody UpdateDeliveryRecordStatusRequest updateStatusDeliveryRecordRequest) {
+        @Valid @RequestBody UpdateDeliveryRecordStatusRequest updateStatusDeliveryRecordRequest,
+        HttpServletRequest httpServletRequest) {
         UpdateDeliveryRecordStatusRequestDto requestDto = UpdateDeliveryRecordStatusRequestDto.of(
-            id, updateStatusDeliveryRecordRequest);
+            id, updateStatusDeliveryRecordRequest, httpServletRequest);
         UpdateDeliveryRecordStatusResponse response = deliveryRecordService.updateStatusDeliveryRecord(
             requestDto);
         return ResponseEntity.ok(CommonResponse.success(response));
