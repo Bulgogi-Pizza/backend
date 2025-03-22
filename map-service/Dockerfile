@@ -1,4 +1,10 @@
-FROM openjdk:17-jdk-alpine
+FROM gradle:8.5-jdk17 AS build
+COPY . /app
 WORKDIR /app
-COPY build/libs/map-service-0.0.1-SNAPSHOT.jar /app/map-service.jar
+RUN gradle clean build -x test --stacktrace --no-daemon
+
+FROM eclipse-temurin:17-jdk
+WORKDIR /app
+COPY --from=build /app/build/libs/map-service-0.0.1-SNAPSHOT.jar /app/map-service.jar
 ENTRYPOINT ["java", "-jar", "/app/map-service.jar"]
+
