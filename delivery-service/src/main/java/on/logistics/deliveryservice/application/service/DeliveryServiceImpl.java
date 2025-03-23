@@ -122,7 +122,7 @@ public class DeliveryServiceImpl implements DeliveryService {
         validCompanyMangerAndDeliveryManager(passport);
         Delivery delivery = getOrElseThrow(id);
         validHubManagerHub(passport, delivery);
-        deliveryRepository.delete(delivery);
+        delivery.deleteSoftly();
     }
 
     @Override

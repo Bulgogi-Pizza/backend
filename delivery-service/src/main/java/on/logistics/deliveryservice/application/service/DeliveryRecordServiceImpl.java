@@ -78,7 +78,7 @@ public class DeliveryRecordServiceImpl implements DeliveryRecordService {
         Passport passport = getPassport(httpServletRequest);
         validMaster(passport);
         DeliveryRecord deliveryRecord = getOrElseThrow(id);
-        deliveryRecordRepository.delete(deliveryRecord);
+        deliveryRecord.deleteSoftly();
     }
 
     @Override

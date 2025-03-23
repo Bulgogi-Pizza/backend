@@ -111,7 +111,7 @@ public class ProductServiceImpl implements ProductService {
         }
         Product product = getOrElseThrow(id);
         validHubManagerHub(passport, product);
-        productRepository.delete(product);
+        product.deleteSoftly();
     }
 
     @Override

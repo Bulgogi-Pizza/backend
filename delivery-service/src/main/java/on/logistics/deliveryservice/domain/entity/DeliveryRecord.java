@@ -19,7 +19,6 @@ import lombok.NoArgsConstructor;
 import on.logistics.deliveryservice.domain.dtos.CreateDeliveryRecordDto;
 import on.logistics.deliveryservice.domain.enums.DeliveryRecordStatus;
 import on.logistics.deliveryservice.global.domain.BaseEntity;
-import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
 @Getter
@@ -28,7 +27,6 @@ import org.hibernate.annotations.SQLRestriction;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @SQLRestriction("is_deleted = false")
-@SQLDelete(sql = "UPDATE p_delivery_record SET is_deleted = true WHERE id = ?")
 public class DeliveryRecord extends BaseEntity {
 
     @Id
