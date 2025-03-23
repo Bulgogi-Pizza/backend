@@ -12,6 +12,7 @@ import on.logistics.hubservice.domain.repository.HubLogisticsRecordRepository;
 import on.logistics.hubservice.domain.repository.HubRepository;
 import on.logistics.hubservice.exception.HubException;
 import on.logistics.hubservice.exception.HubExceptionCode;
+import on.logistics.hubservice.infrastructure.clients.delivery.DeliveryServiceClient;
 import on.logistics.hubservice.infrastructure.clients.hubtransit.HubTransitServiceClient;
 import on.logistics.hubservice.infrastructure.clients.hubtransit.feign.dtos.request.NextHubTransitRequest;
 import org.springframework.stereotype.Service;
@@ -25,6 +26,7 @@ public class HubLogisticsRecordService {
     private final HubLogisticsRecordRepository hubLogisticsRecordRepository;
     private final HubRepository hubRepository;
     private final HubTransitServiceClient hubTransitServiceClient;
+    private final DeliveryServiceClient deliveryServiceClient;
 
     @Transactional
     public void storage(StorageLogisticsRequestDto requestDto) {
@@ -46,6 +48,15 @@ public class HubLogisticsRecordService {
         List<HubLogisticsRecord> records = hubLogisticsRecordRepository.findAllByDeliveryIdIn(
             requestDto.retrievalLogisticsIds());
         records.forEach(HubLogisticsRecord::retrieval);
+        records.stream()
+            .map(HubLogisticsRecord::getDeliveryId)
+            .forEach(deliveryId -> {
+                final var deliveryRecordId = deliveryServiceClient.getDeliveryRecordId(
+                        deliveryId.toString(), requestDto.hubId().toString()).content().get(0)
+                    .deliveryRecordId();
+                deliveryServiceClient.updateDeliveryStatus(
+                    UUID.fromString(deliveryRecordId));
+            });
         hubLogisticsRecordRepository.saveAll(records);
     }
 
