@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 @FeignClient(name = "hub-service")
 public interface HubServiceFeignClient {
 
-    @GetMapping("/api/v1/hubs/{userId}")
-    Response getHubByUserId(@PathVariable UUID userId);
+    @GetMapping("/api/v1/hubs/{hubId}")
+    Response getHubById(@PathVariable UUID hubId);
 
     @GetMapping("/api/v1/hubs/manager/valid")
     Response validateHubManager(@RequestBody ValidateHubManagerRequest request);

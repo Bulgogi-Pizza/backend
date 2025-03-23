@@ -6,7 +6,7 @@ import on.logistics.orderservice.infrastructure.clients.hub.dtos.ValidateHubMana
 
 public interface HubService {
 
-    GetHubByIdResponseDto getHubById(UUID userId);
+    GetHubByIdResponseDto getHubById(UUID hubId);
 
     ValidateHubManagerResponseDto validateHubManager(UUID companyId, UUID hubId);
 }

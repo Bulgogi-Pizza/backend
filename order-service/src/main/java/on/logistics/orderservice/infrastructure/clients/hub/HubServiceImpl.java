@@ -19,9 +19,9 @@ public class HubServiceImpl implements HubService {
 
     private final HubServiceFeignClient hubServiceFeignClient;
 
-    public GetHubByIdResponseDto getHubById(UUID userId) {
-        log.info("Getting hub manager by user id: {}", userId);
-        Response response = hubServiceFeignClient.getHubByUserId(userId);
+    public GetHubByIdResponseDto getHubById(UUID hubId) {
+        log.info("Getting hub manager by user id: {}", hubId);
+        Response response = hubServiceFeignClient.getHubById(hubId);
         return FeignClientResponseUtils.getBody(response, GetHubByIdResponseDto.class);
     }
 
