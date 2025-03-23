@@ -1,4 +1,9 @@
-FROM openjdk:17-jdk-alpine
+FROM gradle:8.5-jdk17 AS build
+COPY . /app
 WORKDIR /app
-COPY build/libs/eureka-server-0.0.1-SNAPSHOT.jar /app/eureka-server.jar
-ENTRYPOINT ["java","-jar","/app/eureka-server.jar"]
+RUN gradle clean build -x test --stacktrace --no-daemon
+
+FROM eclipse-temurin:17-jdk
+WORKDIR /app
+COPY --from=build /app/build/libs/eureka-server-0.0.1-SNAPSHOT.jar /app/eureka-server.jar
+ENTRYPOINT ["java", "-jar", "/app/eureka-server.jar"]
