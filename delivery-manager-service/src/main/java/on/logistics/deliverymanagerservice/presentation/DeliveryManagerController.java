@@ -1,5 +1,6 @@
 package on.logistics.deliverymanagerservice.presentation;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -37,15 +38,18 @@ public class DeliveryManagerController {
 
     @GetMapping("/{id}")
     public ResponseEntity<CommonResponse<GetDeliveryManagerResponse>> getDeliveryManager(
-        @PathVariable UUID id) {
-        final var responseDto = deliveryManagerService.getDeliveryManager(id);
+        @PathVariable UUID id,
+        HttpServletRequest passportRequest) {
+        final var responseDto = deliveryManagerService.getDeliveryManager(id, passportRequest);
         return ResponseEntity.ok(CommonResponse.success(responseDto));
     }
 
     @PostMapping
     public ResponseEntity<CommonResponse<CreateDeliveryManagerResponse>> createDeliveryManager(
-        @RequestBody @Valid CreateDeliveryManagerRequest createDeliveryManagerRequest) {
-        final var requestDto = CreateDeliveryManagerRequestDto.of(createDeliveryManagerRequest);
+        @RequestBody @Valid CreateDeliveryManagerRequest createDeliveryManagerRequest,
+        HttpServletRequest passportRequest) {
+        final var requestDto = CreateDeliveryManagerRequestDto.of(createDeliveryManagerRequest,
+            passportRequest);
         final var responseDto = deliveryManagerService.createDeliveryManager(requestDto);
         return ResponseEntity.ok(CommonResponse.success(responseDto));
     }
@@ -53,15 +57,19 @@ public class DeliveryManagerController {
     @PutMapping("/{id}")
     public ResponseEntity<CommonResponse<UpdateDeliveryManagerResponse>> updateDeliveryManager(
         @PathVariable UUID id,
-        @RequestBody @Valid UpdateDeliveryManagerRequest updateDeliveryManagerRequest) {
-        final var requestDto = UpdateDeliveryManagerRequestDto.of(id, updateDeliveryManagerRequest);
+        @RequestBody @Valid UpdateDeliveryManagerRequest updateDeliveryManagerRequest,
+        HttpServletRequest passportRequest) {
+        final var requestDto = UpdateDeliveryManagerRequestDto.of(id, updateDeliveryManagerRequest,
+            passportRequest);
         final var responseDto = deliveryManagerService.updateDeliveryManager(requestDto);
         return ResponseEntity.ok(CommonResponse.success(responseDto));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<CommonResponse<Void>> deleteDeliveryManager(@PathVariable UUID id) {
-        deliveryManagerService.deleteDeliveryManager(id);
+    public ResponseEntity<CommonResponse<Void>> deleteDeliveryManager(
+        @PathVariable UUID id,
+        HttpServletRequest passportRequest) {
+        deliveryManagerService.deleteDeliveryManager(id, passportRequest);
         return ResponseEntity.ok(CommonResponse.success());
     }
 
