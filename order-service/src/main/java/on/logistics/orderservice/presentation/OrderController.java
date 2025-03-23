@@ -53,7 +53,7 @@ public class OrderController {
     @PostMapping
     public ResponseEntity<CommonResponse<CreateOrderResponseDto>> createOrder(
         @RequestBody @Valid final CreateOrderRequest request,
-        HttpServletRequest servletRequest
+        final HttpServletRequest servletRequest
     ) {
         final Passport passport = passportUtil.getPassportBy(servletRequest);
         final var requestDto = CreateOrderRequestDto.of(
@@ -71,7 +71,7 @@ public class OrderController {
         @RequestParam(required = false) final UUID vendorCompanyId,
         @RequestParam(required = false) final String vendorCompanyName,
         final Pageable pageable,
-        HttpServletRequest servletRequest
+        final HttpServletRequest servletRequest
     ) {
         final Passport passport = passportUtil.getPassportBy(servletRequest);
         final var requestDto = SearchOrderPageRequestDto.of(
@@ -85,7 +85,7 @@ public class OrderController {
     @GetMapping("/{orderId}")
     public ResponseEntity<CommonResponse<GetOrderDetailResponseDto>> getOrderDetail(
         @PathVariable final UUID orderId,
-        HttpServletRequest servletRequest
+        final HttpServletRequest servletRequest
     ) {
         final Passport passport = passportUtil.getPassportBy(servletRequest);
         final var requestDto = GetOrderDetailRequestDto.of(
@@ -98,7 +98,7 @@ public class OrderController {
     public ResponseEntity<CommonResponse<UpdateOrderResponseDto>> updateOrder(
         @PathVariable final UUID orderId,
         @RequestBody @Valid final UpdateOrderRequest request,
-        HttpServletRequest servletRequest
+        final HttpServletRequest servletRequest
     ) {
         final Passport passport = passportUtil.getPassportBy(servletRequest);
         final var requestDto = UpdateOrderRequestDto.of(
@@ -111,7 +111,7 @@ public class OrderController {
     public ResponseEntity<CommonResponse<CancelOrderResponseDto>> cancelVendorOrder(
         @PathVariable final UUID orderId,
         @PathVariable final UUID vendorOrderId,
-        HttpServletRequest servletRequest
+        final HttpServletRequest servletRequest
     ) {
         final Passport passport = passportUtil.getPassportBy(servletRequest);
         final var requestDto = CancelOrderRequestDto.of(
@@ -124,7 +124,7 @@ public class OrderController {
     public ResponseEntity<CommonResponse<Void>> deleteVendorOrder(
         @PathVariable final UUID orderId,
         @PathVariable final UUID vendorOrderId,
-        HttpServletRequest servletRequest
+        final HttpServletRequest servletRequest
     ) {
         final Passport passport = passportUtil.getPassportBy(servletRequest);
         final DeleteOrderRequestDto requestDto = DeleteOrderRequestDto.of(
@@ -137,7 +137,7 @@ public class OrderController {
     public ResponseEntity<CommonResponse<ReturnRequestResponseDto>> requestReturn(
         @PathVariable final UUID orderId,
         @PathVariable final UUID vendorOrderId,
-        HttpServletRequest servletRequest
+        final HttpServletRequest servletRequest
     ) {
         final Passport passport = passportUtil.getPassportBy(servletRequest);
         final var requestDto = ReturnRequestRequestDto.of(
@@ -150,7 +150,7 @@ public class OrderController {
     public ResponseEntity<CommonResponse<ReturnRequestDeniedResponseDto>> denyReturnRequest(
         @PathVariable final UUID orderId,
         @PathVariable final UUID vendorOrderId,
-        HttpServletRequest servletRequest
+        final HttpServletRequest servletRequest
     ) {
         final Passport passport = passportUtil.getPassportBy(servletRequest);
         final var requestDto = ReturnRequestDeniedRequestDto.of(
@@ -163,7 +163,7 @@ public class OrderController {
     public ResponseEntity<CommonResponse<ReturnOrderResponseDto>> returnOrder(
         @PathVariable final UUID orderId,
         @PathVariable final UUID vendorOrderId,
-        HttpServletRequest servletRequest
+        final HttpServletRequest servletRequest
     ) {
         final Passport passport = passportUtil.getPassportBy(servletRequest);
         final var requestDto = ReturnOrderRequestDto.of(

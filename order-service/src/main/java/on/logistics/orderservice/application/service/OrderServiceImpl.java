@@ -2,6 +2,7 @@ package on.logistics.orderservice.application.service;
 
 import static on.logistics.orderservice.exception.OrderException.OutOfStockProductOrderException;
 
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -51,9 +52,12 @@ import on.logistics.orderservice.infrastructure.clients.delivery.dtos.DeliveryRe
 import on.logistics.orderservice.infrastructure.clients.exception.ExternalApiException;
 import on.logistics.orderservice.infrastructure.clients.exception.ExternalApiException.ExternalApiBadRequestException;
 import on.logistics.orderservice.infrastructure.clients.hub.dtos.GetHubByIdResponseDto;
+import on.logistics.orderservice.infrastructure.clients.hub.dtos.GetHubManagerIdResponse;
 import on.logistics.orderservice.infrastructure.clients.hub.dtos.ValidateHubManagerResponseDto;
 import on.logistics.orderservice.infrastructure.clients.product.dtos.DecreaseProductStockRequestDto;
 import on.logistics.orderservice.infrastructure.clients.product.dtos.RollbackDecreaseProductStockRequestDto;
+import on.logistics.orderservice.infrastructure.clients.slack.dtos.SendMessageRequestDto;
+import on.logistics.orderservice.infrastructure.clients.user.dtos.FindUserSlackEmailByUserIdResponse;
 import on.logistics.orderservice.presentation.dtos.delete.DeleteOrderRequestDto;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
@@ -72,6 +76,8 @@ public class OrderServiceImpl implements OrderService {
     private final AIService aiService;
     private final HubService hubService;
     private final CompanyService companyService;
+    private final SlackService slackService;
+    private final UserService userService;
 
     @Transactional
     @Override
@@ -82,13 +88,16 @@ public class OrderServiceImpl implements OrderService {
         Order createdOrder = Order.create(createOrderDto);
 
         Orderer orderer = createOrderer(createdOrder, requestDto);
-        List<VendorOrder> vendorOrders = createVendorOrders(createdOrder,
-            requestDto.ordersByVendor());
+        List<VendorOrder> vendorOrders = createVendorOrders(
+            createdOrder, requestDto.ordersByVendor());
 
         createdOrder.addDependencies(orderer, vendorOrders);
 
         log.info("생성된 주문 저장: {}", createdOrder);
         Order savedOrder = orderRepository.save(createdOrder);
+
+        vendorOrders.forEach(this::tryRequestDelivery);
+        vendorOrders.forEach(this::trySendMessageToHubManager);
 
         return CreateOrderResponseDto.from(savedOrder);
     }
@@ -143,7 +152,6 @@ public class OrderServiceImpl implements OrderService {
         createdVendorOrder.updateShippingDeadline(
             generateShippingDeadlineResponse.shippingDeadline());
 
-        tryDeliveryRequest(createdVendorOrder);
         return createdVendorOrder;
     }
 
@@ -168,8 +176,10 @@ public class OrderServiceImpl implements OrderService {
         log.info("주문 상품 목록 생성");
 
         List<OrderProduct> orderProducts = new ArrayList<>();
+        List<OrderProduct> reducedProductStocks = new ArrayList<>();
         for (OrderedProduct orderedProduct : ordersByVendor.orderItems()) {
-            OrderProduct orderProduct = createOrderProduct(createdVendorOrder, orderedProduct);
+            OrderProduct orderProduct = createOrderProduct(
+                createdVendorOrder, orderedProduct, reducedProductStocks);
             orderProducts.add(orderProduct);
         }
         return orderProducts;
@@ -177,14 +187,17 @@ public class OrderServiceImpl implements OrderService {
 
     private OrderProduct createOrderProduct(
         final VendorOrder vendorOrder,
-        final OrderedProduct orderedProduct
+        final OrderedProduct orderedProduct,
+        final List<OrderProduct> reducedProductStocks
     ) {
         log.info("주문 상품 엔티티 생성");
 
-        tryDecreaseProductStock(orderedProduct);
-
         var createOrderProductDto = CreateOrderProductDto.of(vendorOrder, orderedProduct);
-        return OrderProduct.create(createOrderProductDto);
+        OrderProduct createdOrderProduct = OrderProduct.create(createOrderProductDto);
+
+        tryDecreaseProductStock(createdOrderProduct, reducedProductStocks);
+
+        return createdOrderProduct;
     }
 
     private GenerateShippingDeadlineResponse tryGenerateShippingDeadline(
@@ -200,37 +213,36 @@ public class OrderServiceImpl implements OrderService {
         }
     }
 
-    private void tryDecreaseProductStock(final OrderedProduct orderedProduct) {
+    private void tryDecreaseProductStock(
+        final OrderProduct orderProduct,
+        final List<OrderProduct> reducedProductStocks
+    ) {
         try {
-            decreaseProductStock(orderedProduct);
+            decreaseProductStock(orderProduct);
+            reducedProductStocks.add(orderProduct);
         } catch (ExternalApiBadRequestException e) {
             log.warn("주문 상품 재고 감소 요청 데이터 오류: {}", e.getMessage());
             throw new OutOfStockProductOrderException();
         } catch (ExternalApiException e) {
             log.warn("주문 상품 재고 감소 중 오류 발생: {}", e.getMessage());
+            reducedProductStocks.forEach(this::rollbackDecreaseProductStock);
             throw e;
         }
     }
 
-    private void decreaseProductStock(final OrderedProduct orderedProduct) {
+    private void decreaseProductStock(final OrderProduct orderProduct) {
         log.info("주문할 상품 재고 감소");
-        var requestDto = DecreaseProductStockRequestDto.from(orderedProduct);
+        var requestDto = DecreaseProductStockRequestDto.from(orderProduct);
         productService.decreaseProductStock(requestDto);
     }
 
-    private void tryDeliveryRequest(final VendorOrder vendorOrder) {
+    private void tryRequestDelivery(final VendorOrder vendorOrder) {
         try {
-            deliveryRequest(vendorOrder);
+            requestDelivery(vendorOrder);
         } catch (ExternalApiException e) {
             log.warn("배송 요청 중 오류 발생: {}", e.getMessage());
-            rollbackAllProduct(vendorOrder);
+            rollbackDeliveryRequests(vendorOrder);
             throw e;
-        }
-    }
-
-    private void rollbackAllProduct(final VendorOrder vendorOrder) {
-        for (OrderProduct orderProduct : vendorOrder.getOrderProducts()) {
-            rollbackDecreaseProductStock(orderProduct);
         }
     }
 
@@ -240,11 +252,61 @@ public class OrderServiceImpl implements OrderService {
         productService.rollbackDecreaseProductStock(requestDto);
     }
 
-    private void deliveryRequest(final VendorOrder vendorOrder) {
+    private void requestDelivery(final VendorOrder vendorOrder) {
         log.info("배송 요청");
         vendorOrder.ship();
         var requestDto = DeliveryRequestDto.from(vendorOrder);
         deliveryService.deliveryRequest(requestDto);
+    }
+
+    private void trySendMessageToHubManager(final VendorOrder vendorOrder) {
+        try {
+            sendMessageToHubManager(vendorOrder);
+        } catch (ExternalApiException e) {
+            log.warn("허브 관리자에게 메시지 전송 중 오류 발생: {}", e.getMessage());
+            rollbackDeliveryRequests(vendorOrder);
+            throw e;
+        }
+    }
+
+    private void rollbackDeliveryRequests(VendorOrder vendorOrder) {
+        log.info("배송 요청 롤백");
+        log.warn("모든 상품에 대해서 재고 감소 롤백 요청이 발생하여 N+1 문제가 발생할 수 있습니다.");
+        vendorOrder.getOrderProducts().forEach(this::rollbackDecreaseProductStock);
+    }
+
+    private void sendMessageToHubManager(final VendorOrder vendorOrder) {
+        log.info("허브 관리자에게 메시지 전송");
+        GetHubManagerIdResponse hubManagerIdResponse = hubService.getHubManagerId(
+            vendorOrder.getOrder().getOrderer().getOrdererHubId());
+        FindUserSlackEmailByUserIdResponse hubManager =
+            userService.findUserSlackEmailByUserId(hubManagerIdResponse.hubManagerId());
+        FindUserSlackEmailByUserIdResponse user =
+            userService.findUserSlackEmailByUserId(vendorOrder.getOrder().getOrderer().getUserId());
+        String message = getMessage(vendorOrder);
+        SendMessageRequestDto sendMessageRequestDto = SendMessageRequestDto.of(
+            vendorOrder.getOrder().getOrderer().getUserId(),
+            user.slackEmail(),
+            hubManager.slackEmail(), hubManagerIdResponse.hubManagerId(), message);
+        slackService.sendMessageTo(sendMessageRequestDto);
+    }
+
+    private String getMessage(final VendorOrder vendorOrder) {
+        Order order = vendorOrder.getOrder();
+        Orderer orderer = order.getOrderer();
+        Vendor vendor = vendorOrder.getVendor();
+        return "주문 번호 : " + vendorOrder.getId() + "\n"
+            + "주문자 정보 : " + orderer.getUserNickname()
+            + " / " + orderer.getCompanyName() + "\n"
+            + "상품 정보 : 마른 오징어 50박스\n"
+            + "배송 기한 : " + vendorOrder.getArrivalDeadline() + "\n"
+            + "발송지 : " + vendor.getVendorHubName() + "\n"
+            + "도착지 : " + order.getDestination() + "\n"
+            + "\n"
+            + "위 내용을 기반으로 도출된 최종 발송 시한은 "
+            + vendorOrder.getShippingDeadline().format(
+            DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 HH시 mm분 ss초"))
+            + " 입니다.";
     }
 
     @Override
@@ -508,7 +570,7 @@ public class OrderServiceImpl implements OrderService {
         Order returnedOrder = Order.create(order.getOrderer(), vendorOrder);
         VendorOrder returnedVendorOrder = returnedOrder.getVendorOrders().get(0);
 
-        tryDeliveryRequest(returnedVendorOrder);
+        tryRequestDelivery(returnedVendorOrder);
         returnedVendorOrder.ship();
 
         Order savedReturnOrder = orderRepository.save(returnedOrder);

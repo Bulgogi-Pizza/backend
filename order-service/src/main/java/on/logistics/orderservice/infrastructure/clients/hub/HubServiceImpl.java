@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import on.logistics.orderservice.application.service.HubService;
 import on.logistics.orderservice.global.utils.FeignClientResponseUtils;
 import on.logistics.orderservice.infrastructure.clients.hub.dtos.GetHubByIdResponseDto;
+import on.logistics.orderservice.infrastructure.clients.hub.dtos.GetHubManagerIdResponse;
 import on.logistics.orderservice.infrastructure.clients.hub.dtos.ValidateHubManagerResponseDto;
 import on.logistics.orderservice.infrastructure.clients.hub.feign.HubServiceFeignClient;
 import on.logistics.orderservice.infrastructure.clients.hub.feign.dtos.ValidateHubManagerRequest;
@@ -31,5 +32,12 @@ public class HubServiceImpl implements HubService {
         ValidateHubManagerRequest request = ValidateHubManagerRequest.of(companyId, hubId);
         Response response = hubServiceFeignClient.validateHubManager(request);
         return FeignClientResponseUtils.getBody(response, ValidateHubManagerResponseDto.class);
+    }
+
+    @Override
+    public GetHubManagerIdResponse getHubManagerId(UUID hubId) {
+        log.info("Getting hub manager id by hub id: {}", hubId);
+        Response response = hubServiceFeignClient.getHubManagerId(hubId);
+        return FeignClientResponseUtils.getBody(response, GetHubManagerIdResponse.class);
     }
 }
