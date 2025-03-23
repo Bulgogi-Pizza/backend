@@ -65,10 +65,9 @@ public class ProductServiceImpl implements ProductService {
             throw new ProductException(ProductExceptionCode.PRODUCT_HUB_IS_NOT_FOUND);
         }
 
-        createHubManagerHubAndCompanyManagerValid(passport, companyInfo);
-
         CreateProductDto createProductDto = CreateProductDto.from(requestDto, companyInfo);
         Product product = Product.create(createProductDto);
+        validHubManagerHubAndCompanyManager(passport, companyInfo, product);
         Product saved = productRepository.save(product);
         return CreateProductResponse.of(saved.getId());
     }
@@ -90,12 +89,13 @@ public class ProductServiceImpl implements ProductService {
     @Transactional
     public UpdateProductResponse updateProduct(UpdateProductRequestDto requestDto) {
         Passport passport = getPassport(requestDto.httpServletRequest());
+        log.info("Updating product {}", requestDto.productId());
         validDeliveryManager(passport);
 
         UpdateProductDto updateProductDto = UpdateProductDto.from(requestDto);
         Product product = getOrElseThrow(updateProductDto.productId());
         GetCompanyInfo companyInfo = companyServiceClient.getCompanyInfo(product.getCompanyId());
-        updateHubManagerHubAndCompanyManagerValid(passport, companyInfo, product);
+        validHubManagerHubAndCompanyManager(passport, companyInfo, product);
 
         product.update(updateProductDto);
         return UpdateProductResponse.of(product.getId());
@@ -110,8 +110,7 @@ public class ProductServiceImpl implements ProductService {
             throw new ProductException(ProductExceptionCode.PRODUCT_ACCESS_DENIED);
         }
         Product product = getOrElseThrow(id);
-        getGetHubManagerBooleanResponse(passport, product.getManagedHubId());
-
+        validHubManagerHub(passport, product);
         productRepository.delete(product);
     }
 
@@ -120,9 +119,10 @@ public class ProductServiceImpl implements ProductService {
     public UpdateReduceProductQuantityResponse updateReduceProductQuantity(
         UpdateReduceProductQuantityRequestDto requestDto) {
         Passport passport = getPassport(requestDto.httpServletRequest());
+        validDeliveryManager(passport);
         Product product = getOrElseThrow(requestDto.productId());
         GetCompanyInfo companyInfo = companyServiceClient.getCompanyInfo(product.getCompanyId());
-        updateHubManagerHubAndCompanyManagerValid(passport, companyInfo, product);
+        validHubManagerHubAndCompanyManager(passport, companyInfo, product);
 
         if (product.getQuantity().getValue() == 0) {
             throw new ProductException(ProductExceptionCode.PRODUCT_QUANTITY_LIMIT);
@@ -137,9 +137,10 @@ public class ProductServiceImpl implements ProductService {
     public UpdateIncreaseProductQuantityResponse updateIncreaseProductQuantity(
         UpdateIncreaseProductQuantityRequestDto requestDto) {
         Passport passport = getPassport(requestDto.httpServletRequest());
+        validDeliveryManager(passport);
         Product product = getOrElseThrow(requestDto.productId());
         GetCompanyInfo companyInfo = companyServiceClient.getCompanyInfo(product.getCompanyId());
-        updateHubManagerHubAndCompanyManagerValid(passport, companyInfo, product);
+        validHubManagerHubAndCompanyManager(passport, companyInfo, product);
 
         product.updateIncreaseQuantity(requestDto.productQuantity());
         return UpdateIncreaseProductQuantityResponse.of(product.getId());
@@ -160,25 +161,26 @@ public class ProductServiceImpl implements ProductService {
         }
     }
 
-    private void createHubManagerHubAndCompanyManagerValid(Passport passport,
-        GetCompanyInfo company) {
-        GetHubManagerBooleanResponse hubManagerBoolean = getGetHubManagerBooleanResponse(passport,
-            company.managedHubId());
+    private void validHubManagerHubAndCompanyManager(Passport passport,
+        GetCompanyInfo company, Product product) {
+        validHubManagerHub(passport, product);
+        validCompanyManager(passport, company);
+    }
 
-        if (!company.userId().equals(passport.getUserId()) || Boolean.FALSE.equals(
-            hubManagerBoolean.isExist())) {
-            throw new ProductException(ProductExceptionCode.PRODUCT_ACCESS_DENIED);
+    private void validHubManagerHub(Passport passport, Product product) {
+        if (passport.getRole().equals(AuthRole.HUB_MANAGER.name())) {
+            GetHubManagerBooleanResponse hubManagerBoolean = getGetHubManagerBooleanResponse(
+                passport,
+                product.getManagedHubId());
+            if (Boolean.FALSE.equals(hubManagerBoolean.isExist())) {
+                throw new ProductException(ProductExceptionCode.PRODUCT_ACCESS_DENIED);
+            }
         }
     }
 
-    private void updateHubManagerHubAndCompanyManagerValid(Passport passport,
-        GetCompanyInfo company, Product product) {
-
-        GetHubManagerBooleanResponse hubManagerBoolean = getGetHubManagerBooleanResponse(passport,
-            product.getManagedHubId());
-
-        if (!company.userId().equals(passport.getUserId()) || Boolean.FALSE.equals(
-            hubManagerBoolean.isExist())) {
+    private void validCompanyManager(Passport passport, GetCompanyInfo company) {
+        if (passport.getRole().equals(AuthRole.COMPANY_MANAGER.name()) && !company.userId()
+            .equals(passport.getUserId())) {
             throw new ProductException(ProductExceptionCode.PRODUCT_ACCESS_DENIED);
         }
     }
@@ -187,6 +189,8 @@ public class ProductServiceImpl implements ProductService {
         UUID hubId) {
         HubManagerBooleanRequest hubManagerBooleanRequest = HubManagerBooleanRequest.of(
             passport.getUserId(), hubId);
+        log.info(hubId.toString());
+        log.info(passport.getUserId().toString());
         return hubServiceClient.getHubManagerBoolean(hubManagerBooleanRequest);
     }
 }
