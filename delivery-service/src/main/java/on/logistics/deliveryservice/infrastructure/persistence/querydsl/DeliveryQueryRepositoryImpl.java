@@ -11,7 +11,10 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import on.logistics.deliveryservice.application.dtos.request.SearchDeliveryRequestDto;
 import on.logistics.deliveryservice.domain.entity.Delivery;
+import on.logistics.deliveryservice.global.domain.Passport;
+import on.logistics.deliveryservice.global.enums.AuthRole;
 import on.logistics.deliveryservice.global.enums.PageSortBy;
+import on.logistics.deliveryservice.global.utils.PassportUtil;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -23,10 +26,19 @@ import org.springframework.stereotype.Repository;
 public class DeliveryQueryRepositoryImpl implements DeliveryQueryRepository {
 
     private final JPAQueryFactory queryFactory;
+    private final PassportUtil passportUtil;
 
     @Override
     public Page<Delivery> searchDelivery(SearchDeliveryRequestDto requestDto) {
         BooleanBuilder builder = getSearchDeliveryQuery(requestDto);
+        Passport passport = passportUtil.getPassportByHttpServletRequest(
+            requestDto.httpServletRequest());
+        if (passport.getRole().equals(AuthRole.DELIVERY_MANAGER.name())) {
+            List<Delivery> deliveryList = searchDeliveryManagerRoleList(passport, builder,
+                requestDto.pageable());
+            Long total = totalCount(builder);
+            return new PageImpl<>(deliveryList, requestDto.pageable(), total);
+        }
         List<Delivery> deliveryList = searchDeliveryList(builder, requestDto.pageable());
         Long total = totalCount(builder);
         return new PageImpl<>(deliveryList, requestDto.pageable(), total);
@@ -35,6 +47,14 @@ public class DeliveryQueryRepositoryImpl implements DeliveryQueryRepository {
     private List<Delivery> searchDeliveryList(BooleanBuilder builder, Pageable pageable) {
         OrderSpecifier<?>[] orderSpecifiers = getOrderSpecifiers(pageable);
         return queryFactory.selectFrom(delivery).where(builder).orderBy(orderSpecifiers)
+            .offset(pageable.getOffset()).limit(pageable.getPageSize()).fetch();
+    }
+
+    private List<Delivery> searchDeliveryManagerRoleList(Passport passport, BooleanBuilder builder,
+        Pageable pageable) {
+        OrderSpecifier<?>[] orderSpecifiers = getOrderSpecifiers(pageable);
+        return queryFactory.selectFrom(delivery)
+            .where(delivery.userId.eq(passport.getUserId()), builder).orderBy(orderSpecifiers)
             .offset(pageable.getOffset()).limit(pageable.getPageSize()).fetch();
     }
 
@@ -50,7 +70,7 @@ public class DeliveryQueryRepositoryImpl implements DeliveryQueryRepository {
             builder.and(delivery.status.eq(cond.status()));
         }
         if (cond.companyDeliveryManagerId() != null) {
-            builder.and(delivery.companyDeliveryManagerId.eq(cond.companyDeliveryManagerId()));
+            builder.and(delivery.userId.eq(cond.companyDeliveryManagerId()));
         }
         return builder;
     }

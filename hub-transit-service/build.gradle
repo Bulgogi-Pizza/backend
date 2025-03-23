@@ -40,7 +40,7 @@ dependencies {
     runtimeOnly 'com.h2database:h2'
 
     // redis
-//	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
     // actuator
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
@@ -88,6 +88,14 @@ dependencies {
 dependencyManagement {
     imports {
         mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+    }
+}
+
+sourceSets {
+    main {
+        java {
+            srcDir 'build/generated/sources/annotationProcessor/java/main'
+        }
     }
 }
 

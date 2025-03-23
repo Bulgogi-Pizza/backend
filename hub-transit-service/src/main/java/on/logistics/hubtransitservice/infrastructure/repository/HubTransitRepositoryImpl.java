@@ -29,6 +29,14 @@ public class HubTransitRepositoryImpl implements HubTransitRepository {
     }
 
     @Override
+    public Optional<HubTransit> findByDeliveryIdAndCurrentHubId(
+        UUID deliveryId,
+        UUID currentHubId
+    ) {
+        return hubTransitJpaRepository.findByDeliveryIdAndCurrentHubId(deliveryId, currentHubId);
+    }
+
+    @Override
     public Page<HubTransit> searchHubTransit(String keyword, Pageable pageable
     ) {
         return hubTransitQueryRepository.searchHubTransit(keyword, pageable);

@@ -2,13 +2,17 @@ package on.logistics.deliveryservice.infrastructure.clients.hub.feign;
 
 import feign.Response;
 import java.util.UUID;
+import on.logistics.deliveryservice.global.configuration.FeignClientConfig;
+import on.logistics.deliveryservice.infrastructure.clients.hub.feign.dtos.HubManagerBooleanRequest;
 import on.logistics.deliveryservice.infrastructure.clients.hub.feign.dtos.HubType;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
-@FeignClient(name = "hub-service")
+@FeignClient(name = "hub-service", configuration = FeignClientConfig.class)
 public interface HubServiceFeignClient {
 
     @GetMapping("/api/v1/hubs/{hubId}")
@@ -18,5 +22,8 @@ public interface HubServiceFeignClient {
     Response searchHubs(@RequestParam("type") HubType type);
 
     @GetMapping("/api/v1/hubs/link")
-    Response getSpokeHubInfo(@RequestParam("hub") UUID hubId);
+    Response getSpokeHubInfo(@RequestParam("centerId") UUID centerId);
+
+    @PostMapping("/api/v1/hubs/manager/valid")
+    Response validHubManager(@RequestBody HubManagerBooleanRequest request);
 }

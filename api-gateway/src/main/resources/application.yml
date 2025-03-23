@@ -31,7 +31,7 @@ spring:
         - id: delivery-manager-service # 배송 담당자 서비스
           uri: lb://delivery-manager-service
           predicates:
-            - Path=/api/v1/users/**, /springd #oc/openapi3-delivery-manager-service.json
+            - Path=/api/v1/delivery-managers/**, /springd #oc/openapi3-delivery-manager-service.json
 
         - id: order-service # 주문 서비스
           uri: lb://order-service

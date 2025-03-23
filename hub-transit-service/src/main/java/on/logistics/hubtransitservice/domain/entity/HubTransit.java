@@ -3,6 +3,8 @@ package on.logistics.hubtransitservice.domain.entity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -14,9 +16,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import on.logistics.hubtransitservice.domain.dtos.CreateHubTransitDto;
+import on.logistics.hubtransitservice.domain.enums.DeliveryType;
 import on.logistics.hubtransitservice.domain.vo.CurrentHubName;
-import on.logistics.hubtransitservice.domain.vo.InitialEndHubName;
-import on.logistics.hubtransitservice.domain.vo.InitialStartHubName;
 import on.logistics.hubtransitservice.domain.vo.NextHubName;
 import on.logistics.hubtransitservice.global.domain.BaseEntity;
 import org.hibernate.annotations.SQLDelete;
@@ -39,71 +40,52 @@ public class HubTransit extends BaseEntity {
     @Column(name = "delivery_id", nullable = false)
     private UUID deliveryId;
 
-    @Embedded
-    private InitialStartHubName initialStartHubName;
-    @Embedded
-    private InitialEndHubName initialEndHubName;
+    @Column(name = "delivery_record_id", nullable = false)
+    private UUID deliveryRecordId;
 
     @Column(name = "current_hub_id", nullable = false)
     private UUID currentHubId;
+
     @Embedded
     private CurrentHubName currentHubName;
 
     @Column(name = "next_hub_id", nullable = false)
     private UUID nextHubId;
+
     @Embedded
     private NextHubName nextHubName;
 
-    @Column(name = "next_dest_type")
-    private String nextDestType;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "next_delivery_type", nullable = false)
+    private DeliveryType nextDeliveryType;
 
-    @Column(name = "delivery_manager_id")
-    private UUID deliveryManagerId;
+    @Column(name = "user_id")
+    private UUID userId;
+
+    @Column(name = "route_snapshot", nullable = false, columnDefinition = "jsonb")
+    private String routeSnapshot;
 
 
     public static HubTransit create(CreateHubTransitDto dto) {
         return HubTransit.builder()
             .deliveryId(dto.deliveryId())
-            .initialStartHubName(new InitialStartHubName(dto.startHubName()))
-            .initialEndHubName(new InitialEndHubName(dto.endHubName()))
-            .currentHubId(dto.startHubId())
-            .currentHubName(new CurrentHubName(dto.startHubName()))
+            .deliveryRecordId(dto.deliveryRecordId())
+            .currentHubId(dto.currentHubId())
+            .currentHubName(new CurrentHubName(dto.currentHubName()))
             .nextHubId(dto.nextHubId())
             .nextHubName(new NextHubName(dto.nextHubName()))
-            .nextDestType(dto.nextDestType())
-            .deliveryManagerId(null)
+            .nextDeliveryType(dto.nextDeliveryType())
+            .userId(dto.userId())
+            .routeSnapshot(dto.routeSnapshot())
             .build();
     }
 
-    public static HubTransit createNext(
-        HubTransit currentTransit,
-        UUID newNextHubId,
-        String newNextHubName,
-        String newNextDestType
-    ) {
-        return HubTransit.builder()
-            .deliveryId(currentTransit.getDeliveryId())
-            .initialStartHubName(currentTransit.getInitialStartHubName())
-            .initialEndHubName(currentTransit.getInitialEndHubName())
-            .currentHubId(currentTransit.getNextHubId())
-            .currentHubName(new CurrentHubName(currentTransit.getNextHubName().getValue()))
-            .nextHubId(newNextHubId)
-            .nextHubName(new NextHubName(newNextHubName))
-            .nextDestType(newNextDestType)
-            .deliveryManagerId(null)
-            .build();
-    }
-
-    public void updateDeliveryManagerId(UUID newDeliveryManagerId) {
-        this.deliveryManagerId = newDeliveryManagerId;
+    public void updateDeliveryManagerId(UUID userId) {
+        this.userId = userId;
     }
 
     public void deleteSoftly() {
         super.deleteSoftly();
-    }
-
-    public String getNextDestinationType() {
-        return "END_OF_HUB".equals(this.nextHubName.getValue()) ? "COMPANY" : "HUB";
     }
 
 }

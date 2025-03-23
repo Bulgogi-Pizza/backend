@@ -1,12 +1,7 @@
 package on.logistics.deliveryservice.presentation.dtos.request;
 
-import java.util.UUID;
-import on.logistics.deliveryservice.application.dtos.request.UpdateDeliveryRequestDto;
+import jakarta.validation.constraints.NotBlank;
 
-public record UpdateDeliveryRequest(UUID deliveryId, String destination) {
+public record UpdateDeliveryRequest(@NotBlank(message = "목적지는 필수로 입력되어야 합니다.") String destination) {
 
-    public static UpdateDeliveryRequestDto from(UUID deliveryId, UpdateDeliveryRequest request) {
-        return new UpdateDeliveryRequestDto(deliveryId, request.deliveryId(),
-            request.destination());
-    }
 }

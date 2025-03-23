@@ -28,13 +28,19 @@ public class HubServiceClientImpl implements HubServiceClient {
     @Override
     public GetHubResponse getHubById(UUID hubId) {
         log.info("허브 조회 요청, hubId: {}", hubId);
-        Response response = hubServiceFeignClient.getHubById(hubId);
+        Response response;
+        try {
+            response = hubServiceFeignClient.getHubById(hubId);
+        } catch (Exception e) {
+            throw new ExternalApiException(ExternalApiExceptionCode.HUB_NOT_FOUND);
+        }
+        log.info("허브 조회 성공");
         return FeignClientResponseUtils.getBody(response, GetHubResponse.class);
     }
 
     @Override
     public GetHubResponse getHubByName(String hubName) {
-        log.info("허브 검색 요청, keyword: {}", hubName);
+        log.info("허브 검색 요청, hubName: {}", hubName);
         Response response = hubServiceFeignClient.searchHubs(hubName);
         try (InputStream inputStream = response.body().asInputStream()) {
             CommonResponse<PageDto<GetHubResponse>> commonResponse = objectMapper.readValue(
@@ -51,7 +57,8 @@ public class HubServiceClientImpl implements HubServiceClient {
         } catch (IOException e) {
             throw new ExternalApiException(ExternalApiExceptionCode.HUB_PARSING_ERROR);
         }
-        return null;
+        log.info("허브 검색 성공");
+        return FeignClientResponseUtils.getBody(response, GetHubResponse.class);
     }
 
 }

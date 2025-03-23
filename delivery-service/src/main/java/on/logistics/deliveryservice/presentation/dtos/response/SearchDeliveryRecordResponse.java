@@ -8,12 +8,12 @@ public record SearchDeliveryRecordResponse(UUID deliveryId, UUID deliveryRecordI
                                            Long deliveryRecordSequence,
                                            DeliveryRecordStatus deliveryRecordStatus,
                                            UUID deliveryRecordStartHubId,
-                                           UUID deliveryRecordEndHubId, UUID deliveryManagerId) {
+                                           UUID deliveryRecordEndHubId, UUID userId) {
 
     public static SearchDeliveryRecordResponse from(DeliveryRecord deliveryRecord) {
         return new SearchDeliveryRecordResponse(deliveryRecord.getDelivery().getId(),
             deliveryRecord.getId(), deliveryRecord.getSequence(), deliveryRecord.getStatus(),
             deliveryRecord.getStartHubId(), deliveryRecord.getEndHubId(),
-            deliveryRecord.getDeliveryManagerId());
+            deliveryRecord.getUserId());
     }
 }

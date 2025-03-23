@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import on.logistics.hubservice.domain.entity.HubLogisticsRecord;
-import on.logistics.hubservice.infrastructure.jpa.HubLogisticsRecordJpaRepository;
+import on.logistics.hubservice.infrastructure.persistence.jpa.HubLogisticsRecordJpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
