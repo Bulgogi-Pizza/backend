@@ -63,8 +63,8 @@ public class DeliveryRecord extends BaseEntity {
     @Column(name = "actual_duration")
     private Long actualDuration;
 
-    @Column(nullable = false)
-    private UUID deliveryManagerId;
+    @Column(nullable = false, name = "user_id")
+    private UUID userId;
 
     public static DeliveryRecord create(CreateDeliveryRecordDto createEntityDto,
         Delivery delivery) {
@@ -73,7 +73,7 @@ public class DeliveryRecord extends BaseEntity {
             .endHubId(createEntityDto.endHubId())
             .estimatedDistance(createEntityDto.estimatedDistance())
             .estimatedDuration(createEntityDto.estimatedDuration())
-            .deliveryManagerId(createEntityDto.deliveryManagerId()).build();
+            .userId(createEntityDto.userId()).build();
     }
 
     public void update(Long actualDistance, Long actualDuration) {

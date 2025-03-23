@@ -5,10 +5,10 @@ import on.logistics.companyservice.domain.entity.enums.CompanyType;
 
 
 public record CreateCompanyDto(UUID userId, String companyName, CompanyType type,
-                               String companyAddress) {
+                               String companyAddress, UUID managedHubId) {
 
     public static CreateCompanyDto from(UUID userId, String companyName, CompanyType type,
-        String companyAddress) {
-        return new CreateCompanyDto(userId, companyName, type, companyAddress);
+        String companyAddress, UUID managedHubId) {
+        return new CreateCompanyDto(userId, companyName, type, companyAddress, managedHubId);
     }
 }

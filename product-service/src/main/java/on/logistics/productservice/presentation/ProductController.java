@@ -1,5 +1,6 @@
 package on.logistics.productservice.presentation;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +27,6 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -44,70 +44,64 @@ public class ProductController {
 
     @PostMapping
     public ResponseEntity<CommonResponse<CreateProductResponse>> createProduct(
-        @Valid @RequestBody CreateProductRequest createProductRequest
-    ) {
-        CreateProductRequestDto requestDto = CreateProductRequest.from(createProductRequest);
+        @Valid @RequestBody CreateProductRequest createProductRequest,
+        HttpServletRequest httpServletRequest) {
+        CreateProductRequestDto requestDto = CreateProductRequestDto.from(createProductRequest,
+            httpServletRequest);
         CreateProductResponse response = productService.createProduct(requestDto);
         return ResponseEntity.ok(CommonResponse.success(response));
     }
 
     @GetMapping("/search")
     public ResponseEntity<CommonResponse<PageDto<SearchProductResponse>>> getProduct(
-        @RequestParam(required = false) String name,
-        @PageableDefault Pageable pageable
-    ) {
+        @RequestParam(required = false) String name, @PageableDefault Pageable pageable) {
         SearchProductRequestDto requestDto = SearchProductRequestDto.from(name, pageable);
         PageDto<SearchProductResponse> response = productService.searchProduct(requestDto);
         return ResponseEntity.ok(CommonResponse.success(response));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CommonResponse<GetProductResponse>> getProduct(
-        @PathVariable UUID id
-    ) {
+    public ResponseEntity<CommonResponse<GetProductResponse>> getProduct(@PathVariable UUID id) {
         GetProductResponse response = productService.getProduct(id);
         return ResponseEntity.ok(CommonResponse.success(response));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<CommonResponse<UpdateProductResponse>> updateProduct(
-        @PathVariable UUID id,
-        @Valid @RequestBody UpdateProductRequest updateProductRequest
-    ) {
-        UpdateProductRequestDto requestDto = UpdateProductRequest.from(id, updateProductRequest);
+        @PathVariable UUID id, @Valid @RequestBody UpdateProductRequest updateProductRequest,
+        HttpServletRequest httpServletRequest) {
+        UpdateProductRequestDto requestDto = UpdateProductRequestDto.from(id, updateProductRequest,
+            httpServletRequest);
         UpdateProductResponse response = productService.updateProduct(requestDto);
         return ResponseEntity.ok(CommonResponse.success(response));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<CommonResponse<Void>> deleteProduct(
-        @PathVariable UUID id
-    ) {
-        productService.deleteProduct(id);
+    public ResponseEntity<CommonResponse<Void>> deleteProduct(@PathVariable UUID id,
+        HttpServletRequest httpServletRequest) {
+        productService.deleteProduct(id, httpServletRequest);
         return ResponseEntity.ok(CommonResponse.success());
     }
 
-    @PatchMapping("/reduce/quantity/{id}")
+    @PutMapping("/reduce/quantity/{id}")
     public ResponseEntity<CommonResponse<UpdateReduceProductQuantityResponse>> updateReduceProductQuantity(
         @PathVariable UUID id,
-        @Valid @RequestBody UpdateReduceProductQuantityRequest updateReduceProductQuantityRequest
-    ) {
-        UpdateReduceProductQuantityRequestDto requestDto = UpdateReduceProductQuantityRequest.from(
-            id,
-            updateReduceProductQuantityRequest);
+        @Valid @RequestBody UpdateReduceProductQuantityRequest updateReduceProductQuantityRequest,
+        HttpServletRequest httpServletRequest) {
+        UpdateReduceProductQuantityRequestDto requestDto = UpdateReduceProductQuantityRequestDto.from(
+            id, updateReduceProductQuantityRequest, httpServletRequest);
         UpdateReduceProductQuantityResponse response = productService.updateReduceProductQuantity(
             requestDto);
         return ResponseEntity.ok(CommonResponse.success(response));
     }
 
-    @PatchMapping("/increase/quantity/{id}")
+    @PutMapping("/increase/quantity/{id}")
     public ResponseEntity<CommonResponse<UpdateIncreaseProductQuantityResponse>> updateIncreaseProductQuantity(
         @PathVariable UUID id,
-        @Valid @RequestBody UpdateIncreaseProductQuantityRequest updateIncreaseProductQuantityRequest
-    ) {
-        UpdateIncreaseProductQuantityRequestDto requestDto = UpdateIncreaseProductQuantityRequest.from(
-            id,
-            updateIncreaseProductQuantityRequest);
+        @Valid @RequestBody UpdateIncreaseProductQuantityRequest updateIncreaseProductQuantityRequest,
+        HttpServletRequest httpServletRequest) {
+        UpdateIncreaseProductQuantityRequestDto requestDto = UpdateIncreaseProductQuantityRequestDto.from(
+            id, updateIncreaseProductQuantityRequest, httpServletRequest);
         UpdateIncreaseProductQuantityResponse response = productService.updateIncreaseProductQuantity(
             requestDto);
         return ResponseEntity.ok(CommonResponse.success(response));
