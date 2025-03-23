@@ -83,6 +83,14 @@ dependencyManagement {
     }
 }
 
+sourceSets {
+    main {
+        java {
+            srcDir 'build/generated/sources/annotationProcessor/java/main'
+        }
+    }
+}
+
 tasks.named('test') {
     useJUnitPlatform()
 }
