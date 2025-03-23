@@ -48,7 +48,6 @@ public class CompanyServiceImpl implements CompanyService {
     @Transactional
     public CreateCompanyResponse createCompany(CreateCompanyRequestDto requestDto) {
         Passport passport = getPassport(requestDto.passportRequest());
-
         notMasterAndNotHubManagerValid(passport);
 
         companyRepository.findByUserId(passport.getUserId()).ifPresent(company -> {
@@ -60,16 +59,9 @@ public class CompanyServiceImpl implements CompanyService {
             throw new CompanyException(CompanyExceptionCode.COMPANY_HUB_NOT_FOUND);
         }
 
-        HubManagerBooleanRequest hubManagerBooleanRequest = HubManagerBooleanRequest.of(
-            passport.getUserId(), hubInfo.id());
-        GetHubManagerBooleanResponse hubManagerBoolean = hubServiceClient.getHubManagerBoolean(
-            hubManagerBooleanRequest);
+        validHubManagerHub(passport, hubInfo.id());
 
-        if (Boolean.FALSE.equals(hubManagerBoolean.isExist())) {
-            throw new CompanyException(CompanyExceptionCode.COMPANY_ACCESS_DENIED);
-        }
-
-        CreateCompanyDto createCompanyDto = CreateCompanyDto.from(passport.getUserId(),
+        CreateCompanyDto createCompanyDto = CreateCompanyDto.from(requestDto.userId(),
             requestDto.companyName(), requestDto.companyType(), requestDto.companyAddress(),
             requestDto.managedHubId());
         Company company = Company.create(createCompanyDto);
@@ -103,7 +95,7 @@ public class CompanyServiceImpl implements CompanyService {
 
         Company company = getOrElseThrow(requestDto.companyId());
 
-        hubManagerHubAndCompanyManagerValid(passport, company);
+        validHubManagerHubAndCompanyManager(passport, company);
 
         company.update(requestDto.companyName(), requestDto.companyAddress());
         return UpdateCompanyResponse.of(company.getId());
@@ -121,13 +113,7 @@ public class CompanyServiceImpl implements CompanyService {
 
         Company company = getOrElseThrow(id);
 
-        HubManagerBooleanRequest hubManagerBooleanRequest = HubManagerBooleanRequest.of(
-            passport.getUserId(), company.getManagedHubId());
-        GetHubManagerBooleanResponse hubManagerBoolean = hubServiceClient.getHubManagerBoolean(
-            hubManagerBooleanRequest);
-        if (Boolean.FALSE.equals(hubManagerBoolean.isExist())) {
-            throw new CompanyException(CompanyExceptionCode.COMPANY_ACCESS_DENIED);
-        }
+        validHubManagerHub(passport, company.getManagedHubId());
 
         companyRepository.delete(company);
     }
@@ -164,7 +150,7 @@ public class CompanyServiceImpl implements CompanyService {
         }
 
         Company company = getOrElseThrow(requestDto.companyId());
-        hubManagerHubAndCompanyManagerValid(passport, company);
+        validHubManagerHubAndCompanyManager(passport, company);
         company.updateCompanyType(requestDto.companyType());
         return UpdateCompanyTypeResponse.of(company.getId());
     }
@@ -175,7 +161,7 @@ public class CompanyServiceImpl implements CompanyService {
         Passport passport = getPassport(requestDto.passportRequest());
         notMasterAndNotHubManagerValid(passport);
         Company company = getOrElseThrow(requestDto.companyId());
-        hubManagerHubAndCompanyManagerValid(passport, company);
+        validHubManagerHubAndCompanyManager(passport, company);
         company.updateCompanyUser(requestDto.userId());
         return UpdateCompanyUserResponse.of(company.getId());
     }
@@ -191,15 +177,24 @@ public class CompanyServiceImpl implements CompanyService {
         }
     }
 
-    private void hubManagerHubAndCompanyManagerValid(Passport passport, Company company) {
-        HubManagerBooleanRequest hubManagerBooleanRequest = HubManagerBooleanRequest.of(
-            passport.getUserId(), company.getManagedHubId());
-        GetHubManagerBooleanResponse hubManagerBoolean = hubServiceClient.getHubManagerBoolean(
-            hubManagerBooleanRequest);
+    private void validHubManagerHubAndCompanyManager(Passport passport, Company company) {
+        validHubManagerHub(passport, company.getManagedHubId());
+        if (passport.getRole().equals(AuthRole.COMPANY_MANAGER.name())) {
+            if (!company.getUserId().equals(passport.getUserId())) {
+                throw new CompanyException(CompanyExceptionCode.COMPANY_ACCESS_DENIED);
+            }
+        }
+    }
 
-        if (!company.getUserId().equals(passport.getUserId()) || Boolean.FALSE.equals(
-            hubManagerBoolean.isExist())) {
-            throw new CompanyException(CompanyExceptionCode.COMPANY_ACCESS_DENIED);
+    private void validHubManagerHub(Passport passport, UUID company) {
+        if (passport.getRole().equals(AuthRole.HUB_MANAGER.name())) {
+            HubManagerBooleanRequest hubManagerBooleanRequest = HubManagerBooleanRequest.of(
+                passport.getUserId(), company);
+            GetHubManagerBooleanResponse hubManagerBoolean = hubServiceClient.getHubManagerBoolean(
+                hubManagerBooleanRequest);
+            if (Boolean.FALSE.equals(hubManagerBoolean.isExist())) {
+                throw new CompanyException(CompanyExceptionCode.COMPANY_ACCESS_DENIED);
+            }
         }
     }
 
