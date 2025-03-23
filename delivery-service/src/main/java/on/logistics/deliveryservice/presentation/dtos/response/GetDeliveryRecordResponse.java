@@ -9,7 +9,7 @@ public record GetDeliveryRecordResponse(UUID deliveryId, UUID deliveryRecordId,
                                         DeliveryRecordStatus deliveryRecordStatus,
                                         UUID deliveryRecordStartHubId, UUID deliveryRecordEndHubId,
                                         Long estimatedDistance, Long estimatedDuration,
-                                        Long actualDistance, Long actualDuration) {
+                                        Long actualDistance, Long actualDuration, UUID userId) {
 
     public static GetDeliveryRecordResponse from(DeliveryRecord deliveryRecord) {
         return new GetDeliveryRecordResponse(deliveryRecord.getDelivery().getId(),
@@ -17,7 +17,8 @@ public record GetDeliveryRecordResponse(UUID deliveryId, UUID deliveryRecordId,
             deliveryRecord.getSequence(), deliveryRecord.getStatus(),
             deliveryRecord.getStartHubId(), deliveryRecord.getEndHubId(),
             deliveryRecord.getEstimatedDistance(), deliveryRecord.getEstimatedDuration(),
-            deliveryRecord.getActualDistance(), deliveryRecord.getActualDuration());
+            deliveryRecord.getActualDistance(), deliveryRecord.getActualDuration(),
+            deliveryRecord.getUserId());
     }
 
 }

@@ -21,6 +21,11 @@ spring:
       ddl-auto: none
     show-sql: true
 
+  cloud:
+    gateway:
+      auth:
+        secret:
+          key: ENC(HI4A/uV5RCH/wOUjxaZDApv6DlH9ANhHYK87ojAyzTI=)
 jwt:
   secret:
     key: ENC(2uuoncCRKwGUefB7oMr59hH/fP+END/NGxhJsdt2MsaIEiVSByZsbfh3vcmhh4FIo6Cf3u4ZhS9GiF+0zJL7mWtIN1BJYMD8GnVReruCWy9sKciYXbzm91GG8ZPMNAcDQJbI4f9P753yNEypXE0Coi+kvXC+pUS9GAKzYUGf9jd/MHUmfcwi2gOWASf0JJ5h)
@@ -34,6 +39,7 @@ passport:
     generation: 3600000 # 60 * 60 * 1000, 1시간
     expected: 60000 # 60 * 1000, 1분
 
+eureka:
   client:
     service-url:
       defaultZone: http://localhost:8761/eureka/

@@ -15,6 +15,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import on.logistics.companyservice.domain.entity.dtos.CreateCompanyDto;
+import on.logistics.companyservice.domain.entity.enums.CompanyStatus;
 import on.logistics.companyservice.domain.entity.enums.CompanyType;
 import on.logistics.companyservice.domain.entity.vo.Address;
 import on.logistics.companyservice.domain.entity.vo.Name;
@@ -44,6 +45,9 @@ public class Company extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private CompanyType type;
 
+    @Enumerated(EnumType.STRING)
+    private CompanyStatus status;
+
     @Column(name = "managed_hub_id", nullable = true)
     private UUID managedHubId;
 
@@ -53,6 +57,7 @@ public class Company extends BaseEntity {
     public static Company create(CreateCompanyDto createCompanyDto) {
         return Company.builder().userId(createCompanyDto.userId())
             .name(new Name(createCompanyDto.companyName())).type(createCompanyDto.type())
+            .managedHubId(createCompanyDto.managedHubId()).status(CompanyStatus.APPROVED)
             .address(new Address(createCompanyDto.companyAddress())).build();
     }
 
@@ -66,6 +71,7 @@ public class Company extends BaseEntity {
     }
 
     public void updateHub(UUID managedHubId) {
+        this.status = CompanyStatus.APPROVED;
         this.managedHubId = managedHubId;
     }
 

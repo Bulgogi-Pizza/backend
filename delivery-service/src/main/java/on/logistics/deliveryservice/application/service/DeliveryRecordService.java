@@ -1,5 +1,6 @@
 package on.logistics.deliveryservice.application.service;
 
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.UUID;
 import on.logistics.deliveryservice.application.dtos.request.CreateDeliveryRecordRequestDto;
 import on.logistics.deliveryservice.application.dtos.request.SearchDeliveryRecordRequestDto;
@@ -19,12 +20,12 @@ public interface DeliveryRecordService {
     UpdateDeliveryRecordResponse updateActualDeliveryRecord(
         UpdateDeliveryRecordRequestDto requestDto);
 
-    void deleteDeliveryRecord(UUID id);
+    void deleteDeliveryRecord(UUID id, HttpServletRequest httpServletRequest);
 
     UpdateDeliveryRecordStatusResponse updateStatusDeliveryRecord(
         UpdateDeliveryRecordStatusRequestDto requestDto);
 
-    GetDeliveryRecordResponse getDeliveryRecord(UUID id);
+    GetDeliveryRecordResponse getDeliveryRecord(UUID id, HttpServletRequest httpServletRequest);
 
     PageDto<SearchDeliveryRecordResponse> searchDeliveryRecord(
         SearchDeliveryRecordRequestDto requestDto);

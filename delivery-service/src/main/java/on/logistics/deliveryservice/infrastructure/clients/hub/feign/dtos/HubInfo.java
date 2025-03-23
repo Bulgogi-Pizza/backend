@@ -1,6 +1,9 @@
 package on.logistics.deliveryservice.infrastructure.clients.hub.feign.dtos;
 
-public record HubInfo(String id, String name, String type, String address, String latitude,
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+public record HubInfo(String id, @JsonProperty("hubName") String name,
+                      @JsonProperty("hubType") String type, String address, String latitude,
                       String longitude) {
 
 }

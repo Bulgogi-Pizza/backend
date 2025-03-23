@@ -6,7 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 
-@FeignClient(name = "auth-service", url = "localhost:18081")
+@FeignClient(name = "auth-service")
 public interface AuthFeignClient {
 
     @DeleteMapping("/api/v1/auth/my")

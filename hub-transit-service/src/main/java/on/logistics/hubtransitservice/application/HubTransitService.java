@@ -1,33 +1,31 @@
 package on.logistics.hubtransitservice.application;
 
 import java.util.UUID;
-import on.logistics.hubtransitservice.application.dtos.create.CreateHubTransitRequestDto;
-import on.logistics.hubtransitservice.application.dtos.create.CreateHubTransitResponseDto;
-import on.logistics.hubtransitservice.application.dtos.create.CreateNextHubTransitRequestDto;
-import on.logistics.hubtransitservice.application.dtos.create.CreateNextHubTransitResponseDto;
-import on.logistics.hubtransitservice.application.dtos.read.GetHubTransitResponseDto;
-import on.logistics.hubtransitservice.application.dtos.read.NextHubTransitRequestDto;
-import on.logistics.hubtransitservice.application.dtos.read.NextHubTransitResponseDto;
-import on.logistics.hubtransitservice.application.dtos.read.SearchHubTransitResponseDto;
-import on.logistics.hubtransitservice.application.dtos.update.UpdateHubTransitRequestDto;
-import on.logistics.hubtransitservice.application.dtos.update.UpdateHubTransitResponseDto;
+import on.logistics.hubtransitservice.application.dtos.request.CreateHubTransitRequestDto;
+import on.logistics.hubtransitservice.application.dtos.request.GetNextHubRequestDto;
+import on.logistics.hubtransitservice.application.dtos.request.InboundHubTransitRequestDto;
+import on.logistics.hubtransitservice.application.dtos.request.UpdateHubTransitRequestDto;
+import on.logistics.hubtransitservice.presentation.dtos.response.CreateHubTransitResponse;
+import on.logistics.hubtransitservice.presentation.dtos.response.GetHubTransitResponse;
+import on.logistics.hubtransitservice.presentation.dtos.response.GetNextHubResponse;
+import on.logistics.hubtransitservice.presentation.dtos.response.SearchHubTransitResponse;
+import on.logistics.hubtransitservice.presentation.dtos.response.UpdateHubTransitResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface HubTransitService {
 
-    CreateHubTransitResponseDto createHubTransit(final CreateHubTransitRequestDto requestDto);
+    CreateHubTransitResponse createHubTransit(CreateHubTransitRequestDto requestDto);
 
-    CreateNextHubTransitResponseDto createNextHubTransit(
-        final CreateNextHubTransitRequestDto requestDto);
+    void processInboundHubTransit(InboundHubTransitRequestDto requestDto);
 
-    GetHubTransitResponseDto getHubTransit(UUID transitId);
+    GetHubTransitResponse getHubTransit(UUID transitId);
 
-    Page<SearchHubTransitResponseDto> searchHubTransit(String keyword, Pageable pageable);
+    Page<SearchHubTransitResponse> searchHubTransit(String keyword, Pageable pageable);
 
-    NextHubTransitResponseDto getNextHubTransit(NextHubTransitRequestDto requestDto);
+    GetNextHubResponse getNextHubTransit(GetNextHubRequestDto requestDto);
 
-    UpdateHubTransitResponseDto updateHubTransit(final UpdateHubTransitRequestDto requestDto);
+    UpdateHubTransitResponse updateHubTransit(UpdateHubTransitRequestDto requestDto);
 
     void deleteHubTransit(UUID transitId);
 

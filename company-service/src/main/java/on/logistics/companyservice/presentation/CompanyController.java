@@ -1,5 +1,6 @@
 package on.logistics.companyservice.presentation;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -10,6 +11,7 @@ import on.logistics.companyservice.application.dtos.request.UpdateCompanyRequest
 import on.logistics.companyservice.application.dtos.request.UpdateCompanyTypeRequestDto;
 import on.logistics.companyservice.application.dtos.request.UpdateCompanyUserRequestDto;
 import on.logistics.companyservice.application.service.CompanyService;
+import on.logistics.companyservice.domain.entity.enums.CompanyStatus;
 import on.logistics.companyservice.domain.entity.enums.CompanyType;
 import on.logistics.companyservice.global.application.dtos.PageDto;
 import on.logistics.companyservice.global.presentation.dtos.CommonResponse;
@@ -48,8 +50,10 @@ public class CompanyController {
 
     @PostMapping
     public ResponseEntity<CommonResponse<CreateCompanyResponse>> createCompany(
-        @Valid @RequestBody CreateCompanyRequest createCompanyRequest) {
-        final CreateCompanyRequestDto requestDto = CreateCompanyRequest.from(createCompanyRequest);
+        @Valid @RequestBody CreateCompanyRequest createCompanyRequest,
+        HttpServletRequest passportRequest) {
+        final CreateCompanyRequestDto requestDto = CreateCompanyRequestDto.from(
+            createCompanyRequest, passportRequest);
         CreateCompanyResponse response = companyService.createCompany(requestDto);
         return ResponseEntity.ok(CommonResponse.success(response));
     }
@@ -57,15 +61,17 @@ public class CompanyController {
     @GetMapping("/search")
     public ResponseEntity<CommonResponse<PageDto<SearchCompanyResponse>>> searchCompany(
         @RequestParam(required = false) String name,
-        @RequestParam(required = false) CompanyType type, @PageableDefault Pageable pageable) {
-        final SearchCompanyRequestDto requestDto = SearchCompanyRequestDto.from(name, type,
+        @RequestParam(required = false) CompanyType type,
+        @RequestParam(required = false) CompanyStatus status, @PageableDefault Pageable pageable) {
+        final SearchCompanyRequestDto requestDto = SearchCompanyRequestDto.from(name, type, status,
             pageable);
         PageDto<SearchCompanyResponse> response = companyService.searchCompany(requestDto);
         return ResponseEntity.ok(CommonResponse.success(response));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CommonResponse<GetCompanyResponse>> getCompany(@PathVariable UUID id) {
+    public ResponseEntity<CommonResponse<GetCompanyResponse>> getCompany(@PathVariable UUID id,
+        HttpServletRequest passportRequest) {
         GetCompanyResponse response = companyService.getCompany(id);
         return ResponseEntity.ok(CommonResponse.success(response));
     }
@@ -73,24 +79,28 @@ public class CompanyController {
 
     @PutMapping("/{id}")
     public ResponseEntity<CommonResponse<UpdateCompanyResponse>> updateCompany(
-        @PathVariable UUID id, @Valid @RequestBody UpdateCompanyRequest updateCompanyRequest) {
-        final UpdateCompanyRequestDto requestDto = UpdateCompanyRequest.from(updateCompanyRequest);
-        UpdateCompanyResponse response = companyService.updateCompany(id, requestDto);
+        @PathVariable UUID id, @Valid @RequestBody UpdateCompanyRequest updateCompanyRequest,
+        HttpServletRequest passportRequest) {
+        final UpdateCompanyRequestDto requestDto = UpdateCompanyRequestDto.from(id,
+            updateCompanyRequest, passportRequest);
+        UpdateCompanyResponse response = companyService.updateCompany(requestDto);
         return ResponseEntity.ok(CommonResponse.success(response));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<CommonResponse<Void>> deleteCompany(@PathVariable UUID id) {
-        companyService.deleteCompany(id);
+    public ResponseEntity<CommonResponse<Void>> deleteCompany(@PathVariable UUID id,
+        HttpServletRequest passportRequest) {
+        companyService.deleteCompany(id, passportRequest);
         return ResponseEntity.ok(CommonResponse.success());
     }
 
     @PatchMapping("/hub/{id}")
     public ResponseEntity<CommonResponse<UpdateCompanyHubResponse>> updateCompanyHub(
         @PathVariable UUID id,
-        @Valid @RequestBody UpdateCompanyHubRequest updateCompanyHubRequest) {
-        final UpdateCompanyHubRequestDto requestDto = UpdateCompanyHubRequest.from(
-            updateCompanyHubRequest);
+        @Valid @RequestBody UpdateCompanyHubRequest updateCompanyHubRequest,
+        HttpServletRequest passportRequest) {
+        final UpdateCompanyHubRequestDto requestDto = UpdateCompanyHubRequestDto.from(
+            updateCompanyHubRequest, passportRequest);
         UpdateCompanyHubResponse response = companyService.updateCompanyHub(id, requestDto);
         return ResponseEntity.ok(CommonResponse.success(response));
     }
@@ -98,10 +108,10 @@ public class CompanyController {
     @PatchMapping("/type/{id}")
     public ResponseEntity<CommonResponse<UpdateCompanyTypeResponse>> updateCompanyType(
         @PathVariable UUID id,
-        @Valid @RequestBody UpdateCompanyTypeRequest updateCompanyTypeRequest
-    ) {
+        @Valid @RequestBody UpdateCompanyTypeRequest updateCompanyTypeRequest,
+        HttpServletRequest passportRequest) {
         final UpdateCompanyTypeRequestDto requestDto = UpdateCompanyTypeRequestDto.from(id,
-            updateCompanyTypeRequest.companyType());
+            updateCompanyTypeRequest.companyType(), passportRequest);
         UpdateCompanyTypeResponse response = companyService.updateCompanyType(requestDto);
         return ResponseEntity.ok(CommonResponse.success(response));
     }
@@ -109,10 +119,10 @@ public class CompanyController {
     @PatchMapping("/user/{id}")
     public ResponseEntity<CommonResponse<UpdateCompanyUserResponse>> updateCompanyUser(
         @PathVariable UUID id,
-        @Valid @RequestBody UpdateCompanyUserRequest updateCompanyUserRequest
-    ) {
+        @Valid @RequestBody UpdateCompanyUserRequest updateCompanyUserRequest,
+        HttpServletRequest passportRequest) {
         final UpdateCompanyUserRequestDto requestDto = UpdateCompanyUserRequestDto.of(id,
-            updateCompanyUserRequest.userId());
+            updateCompanyUserRequest.userId(), passportRequest);
         UpdateCompanyUserResponse response = companyService.updateCompanyUser(requestDto);
         return ResponseEntity.ok(CommonResponse.success(response));
     }

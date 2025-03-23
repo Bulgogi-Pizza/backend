@@ -1,5 +1,6 @@
 package on.logistics.deliveryservice.application.service;
 
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -12,14 +13,21 @@ import on.logistics.deliveryservice.application.dtos.request.UpdateAssignManager
 import on.logistics.deliveryservice.application.dtos.request.UpdateDeliveryRequestDto;
 import on.logistics.deliveryservice.domain.dtos.CreateDeliveryDto;
 import on.logistics.deliveryservice.domain.entity.Delivery;
+import on.logistics.deliveryservice.domain.enums.DeliveryStatus;
 import on.logistics.deliveryservice.domain.repository.DeliveryRepository;
 import on.logistics.deliveryservice.exception.DeliveryException;
 import on.logistics.deliveryservice.exception.DeliveryExceptionCode;
 import on.logistics.deliveryservice.global.application.dtos.PageDto;
+import on.logistics.deliveryservice.global.domain.Passport;
+import on.logistics.deliveryservice.global.enums.AuthRole;
+import on.logistics.deliveryservice.global.utils.PassportUtil;
 import on.logistics.deliveryservice.infrastructure.clients.hub.HubServiceClient;
+import on.logistics.deliveryservice.infrastructure.clients.hub.feign.dtos.GetHubInfo;
+import on.logistics.deliveryservice.infrastructure.clients.hub.feign.dtos.GetHubManagerBooleanResponse;
 import on.logistics.deliveryservice.infrastructure.clients.hub.feign.dtos.GetMiddleHubPageInfo;
 import on.logistics.deliveryservice.infrastructure.clients.hub.feign.dtos.GetSpokeHubInfo;
 import on.logistics.deliveryservice.infrastructure.clients.hub.feign.dtos.HubInfo;
+import on.logistics.deliveryservice.infrastructure.clients.hub.feign.dtos.HubManagerBooleanRequest;
 import on.logistics.deliveryservice.infrastructure.clients.hub.feign.dtos.HubType;
 import on.logistics.deliveryservice.infrastructure.clients.hubTransit.HubTransitServiceClient;
 import on.logistics.deliveryservice.infrastructure.clients.hubTransit.feign.dtos.CreateHubTransitRouteRequest;
@@ -50,26 +58,29 @@ public class DeliveryServiceImpl implements DeliveryService {
     private final MapServiceClient mapServiceClient;
     private final HubServiceClient hubServiceClient;
     private final HubTransitServiceClient hubTransitServiceClient;
+    private final PassportUtil passportUtil;
 
     @Override
     @Transactional
     public CreateDeliveryResponse createDelivery(CreateDeliveryRequestDto requestDto) {
+        Passport passport = getPassport(requestDto.httpServletRequest());
+        if (!passport.getRole().equals(AuthRole.MASTER.name())) {
+            throw new DeliveryException(DeliveryExceptionCode.DELIVERY_ACCESS_DENIED);
+        }
+
+        GetHubInfo startHubInfo = hubServiceClient.getHubInfo(requestDto.startHubId());
+        if (startHubInfo == null) {
+            throw new DeliveryException(DeliveryExceptionCode.DELIVERY_START_HUB_NOT_FOUND);
+        }
+
         DeliveryHubInfoDto hubInfo = deliveryHubInfo(requestDto.destination());
-        DeliveryUserInfoDto userInfo = deliveryUserInfo();
+        DeliveryUserInfoDto userInfo = deliveryUserInfo(passport);
         CreateDeliveryDto entityRequestDto = CreateDeliveryDto.from(requestDto, hubInfo, userInfo);
         Delivery saved = Delivery.create(entityRequestDto);
         deliveryRepository.save(saved);
         // todo : 비동기 고민
         createHubTransitRouteRequest(requestDto, hubInfo, saved);
         return CreateDeliveryResponse.of(saved.getId());
-    }
-
-    private void createHubTransitRouteRequest(CreateDeliveryRequestDto requestDto,
-        DeliveryHubInfoDto hubInfo,
-        Delivery saved) {
-        CreateHubTransitRouteRequest createHubTransitRouteRequest = CreateHubTransitRouteRequest.of(
-            requestDto.startHubId(), hubInfo.endHubId(), saved.getId());
-        hubTransitServiceClient.createHubTransitRoute(createHubTransitRouteRequest);
     }
 
     @Override
@@ -80,24 +91,37 @@ public class DeliveryServiceImpl implements DeliveryService {
     }
 
     @Override
-    public GetDeliveryResponse getDelivery(UUID id) {
+    public GetDeliveryResponse getDelivery(UUID id, HttpServletRequest httpServletRequest) {
+        Passport passport = getPassport(httpServletRequest);
         Delivery delivery = getOrElseThrow(id);
+        validDeliveryManager(passport, delivery);
         return GetDeliveryResponse.from(delivery);
     }
 
     @Override
     @Transactional
     public UpdateDeliveryResponse updateDelivery(UpdateDeliveryRequestDto requestDto) {
-        DeliveryHubInfoDto hubInfo = deliveryHubInfo(requestDto.destination());
+        Passport passport = getPassport(requestDto.httpServletRequest());
+        validCompanyManager(passport);
+
         Delivery delivery = getOrElseThrow(requestDto.deliveryId());
+        if (!delivery.getStatus().equals(DeliveryStatus.HUB_WAITING)) {
+            throw new DeliveryException(DeliveryExceptionCode.DELIVERY_START);
+        }
+        validHubManagerHubAndDeliveryManager(passport, delivery);
+        log.info(requestDto.toString());
+        DeliveryHubInfoDto hubInfo = deliveryHubInfo(requestDto.destination());
         delivery.update(requestDto.destination(), hubInfo);
         return UpdateDeliveryResponse.of(delivery.getId());
     }
 
     @Override
     @Transactional
-    public void deleteDelivery(UUID id) {
+    public void deleteDelivery(UUID id, HttpServletRequest httpServletRequest) {
+        Passport passport = getPassport(httpServletRequest);
+        validCompanyMangerAndDeliveryManager(passport);
         Delivery delivery = getOrElseThrow(id);
+        validHubManagerHub(passport, delivery);
         deliveryRepository.delete(delivery);
     }
 
@@ -105,58 +129,82 @@ public class DeliveryServiceImpl implements DeliveryService {
     @Transactional
     public UpdateAssignManagerResponse updateAssignManager(
         UpdateAssignManagerRequestDto updateAssignManagerRequestDto) {
+        Passport passport = getPassport(updateAssignManagerRequestDto.httpServletRequest());
+        validCompanyManager(passport);
         Delivery delivery = getOrElseThrow(updateAssignManagerRequestDto.deliveryId());
-        delivery.updateAssignManager(updateAssignManagerRequestDto.companyDeliveryManagerId());
+        validHubManagerHubAndDeliveryManager(passport, delivery);
+        delivery.updateAssignManager(updateAssignManagerRequestDto.userId());
         return UpdateAssignManagerResponse.of(delivery.getId());
     }
 
     @Override
     @Transactional
-    public UpdateDeliveryStatusHubMovingResponse updateDeliveryStatusHubMoving(UUID id) {
+    public UpdateDeliveryStatusHubMovingResponse updateDeliveryStatusHubMoving(UUID id,
+        HttpServletRequest httpServletRequest) {
+        Passport passport = getPassport(httpServletRequest);
+        validCompanyManager(passport);
         Delivery delivery = getOrElseThrow(id);
+        validHubManagerHubAndDeliveryManager(passport, delivery);
         delivery.updateDeliveryStatusHubMoving();
         return UpdateDeliveryStatusHubMovingResponse.of(delivery.getId());
     }
 
     @Override
     @Transactional
-    public UpdateDeliveryStatusHubArriveResponse updateDeliveryStatusHubArrive(UUID id) {
+    public UpdateDeliveryStatusHubArriveResponse updateDeliveryStatusHubArrive(UUID id,
+        HttpServletRequest httpServletRequest) {
+        Passport passport = getPassport(httpServletRequest);
+        validCompanyManager(passport);
         Delivery delivery = getOrElseThrow(id);
+        validHubManagerHubAndDeliveryManager(passport, delivery);
         delivery.updateDeliveryStatusHubArrive();
         return UpdateDeliveryStatusHubArriveResponse.of(delivery.getId());
     }
 
     @Override
     @Transactional
-    public UpdateDeliveryStatusCompanyMovingResponse updateDeliveryStatusCompanyMoving(UUID id) {
+    public UpdateDeliveryStatusCompanyMovingResponse updateDeliveryStatusCompanyMoving(UUID id,
+        HttpServletRequest httpServletRequest) {
+        Passport passport = getPassport(httpServletRequest);
+        validCompanyManager(passport);
         Delivery delivery = getOrElseThrow(id);
+        validHubManagerHubAndDeliveryManager(passport, delivery);
         delivery.updateDeliveryStatusCompanyMoving();
         return UpdateDeliveryStatusCompanyMovingResponse.of(delivery.getId());
     }
 
     @Override
     @Transactional
-    public UpdateDeliveryStatusCompanyArriveResponse updateDeliveryStatusCompanyArrive(UUID id) {
+    public UpdateDeliveryStatusCompanyArriveResponse updateDeliveryStatusCompanyArrive(UUID id,
+        HttpServletRequest httpServletRequest) {
+        Passport passport = getPassport(httpServletRequest);
+        validCompanyManager(passport);
         Delivery delivery = getOrElseThrow(id);
+        validHubManagerHubAndDeliveryManager(passport, delivery);
         delivery.updateDeliveryStatusCompanyArrive();
         return UpdateDeliveryStatusCompanyArriveResponse.of(delivery.getId());
     }
 
     @Override
     @Transactional
-    public UpdateDeliveryStatusCancelResponse updateDeliveryStatusCancel(UUID id) {
+    public UpdateDeliveryStatusCancelResponse updateDeliveryStatusCancel(UUID id,
+        HttpServletRequest httpServletRequest) {
+        Passport passport = getPassport(httpServletRequest);
+        validCompanyManager(passport);
         Delivery delivery = getOrElseThrow(id);
+        validHubManagerHubAndDeliveryManager(passport, delivery);
         delivery.updateDeliveryStatusCancel();
         return UpdateDeliveryStatusCancelResponse.of(delivery.getId());
     }
 
     public DeliveryHubInfoDto deliveryHubInfo(String destination) {
+        // todo: 목적지 위도, 경도 받아옴.
+        log.info("delivery hub info: {}", destination);
         GetDestinationInfo geocode = mapServiceClient.getGeocode(destination);
+        log.info("geocode: {}", geocode.toString());
         String start = "" + geocode.longitude() + "" + "," + geocode.latitude();
-
         GetMiddleHubPageInfo getMiddleHubPageInfo = typeHubInfoList();
         GetHubRouteInfo middleRoute = middleRouteInfo(start, getMiddleHubPageInfo);
-
         UUID middleRouteHubId = middleRouteHubId(getMiddleHubPageInfo, middleRoute);
         GetSpokeHubInfo getSpokeHubInfo = typeSpokeInfoList(middleRouteHubId);
         GetHubRouteInfo endRoute = endRouteInfo(start, getSpokeHubInfo);
@@ -165,17 +213,18 @@ public class DeliveryServiceImpl implements DeliveryService {
         return DeliveryHubInfoDto.of(endHubId);
     }
 
-
     private UUID endRouteHubId(GetSpokeHubInfo getSpokeHubInfo, GetHubRouteInfo endRoute) {
         List<HubInfo> hubs = getSpokeHubInfo.data();
-        String middleRouteHubLongitude = String.valueOf(
-            endRoute.summary().end().location().get(0));
-        String middleRouteHubLatitude = String.valueOf(
-            endRoute.summary().end().location().get(1));
+        String spiltEndRouteHubLongitude = String.valueOf(
+            endRoute.summary().end().location().get(0)).substring(0, 6);
+        String spiltEndRouteHubLatitude = String.valueOf(endRoute.summary().end().location().get(1))
+            .substring(0, 6);
         String endHubId = "";
         for (HubInfo typeHubInfo : hubs) {
-            if (typeHubInfo.longitude().equals(middleRouteHubLongitude) && typeHubInfo.latitude()
-                .equals(middleRouteHubLatitude)) {
+            String splitHubLongitude = typeHubInfo.longitude().substring(0, 6);
+            String splitHubLatitude = typeHubInfo.latitude().substring(0, 6);
+            if (splitHubLongitude.equals(spiltEndRouteHubLongitude) && splitHubLatitude.equals(
+                spiltEndRouteHubLatitude)) {
                 endHubId = typeHubInfo.id();
                 break;
             }
@@ -184,43 +233,31 @@ public class DeliveryServiceImpl implements DeliveryService {
     }
 
     private GetHubRouteInfo endRouteInfo(String start, GetSpokeHubInfo getSpokeHubInfo) {
-        String end = "";
         List<HubInfo> hubs = getSpokeHubInfo.data();
-        for (HubInfo typeHubInfo : hubs) {
-            end += ("" + typeHubInfo.longitude() + "" + typeHubInfo.latitude() + ":");
-        }
-        if (end.endsWith(":")) {
-            end = end.substring(0, end.length() - 1);
-        }
+        String end = getMapApiEndSerchingString(hubs);
         return mapServiceClient.getRoute(start, end);
     }
 
     public GetHubRouteInfo middleRouteInfo(String start,
         GetMiddleHubPageInfo getMiddleHubPageInfo) {
-
-        String end = "";
-        List<HubInfo> hubs = getMiddleHubPageInfo.data();
-        for (HubInfo typeHubInfo : hubs) {
-            end += ("" + typeHubInfo.longitude() + "" + typeHubInfo.latitude() + ":");
-        }
-        if (end.endsWith(":")) {
-            end = end.substring(0, end.length() - 1);
-        }
-
+        List<HubInfo> hubs = getMiddleHubPageInfo.content();
+        String end = getMapApiEndSerchingString(hubs);
         return mapServiceClient.getRoute(start, end);
     }
 
     public UUID middleRouteHubId(GetMiddleHubPageInfo getMiddleHubPageInfo,
         GetHubRouteInfo middleRoute) {
-        List<HubInfo> hubs = getMiddleHubPageInfo.data();
-        String middleRouteHubLongitude = String.valueOf(
-            middleRoute.summary().end().location().get(0));
-        String middleRouteHubLatitude = String.valueOf(
-            middleRoute.summary().end().location().get(1));
+        List<HubInfo> hubs = getMiddleHubPageInfo.content();
+        String spiltMiddleRouteHubLongitude = String.valueOf(
+            middleRoute.summary().end().location().get(0)).substring(0, 6);
+        String spiltMiddleRouteHubLatitude = String.valueOf(
+            middleRoute.summary().end().location().get(1)).substring(0, 6);
         String middleRouteId = "";
         for (HubInfo typeHubInfo : hubs) {
-            if (typeHubInfo.longitude().equals(middleRouteHubLongitude) && typeHubInfo.latitude()
-                .equals(middleRouteHubLatitude)) {
+            String splitHubLongitude = typeHubInfo.longitude().substring(0, 6);
+            String splitHubLatitude = typeHubInfo.latitude().substring(0, 6);
+            if (splitHubLongitude.equals(spiltMiddleRouteHubLongitude) && splitHubLatitude.equals(
+                spiltMiddleRouteHubLatitude)) {
                 middleRouteId = typeHubInfo.id();
                 break;
             }
@@ -236,15 +273,82 @@ public class DeliveryServiceImpl implements DeliveryService {
         return hubServiceClient.getSpokeHubInfo(middleHubId);
     }
 
-    public DeliveryUserInfoDto deliveryUserInfo() {
-        // todo: 요청이 들어온 패스포트에서 유저 이름 및 정보 확인
-        String recipient = "임시";
-        String recipientSlackEmail = "user@slack.com";
+    public DeliveryUserInfoDto deliveryUserInfo(Passport passport) {
+        String recipient = passport.getNickname();
+        String recipientSlackEmail = passport.getSlackEmail();
         return DeliveryUserInfoDto.of(recipient, recipientSlackEmail);
+    }
+
+    private String getMapApiEndSerchingString(List<HubInfo> hubs) {
+        String end = "";
+        for (HubInfo typeHubInfo : hubs) {
+            end += ("" + typeHubInfo.longitude() + "," + typeHubInfo.latitude() + ":");
+        }
+        if (end.endsWith(":")) {
+            end = end.substring(0, end.length() - 1);
+        }
+        return end;
+    }
+
+    private void createHubTransitRouteRequest(CreateDeliveryRequestDto requestDto,
+        DeliveryHubInfoDto hubInfo, Delivery saved) {
+        CreateHubTransitRouteRequest createHubTransitRouteRequest = CreateHubTransitRouteRequest.of(
+            requestDto.startHubId(), hubInfo.endHubId(), saved.getId());
+        hubTransitServiceClient.createHubTransitRoute(createHubTransitRouteRequest);
     }
 
     public Delivery getOrElseThrow(UUID deliveryId) {
         return deliveryRepository.findById(deliveryId)
             .orElseThrow(() -> new DeliveryException(DeliveryExceptionCode.DELIVERY_NOT_FOUND));
     }
+
+    private Passport getPassport(HttpServletRequest passportRequest) {
+        return passportUtil.getPassportByHttpServletRequest(passportRequest);
+    }
+
+    private void validCompanyManager(Passport passport) {
+        if (passport.getRole().equals(AuthRole.COMPANY_MANAGER.name())) {
+            throw new DeliveryException(DeliveryExceptionCode.DELIVERY_ACCESS_DENIED);
+        }
+    }
+
+    private void validCompanyMangerAndDeliveryManager(Passport passport) {
+        if (passport.getRole().equals(AuthRole.COMPANY_MANAGER.name()) || passport.getRole()
+            .equals(AuthRole.DELIVERY_MANAGER.name())) {
+            throw new DeliveryException(DeliveryExceptionCode.DELIVERY_ACCESS_DENIED);
+        }
+    }
+
+    private void validHubManagerHubAndDeliveryManager(Passport passport, Delivery delivery) {
+        validHubManagerHub(passport, delivery);
+        validDeliveryManager(passport, delivery);
+    }
+
+    private void validDeliveryManager(Passport passport, Delivery delivery) {
+        if (passport.getRole().equals(AuthRole.DELIVERY_MANAGER.name()) && !delivery.getUserId()
+            .equals(passport.getUserId())) {
+            throw new DeliveryException(DeliveryExceptionCode.DELIVERY_ACCESS_DENIED);
+        }
+    }
+
+    private void validHubManagerHub(Passport passport, Delivery delivery) {
+        if (passport.getRole().equals(AuthRole.HUB_MANAGER.name())) {
+            GetHubManagerBooleanResponse startHubManager = getHubManagerBooleanResponse(passport,
+                delivery.getStartHubId());
+            GetHubManagerBooleanResponse endHubManager = getHubManagerBooleanResponse(passport,
+                delivery.getEndHubId());
+            if (Boolean.FALSE.equals(startHubManager.isExist()) && Boolean.FALSE.equals(
+                endHubManager.isExist())) {
+                throw new DeliveryException(DeliveryExceptionCode.DELIVERY_ACCESS_DENIED);
+            }
+        }
+    }
+
+    private GetHubManagerBooleanResponse getHubManagerBooleanResponse(Passport passport,
+        UUID hubId) {
+        HubManagerBooleanRequest hubManagerBooleanRequest = HubManagerBooleanRequest.of(
+            passport.getUserId(), hubId);
+        return hubServiceClient.getHubManagerBoolean(hubManagerBooleanRequest);
+    }
+
 }
