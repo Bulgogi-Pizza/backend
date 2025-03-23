@@ -109,6 +109,7 @@ public class DeliveryServiceImpl implements DeliveryService {
             throw new DeliveryException(DeliveryExceptionCode.DELIVERY_START);
         }
         validHubManagerHubAndDeliveryManager(passport, delivery);
+        log.info(requestDto.toString());
         DeliveryHubInfoDto hubInfo = deliveryHubInfo(requestDto.destination());
         delivery.update(requestDto.destination(), hubInfo);
         return UpdateDeliveryResponse.of(delivery.getId());
@@ -198,7 +199,9 @@ public class DeliveryServiceImpl implements DeliveryService {
 
     public DeliveryHubInfoDto deliveryHubInfo(String destination) {
         // todo: 목적지 위도, 경도 받아옴.
+        log.info("delivery hub info: {}", destination);
         GetDestinationInfo geocode = mapServiceClient.getGeocode(destination);
+        log.info("geocode: {}", geocode.toString());
         String start = "" + geocode.longitude() + "" + "," + geocode.latitude();
         GetMiddleHubPageInfo getMiddleHubPageInfo = typeHubInfoList();
         GetHubRouteInfo middleRoute = middleRouteInfo(start, getMiddleHubPageInfo);
