@@ -14,7 +14,10 @@ public enum HubTransitExceptionCode implements ExceptionCode {
     MAX_LENGTH_EXCEEDED(HttpStatus.BAD_REQUEST, "허브명은 100자를 초과할 수 없습니다."),
     ROUTE_NOT_FOUND(HttpStatus.NOT_FOUND, "경로를 찾을 수 없습니다."),
     ROUTE_INVALID(HttpStatus.BAD_REQUEST, "유효하지 않은 경로입니다"),
-    ROUTE_JSON_PARSE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "경로 파싱 도중 오류가 발생했습니다.");
+    ROUTE_JSON_PARSE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "경로 파싱 도중 오류가 발생했습니다."),
+    HAS_NO_AUTHORITY(HttpStatus.UNAUTHORIZED, "권한이 없습니다."),
+    NO_FURTHER_HUB(HttpStatus.BAD_REQUEST, ""),
+    ;
 
     private final HttpStatus httpStatus;
     private final String message;

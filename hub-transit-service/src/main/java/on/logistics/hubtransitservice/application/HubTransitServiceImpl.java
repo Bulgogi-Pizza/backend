@@ -6,24 +6,33 @@ import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import on.logistics.hubtransitservice.application.dtos.create.CreateHubTransitRequestDto;
-import on.logistics.hubtransitservice.application.dtos.create.CreateHubTransitResponseDto;
-import on.logistics.hubtransitservice.application.dtos.create.CreateNextHubTransitRequestDto;
-import on.logistics.hubtransitservice.application.dtos.create.CreateNextHubTransitResponseDto;
-import on.logistics.hubtransitservice.application.dtos.read.GetHubTransitResponseDto;
-import on.logistics.hubtransitservice.application.dtos.read.NextHubTransitRequestDto;
-import on.logistics.hubtransitservice.application.dtos.read.NextHubTransitResponseDto;
-import on.logistics.hubtransitservice.application.dtos.read.SearchHubTransitResponseDto;
-import on.logistics.hubtransitservice.application.dtos.update.UpdateHubTransitRequestDto;
-import on.logistics.hubtransitservice.application.dtos.update.UpdateHubTransitResponseDto;
+import on.logistics.hubtransitservice.application.dtos.request.CreateHubTransitRequestDto;
+import on.logistics.hubtransitservice.application.dtos.request.GetNextHubRequestDto;
+import on.logistics.hubtransitservice.application.dtos.request.InboundHubTransitRequestDto;
+import on.logistics.hubtransitservice.application.dtos.request.UpdateHubTransitRequestDto;
+import on.logistics.hubtransitservice.application.dtos.response.CreateHubTransitResponseDto;
 import on.logistics.hubtransitservice.domain.dtos.CreateHubTransitDto;
 import on.logistics.hubtransitservice.domain.entity.HubTransit;
 import on.logistics.hubtransitservice.domain.entity.Route;
+import on.logistics.hubtransitservice.domain.enums.DeliveryType;
 import on.logistics.hubtransitservice.domain.repository.HubTransitRepository;
 import on.logistics.hubtransitservice.domain.repository.RouteRepository;
 import on.logistics.hubtransitservice.exception.HubTransitException;
 import on.logistics.hubtransitservice.exception.HubTransitExceptionCode;
+import on.logistics.hubtransitservice.infrastructure.clients.deliverymanager.DeliveryManagerClient;
+import on.logistics.hubtransitservice.infrastructure.clients.deliverymanager.feign.dtos.AssignDeliveryManagerRequest;
+import on.logistics.hubtransitservice.infrastructure.clients.deliverymanager.feign.dtos.AssignDeliveryManagerResponse;
+import on.logistics.hubtransitservice.infrastructure.clients.deliveryservice.DeliveryServiceClient;
+import on.logistics.hubtransitservice.infrastructure.clients.deliveryservice.feign.dtos.CreateDeliveryRecordRequest;
+import on.logistics.hubtransitservice.infrastructure.clients.deliveryservice.feign.dtos.CreateDeliveryRecordResponse;
+import on.logistics.hubtransitservice.infrastructure.clients.deliveryservice.feign.dtos.UpdateDeliveryStatusRequest;
 import on.logistics.hubtransitservice.infrastructure.clients.hub.HubServiceClient;
+import on.logistics.hubtransitservice.infrastructure.clients.hub.feign.dtos.GetHubResponse;
+import on.logistics.hubtransitservice.presentation.dtos.response.CreateHubTransitResponse;
+import on.logistics.hubtransitservice.presentation.dtos.response.GetHubTransitResponse;
+import on.logistics.hubtransitservice.presentation.dtos.response.GetNextHubResponse;
+import on.logistics.hubtransitservice.presentation.dtos.response.SearchHubTransitResponse;
+import on.logistics.hubtransitservice.presentation.dtos.response.UpdateHubTransitResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -38,30 +47,46 @@ public class HubTransitServiceImpl implements HubTransitService {
     private final HubTransitRepository hubTransitRepository;
     private final RouteRepository routeRepository;
     private final HubServiceClient hubServiceClient;
+    private final DeliveryServiceClient deliveryServiceClient;
+    private final DeliveryManagerClient deliveryManagerClient;
     private final ObjectMapper objectMapper;
 
     @Override
     @Transactional
-    public CreateHubTransitResponseDto createHubTransit(
-        final CreateHubTransitRequestDto requestDto
-    ) {
+    public CreateHubTransitResponse createHubTransit(CreateHubTransitRequestDto requestDto) {
         log.info("허브 이동정보 생성 요청");
-        var startHubResponse = getHubInfo(requestDto.startHubId());
-        var endHubResponse = getHubInfo(requestDto.endHubId());
 
-        var route = getRouteByHubNames(startHubResponse.name, endHubResponse.name);
-        String nextHubName = determineNextHubName(route.getPathJson(), startHubResponse.name);
+        var startHub = getHubInfo(requestDto.startHubId());
+        var endHub = getHubInfo(requestDto.endHubId());
+
+        var route = getRouteByHubNames(startHub.hubName(), endHub.hubName());
+        String routeSnapshot = route.getPathJson();
+
+        var currentHubId = startHub.id();
+        var currentHubName = startHub.hubName();
+
+        String nextHubName = determineNextHubName(routeSnapshot, currentHubName);
         UUID nextHubId = getNextHubIdByName(nextHubName);
-        String nextDestinationType = getNextDestinationType(nextHubName);
+        DeliveryType deliveryType = getNextDeliveryType(nextHubName);
 
-        CreateHubTransitRequestDto updatedRequestDto = requestDto.withInitialHubInfo(
-            startHubResponse.name,
-            endHubResponse.name,
-            nextHubId,
-            nextHubName,
-            nextDestinationType
-        );
-        CreateHubTransitDto createDto = CreateHubTransitDto.of(updatedRequestDto);
+        var deliveryManager = getDeliveryManager(
+            requestDto.deliveryId(), currentHubId, deliveryType);
+
+        var deliveryRecord = createDeliveryRecord(
+            requestDto.deliveryId(), currentHubId, nextHubId, deliveryManager);
+
+        CreateHubTransitDto createDto = CreateHubTransitDto.builder()
+            .deliveryId(requestDto.deliveryId())
+            .deliveryRecordId(deliveryRecord.deliveryRecordId())
+            .currentHubId(currentHubId)
+            .currentHubName(currentHubName)
+            .nextHubId(nextHubId)
+            .nextHubName(nextHubName)
+            .nextDeliveryType(deliveryType)
+            .userId(deliveryManager.userId())
+            .routeSnapshot(routeSnapshot)
+            .build();
+
         HubTransit hubTransit = HubTransit.create(createDto);
         HubTransit saved = hubTransitRepository.save(hubTransit);
         log.info("허브 이동정보 생성 완료, id: {}", saved.getId());
@@ -70,93 +95,100 @@ public class HubTransitServiceImpl implements HubTransitService {
 
     @Override
     @Transactional
-    public CreateNextHubTransitResponseDto createNextHubTransit(
-        final CreateNextHubTransitRequestDto requestDto
+    public void processInboundHubTransit(
+        InboundHubTransitRequestDto requestDto
     ) {
-        log.info("후속 허브 이동 요청, transitId: {}, currentHubId: {}", requestDto.transitId(),
+        log.info("허브 입고 요청, deliveryId: {}, currentHubId: {}", requestDto.deliveryId(),
             requestDto.currentHubId());
 
-        HubTransit currentHubTransit = getOrElseThrow(requestDto.transitId());
-        String newCurrentHubName = currentHubTransit.getNextHubName().getValue();
+        HubTransit currentTransit = hubTransitRepository
+            .findByDeliveryIdAndCurrentHubId(requestDto.deliveryId(), requestDto.currentHubId())
+            .orElseThrow(
+                () -> new HubTransitException(HubTransitExceptionCode.HUB_TRANSIT_NOT_FOUND));
 
-        Route route = getRouteByHubNames(
-            currentHubTransit.getInitialStartHubName().getValue(),
-            currentHubTransit.getInitialEndHubName().getValue()
+        if (currentTransit.getNextHubName().getValue().equals("END_OF_HUB")) {
+            throw new HubTransitException(HubTransitExceptionCode.NO_FURTHER_HUB);
+        }
+
+        String routeSnapshot = currentTransit.getRouteSnapshot();
+        String newNextHubName = determineNextHubName(
+            routeSnapshot,
+            currentTransit.getNextHubName().getValue()
         );
-
-        String newNextHubName = determineNextHubName(route.getPathJson(), newCurrentHubName);
         UUID newNextHubId = getNextHubIdByName(newNextHubName);
-        String nextDestinationType = getNextDestinationType(newNextHubName);
+        DeliveryType newNextDeliveryType = getNextDeliveryType(newNextHubName);
 
-        HubTransit nextTransit = HubTransit.createNext(
-            currentHubTransit,
-            newNextHubId,
-            newNextHubName,
-            nextDestinationType
-        );
-        HubTransit saved = hubTransitRepository.save(nextTransit);
-        log.info("후속 허브 이동정보 생성 완료, new transitId: {}", saved.getId());
-        return CreateNextHubTransitResponseDto.from(saved);
+        UUID newCurrentHubId = currentTransit.getNextHubId();
+        String newCurrentHubName = currentTransit.getNextHubName().getValue();
+
+        var deliveryManager = getDeliveryManager(
+            requestDto.deliveryId(), newCurrentHubId, newNextDeliveryType);
+
+        var deliveryRecord = createDeliveryRecord(
+            requestDto.deliveryId(), newCurrentHubId, newNextHubId, deliveryManager);
+
+        // TODO: 기존 배송 기록 상태 업데이트 추가 필요
+        // 7. 기존 transit record의 배송 기록 상태 업데이트: PATCH "/api/v1/delivery/record/status/{id}" with status "HUB_ARRIVE"
+        // deliveryService.updateDeliveryRecordStatus(currentTransit.getDeliveryRecordId(), "HUB_ARRIVE");
+        var updateDeliveryRecordRequest = UpdateDeliveryStatusRequest.builder()
+            .deliveryRecordStatus("HUB_ARRIVE").build();
+        deliveryServiceClient.updateDeliveryRecordStatus(
+            currentTransit.getDeliveryRecordId(), updateDeliveryRecordRequest);
+
+        CreateHubTransitDto nextTransitDto = CreateHubTransitDto.builder()
+            .deliveryId(requestDto.deliveryId())
+            .deliveryRecordId(deliveryRecord.deliveryRecordId())
+            .currentHubId(newCurrentHubId)
+            .currentHubName(newCurrentHubName)
+            .nextHubId(newNextHubId)
+            .nextHubName(newNextHubName)
+            .nextDeliveryType(newNextDeliveryType)
+            .userId(deliveryManager.userId())
+            .routeSnapshot(routeSnapshot)
+            .build();
+
+        HubTransit nextHubTransit = HubTransit.create(nextTransitDto);
+        HubTransit saved = hubTransitRepository.save(nextHubTransit);
+        log.info("허브 입고 요청 처리 완료, new transitId: {}", saved.getId());
     }
 
     @Override
-    public GetHubTransitResponseDto getHubTransit(UUID transitId) {
+    public GetHubTransitResponse getHubTransit(UUID transitId) {
         HubTransit hubTransit = getOrElseThrow(transitId);
-        log.info("허브 이동정보 조회 성공, transitId: {}", transitId);
-        return GetHubTransitResponseDto.from(hubTransit);
+        log.info("허브간 이동정보 조회 성공, transitId: {}", transitId);
+        return GetHubTransitResponse.from(hubTransit);
     }
 
     @Override
-    public Page<SearchHubTransitResponseDto> searchHubTransit(String keyword, Pageable pageable) {
-        log.info("Service - 검색 조건: keyword={}", keyword);
+    public Page<SearchHubTransitResponse> searchHubTransit(String keyword, Pageable pageable) {
+        log.info("허브간 이동정보 조회, keyword={}", keyword);
         return hubTransitRepository.searchHubTransit(keyword, pageable)
-            .map(SearchHubTransitResponseDto::from);
+            .map(SearchHubTransitResponse::from);
     }
 
     @Override
-    @Transactional
-    public NextHubTransitResponseDto getNextHubTransit(NextHubTransitRequestDto requestDto) {
-        log.info("다음 허브 이동정보 조회 요청, transitId: {}", requestDto.transitId());
-
+    public GetNextHubResponse getNextHubTransit(GetNextHubRequestDto requestDto) {
         HubTransit hubTransit = getOrElseThrow(requestDto.transitId());
-        String currentHubName = hubTransit.getCurrentHubName().getValue();
-        Route route = getRouteByHubNames(hubTransit.getInitialStartHubName().getValue(),
-            hubTransit.getInitialEndHubName().getValue()
-        );
-
-        String nextHubName = determineNextHubName(route.getPathJson(), currentHubName);
-        UUID nextHubId = getNextHubIdByName(nextHubName);
-        String nextDestinationType = getNextDestinationType(nextHubName);
-
-        return NextHubTransitResponseDto.of(
-            hubTransit.getId(),
-            hubTransit.getCurrentHubId(),
-            hubTransit.getCurrentHubName().getValue(),
-            nextHubId,
-            nextHubName,
-            nextDestinationType,
-            hubTransit.getDeliveryManagerId()
-        );
+        log.info("다음 허브 조회 성공, transitId: {}", requestDto.transitId());
+        return GetNextHubResponse.from(hubTransit);
     }
 
     @Override
     @Transactional
-    public UpdateHubTransitResponseDto updateHubTransit(
-        final UpdateHubTransitRequestDto requestDto) {
+    public UpdateHubTransitResponse updateHubTransit(UpdateHubTransitRequestDto requestDto) {
         log.info("배송 담당자 업데이트 요청, dto: {}", requestDto);
         HubTransit hubTransit = getOrElseThrow(requestDto.transitId());
-        hubTransit.updateDeliveryManagerId(requestDto.deliveryManagerId());
+        hubTransit.updateDeliveryManagerId(requestDto.userId());
         log.info("배송 담당자 업데이트 완료, transitId: {}", hubTransit.getId());
-        return UpdateHubTransitResponseDto.from(hubTransit);
+        return UpdateHubTransitResponse.from(hubTransit);
     }
 
     @Override
     @Transactional
     public void deleteHubTransit(UUID transitId) {
-        log.info("삭제 요청 받은 transitId: {}", transitId);
+        log.info("허브 이동정보 삭제 요청, transitId: {}", transitId);
         HubTransit hubTransit = getOrElseThrow(transitId);
         hubTransit.deleteSoftly();
-        hubTransitRepository.save(hubTransit);
         log.info("허브 이동정보 soft delted, transitId: {}", transitId);
     }
 
@@ -166,12 +198,12 @@ public class HubTransitServiceImpl implements HubTransitService {
                 () -> new HubTransitException(HubTransitExceptionCode.HUB_TRANSIT_NOT_FOUND));
     }
 
-    private HubInfo getHubInfo(UUID hubId) {
+    private GetHubResponse getHubInfo(UUID hubId) {
         var hubResponse = hubServiceClient.getHubById(hubId);
         if (hubResponse == null) {
-            throw new HubTransitException(HubTransitExceptionCode.HUB_TRANSIT_NOT_FOUND);
+            throw new HubTransitException(HubTransitExceptionCode.HUB_NOT_FOUND);
         }
-        return new HubInfo(hubResponse.id(), hubResponse.hubName(), hubResponse.hubType());
+        return hubResponse;
     }
 
     private Route getRouteByHubNames(String startHubName, String endHubName) {
@@ -202,16 +234,41 @@ public class HubTransitServiceImpl implements HubTransitService {
             return UUID.fromString("00000000-0000-0000-0000-000000000000");
         }
         var hubResponse = hubServiceClient.getHubByName(nextHubName);
-        return hubResponse != null ?
-            hubResponse.id() : UUID.fromString("00000000-0000-0000-0000-000000000000");
+        if (hubResponse == null) {
+            throw new HubTransitException(HubTransitExceptionCode.HUB_NOT_FOUND);
+        }
+        return hubResponse.id();
     }
 
-    private String getNextDestinationType(String nextHubName) {
-        return "END_OF_HUB".equals(nextHubName) ? "COMPANY" : "HUB";
+    private DeliveryType getNextDeliveryType(String nextHubName) {
+        return "END_OF_HUB".equals(nextHubName) ? DeliveryType.COMPANY_DELIVERY
+            : DeliveryType.HUB_DELIVERY;
     }
 
-    private record HubInfo(UUID id, String name, String hubType) {
+    private AssignDeliveryManagerResponse getDeliveryManager(
+        UUID requestDto, UUID currentHubId, DeliveryType deliveryType
+    ) {
+        return deliveryManagerClient.assignDeliveryManager(
+            AssignDeliveryManagerRequest.builder()
+                .deliveryId(requestDto)
+                .hubId(currentHubId)
+                .deliveryType(deliveryType)
+                .build()
+        );
+    }
 
+    private CreateDeliveryRecordResponse createDeliveryRecord(
+        UUID requestDto, UUID currentHubId, UUID nextHubId,
+        AssignDeliveryManagerResponse deliveryManager
+    ) {
+        return deliveryServiceClient.createDeliveryRecord(
+            CreateDeliveryRecordRequest.builder()
+                .deliveryId(requestDto)
+                .deliveryRecordStartHubId(currentHubId)
+                .deliveryRecordEndHubId(nextHubId)
+                .userId(deliveryManager.userId())
+                .build()
+        );
     }
 
 }

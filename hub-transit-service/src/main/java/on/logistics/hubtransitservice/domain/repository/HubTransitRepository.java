@@ -12,6 +12,8 @@ public interface HubTransitRepository {
 
     Optional<HubTransit> findById(UUID transitId);
 
+    Optional<HubTransit> findByDeliveryIdAndCurrentHubId(UUID deliveryId, UUID currentHubId);
+
     Page<HubTransit> searchHubTransit(String keyword, Pageable pageable);
 
 }
