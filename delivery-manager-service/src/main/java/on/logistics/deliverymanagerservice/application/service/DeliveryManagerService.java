@@ -1,0 +1,123 @@
+package on.logistics.deliverymanagerservice.application.service;
+
+import java.time.LocalDateTime;
+import java.util.UUID;
+import lombok.RequiredArgsConstructor;
+import on.logistics.deliverymanagerservice.application.dtos.AssignDeliveryManagerRequestDto;
+import on.logistics.deliverymanagerservice.application.dtos.CreateDeliveryManagerRequestDto;
+import on.logistics.deliverymanagerservice.application.dtos.UpdateDeliveryManagerRequestDto;
+import on.logistics.deliverymanagerservice.application.dtos.ValidDeliveryManagerRequestDto;
+import on.logistics.deliverymanagerservice.domain.entity.DeliveryAssignment;
+import on.logistics.deliverymanagerservice.domain.entity.DeliveryManager;
+import on.logistics.deliverymanagerservice.domain.entity.DeliveryType;
+import on.logistics.deliverymanagerservice.domain.entity.dtos.CreateDeliveryManagerDto;
+import on.logistics.deliverymanagerservice.domain.entity.repository.DeliveryAssignmentRepository;
+import on.logistics.deliverymanagerservice.domain.entity.repository.DeliveryManagerRepository;
+import on.logistics.deliverymanagerservice.exception.DeliveryManagerException;
+import on.logistics.deliverymanagerservice.exception.DeliveryManagerExceptionCode;
+import on.logistics.deliverymanagerservice.presentation.dtos.response.AssignDeliveryManagerResponse;
+import on.logistics.deliverymanagerservice.presentation.dtos.response.CreateDeliveryManagerResponse;
+import on.logistics.deliverymanagerservice.presentation.dtos.response.GetDeliveryManagerResponse;
+import on.logistics.deliverymanagerservice.presentation.dtos.response.UpdateDeliveryManagerResponse;
+import on.logistics.deliverymanagerservice.presentation.dtos.response.ValidDeliveryManagerResponse;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+@RequiredArgsConstructor
+public class DeliveryManagerService {
+
+    private final DeliveryManagerRepository deliveryManagerRepository;
+    private final DeliveryAssignmentRepository deliveryAssignmentRepository;
+
+    @Transactional(readOnly = true)
+    public GetDeliveryManagerResponse getDeliveryManager(UUID id) {
+        DeliveryManager deliveryManager = findDeliveryManagerById(id);
+        // TODO: 추후 실제 유저 정보 넣어주기
+        return GetDeliveryManagerResponse.of(deliveryManager, "김배달", "kim delivery");
+    }
+
+    @Transactional
+    public CreateDeliveryManagerResponse createDeliveryManager(
+        CreateDeliveryManagerRequestDto requestDto) {
+        Integer sequence = getAssignedSequence(requestDto.hubId(), requestDto.deliveryType());
+        CreateDeliveryManagerDto createDeliveryManagerDto = CreateDeliveryManagerDto.of(requestDto,
+            sequence);
+        DeliveryManager deliveryManager = DeliveryManager.create(createDeliveryManagerDto);
+        DeliveryManager savedDeliveryManager = deliveryManagerRepository.save(deliveryManager);
+        return CreateDeliveryManagerResponse.of(savedDeliveryManager.getId());
+    }
+
+    @Transactional
+    public UpdateDeliveryManagerResponse updateDeliveryManager(
+        UpdateDeliveryManagerRequestDto requestDto) {
+        DeliveryManager deliveryManager = findDeliveryManagerById(requestDto.deliveryManagerId());
+        if (deliveryManager.getType() == requestDto.deliveryType()) {
+            throw new DeliveryManagerException(DeliveryManagerExceptionCode.SAME_DELIVERY_TYPE);
+        }
+        int sequence = getAssignedSequence(deliveryManager.getHubId(), requestDto.deliveryType());
+        deliveryManager.update(requestDto.deliveryType(), sequence);
+        // TODO: 추후 실제 유저 정보 넣어주기
+        return UpdateDeliveryManagerResponse.of(deliveryManager, "김배달", "kim delivery");
+    }
+
+    @Transactional
+    public void deleteDeliveryManager(final UUID id) {
+        DeliveryManager deliveryManager = findDeliveryManagerById(id);
+        deliveryManager.delete();
+    }
+
+    @Transactional
+    public AssignDeliveryManagerResponse assignDeliveryManager(
+        AssignDeliveryManagerRequestDto requestDto) {
+        DeliveryManager lastAssigned = deliveryManagerRepository
+            .findLastAssignedManager(requestDto.hubId(), requestDto.type())
+            .orElse(null);
+
+        DeliveryManager nextManager;
+        if (lastAssigned != null) {
+            nextManager = deliveryManagerRepository.findNextDeliveryManager(requestDto.hubId(),
+                    lastAssigned.getSequence())
+                .orElseGet(() -> findFirstByHubIdOrderBySequenceAsc(requestDto.hubId(),
+                    requestDto.type()));
+        } else {
+            nextManager = findFirstByHubIdOrderBySequenceAsc(requestDto.hubId(), requestDto.type());
+        }
+
+        nextManager.updateLastAssignedAt(LocalDateTime.now());
+        deliveryManagerRepository.save(nextManager);
+        DeliveryAssignment deliveryAssignment = DeliveryAssignment.create(
+            requestDto.hubId(),
+            nextManager.getId(),
+            requestDto.deliveryId()
+        );
+        deliveryAssignmentRepository.save(deliveryAssignment);
+        return AssignDeliveryManagerResponse.of(nextManager.getId());
+    }
+
+    @Transactional
+    public ValidDeliveryManagerResponse validDeliveryManager(
+        ValidDeliveryManagerRequestDto requestDto) {
+        boolean isExistDeliveryManager = deliveryManagerRepository.findByIdAndUserId(
+            requestDto.deliveryManager(), requestDto.userId()).isPresent();
+        return ValidDeliveryManagerResponse.of(isExistDeliveryManager);
+    }
+
+    private DeliveryManager findDeliveryManagerById(UUID id) {
+        return deliveryManagerRepository.findByIdAndIsDeleted(id, false)
+            .orElseThrow(() -> new DeliveryManagerException(
+                DeliveryManagerExceptionCode.DELIVERY_MANAGER_NOT_FOUND));
+    }
+
+    private Integer getAssignedSequence(UUID hubId, DeliveryType deliveryType) {
+        int maxSequence = deliveryManagerRepository
+            .findMaxSequenceByHubIdAndType(hubId, deliveryType);
+        return maxSequence + 1;
+    }
+
+    private DeliveryManager findFirstByHubIdOrderBySequenceAsc(UUID hubId, DeliveryType type) {
+        return deliveryManagerRepository.findFirstByHubIdOrderBySequenceAsc(hubId, type)
+            .orElseThrow(() -> new DeliveryManagerException(
+                DeliveryManagerExceptionCode.DELIVERY_MANAGER_NOT_FOUND));
+    }
+}

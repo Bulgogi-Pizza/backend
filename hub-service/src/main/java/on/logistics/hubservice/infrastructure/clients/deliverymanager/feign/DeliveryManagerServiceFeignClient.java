@@ -1,0 +1,14 @@
+package on.logistics.hubservice.infrastructure.clients.deliverymanager.feign;
+
+import feign.Response;
+import on.logistics.hubservice.infrastructure.clients.deliverymanager.feign.dtos.request.AssignDeliveryManagerRequest;
+import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+
+@FeignClient(name = "delivery-manager-service")
+public interface DeliveryManagerServiceFeignClient {
+
+    @PostMapping("/api/v1/delivery-managers/assign")
+    Response assignDeliveryManager(@RequestBody AssignDeliveryManagerRequest request);
+}

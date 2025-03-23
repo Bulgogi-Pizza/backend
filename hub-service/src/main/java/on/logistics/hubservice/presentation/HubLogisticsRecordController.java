@@ -35,8 +35,8 @@ public class HubLogisticsRecordController {
     ResponseEntity<CommonResponse<Void>> retrieval(
         @PathVariable UUID hubId,
         @RequestBody RetrievalLogisticsRequest retrievalLogisticsRequest) {
-        final var reqeustDto = RetrievalLogisticsRequestDto.of(hubId, retrievalLogisticsRequest);
-        hubLogisticsRecordService.retrieval(reqeustDto);
+        final var requestDto = RetrievalLogisticsRequestDto.of(hubId, retrievalLogisticsRequest);
+        hubLogisticsRecordService.retrieval(requestDto);
         return ResponseEntity.ok(CommonResponse.success());
     }
 }

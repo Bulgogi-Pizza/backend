@@ -2,6 +2,13 @@ spring:
   application:
     name: hub-service
 
+  data:
+    redis:
+      host: ENC(WCP+8mkysXzEV+eZ1E5A9+XQsysXwDwz)
+      port: 16371
+      username: ENC(hK+1LVIhvsPYxTR80FgHp15Fhz64VZWX)
+      password: ENC(hK+1LVIhvsPYxTR80FgHp15Fhz64VZWX)
+
   datasource:
     url: ENC(w/qxsogEfvgBRSPgkV068Bv4ys0L0DrQ9z/DSlc8/J5ExaZoFPTkoattvgqf5b6f)
     username: ENC(O0JZhVcB3wpGWRMG9nvHVgGq6/kWnWpc)

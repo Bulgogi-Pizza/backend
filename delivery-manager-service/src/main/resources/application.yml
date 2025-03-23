@@ -1,0 +1,33 @@
+spring:
+  application:
+    name: delivery-manager-service
+
+  data:
+    redis:
+      host: ENC(WCP+8mkysXzEV+eZ1E5A9+XQsysXwDwz)
+      port: 16371
+      username: ENC(hK+1LVIhvsPYxTR80FgHp15Fhz64VZWX)
+      password: ENC(hK+1LVIhvsPYxTR80FgHp15Fhz64VZWX)
+
+  datasource:
+    url: ENC(FWTpgqN/ecUdslZLRbpZsjIlvzNhK8HgBUPKlyWzTO1T13K5g02NkorMDQHYnT61hQIRIfbtjKKmaprYsm5zSw==)
+    username: ENC(QMAWl0YgoBa9M9qnDp4+wglVvgY22uoi)
+    password: ENC(VMkEagWvPmJfgIeZ6iHYHA==)
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    database: postgresql
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    prefer-ip-address: true
