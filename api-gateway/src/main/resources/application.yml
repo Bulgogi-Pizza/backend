@@ -25,7 +25,7 @@ spring:
         - id: delivery-manager-service # 배송 담당자 서비스
           uri: lb://delivery-manager-service
           predicates:
-            - Path=/api/v1/users/**
+            - Path=/api/v1/delivery-managers/**
 
         - id: order-service # 주문 서비스
           uri: lb://order-service
@@ -66,7 +66,7 @@ spring:
           uri: lb://ai-service
           predicates:
             - Path=/api/v1/ai/**
-              
+
         - id: map-service # 지도 서비스
           uri: lb://map-service
           predicates:
