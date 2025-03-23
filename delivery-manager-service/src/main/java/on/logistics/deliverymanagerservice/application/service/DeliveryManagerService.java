@@ -6,6 +6,7 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import on.logistics.deliverymanagerservice.application.dtos.AssignDeliveryManagerRequestDto;
 import on.logistics.deliverymanagerservice.application.dtos.CreateDeliveryManagerRequestDto;
+import on.logistics.deliverymanagerservice.application.dtos.SearchDeliveryManagerRequestDto;
 import on.logistics.deliverymanagerservice.application.dtos.UpdateDeliveryManagerRequestDto;
 import on.logistics.deliverymanagerservice.application.dtos.ValidDeliveryManagerRequestDto;
 import on.logistics.deliverymanagerservice.domain.entity.DeliveryAssignment;
@@ -18,6 +19,7 @@ import on.logistics.deliverymanagerservice.domain.entity.repository.DeliveryMana
 import on.logistics.deliverymanagerservice.domain.entity.repository.UserSummaryRepository;
 import on.logistics.deliverymanagerservice.exception.DeliveryManagerException;
 import on.logistics.deliverymanagerservice.exception.DeliveryManagerExceptionCode;
+import on.logistics.deliverymanagerservice.global.application.dtos.PageDto;
 import on.logistics.deliverymanagerservice.global.domain.Passport;
 import on.logistics.deliverymanagerservice.global.enums.AuthRole;
 import on.logistics.deliverymanagerservice.global.util.PassportUtil;
@@ -26,6 +28,7 @@ import on.logistics.deliverymanagerservice.infrastructure.clients.user.feign.dto
 import on.logistics.deliverymanagerservice.presentation.dtos.response.AssignDeliveryManagerResponse;
 import on.logistics.deliverymanagerservice.presentation.dtos.response.CreateDeliveryManagerResponse;
 import on.logistics.deliverymanagerservice.presentation.dtos.response.GetDeliveryManagerResponse;
+import on.logistics.deliverymanagerservice.presentation.dtos.response.SearchDeliveryManagerResponse;
 import on.logistics.deliverymanagerservice.presentation.dtos.response.UpdateDeliveryManagerResponse;
 import on.logistics.deliverymanagerservice.presentation.dtos.response.ValidDeliveryManagerResponse;
 import org.springframework.stereotype.Service;
@@ -58,6 +61,19 @@ public class DeliveryManagerService {
 
         return GetDeliveryManagerResponse.of(deliveryManager, userSummary.getNickname(),
             userSummary.getSlackEmail());
+    }
+
+    @Transactional(readOnly = true)
+    public PageDto<SearchDeliveryManagerResponse> searchDeliveryManager(
+        SearchDeliveryManagerRequestDto requestDto) {
+        Passport passport = getPassport(requestDto.passportRequest());
+        if (!(validateMaster(passport) || validateHubManager(passport))) {
+            throw new DeliveryManagerException(
+                DeliveryManagerExceptionCode.DELIVERY_MANAGER_NOT_FOUND);
+        }
+        PageDto<SearchDeliveryManagerResponse> responsePageDto = deliveryManagerRepository.searchDeliveryManager(
+            requestDto);
+        return responsePageDto;
     }
 
     @Transactional

@@ -6,9 +6,11 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import on.logistics.deliverymanagerservice.application.dtos.AssignDeliveryManagerRequestDto;
 import on.logistics.deliverymanagerservice.application.dtos.CreateDeliveryManagerRequestDto;
+import on.logistics.deliverymanagerservice.application.dtos.SearchDeliveryManagerRequestDto;
 import on.logistics.deliverymanagerservice.application.dtos.UpdateDeliveryManagerRequestDto;
 import on.logistics.deliverymanagerservice.application.dtos.ValidDeliveryManagerRequestDto;
 import on.logistics.deliverymanagerservice.application.service.DeliveryManagerService;
+import on.logistics.deliverymanagerservice.global.application.dtos.PageDto;
 import on.logistics.deliverymanagerservice.global.presentation.dtos.CommonResponse;
 import on.logistics.deliverymanagerservice.presentation.dtos.request.AssignDeliveryManagerRequest;
 import on.logistics.deliverymanagerservice.presentation.dtos.request.CreateDeliveryManagerRequest;
@@ -17,8 +19,11 @@ import on.logistics.deliverymanagerservice.presentation.dtos.request.ValidDelive
 import on.logistics.deliverymanagerservice.presentation.dtos.response.AssignDeliveryManagerResponse;
 import on.logistics.deliverymanagerservice.presentation.dtos.response.CreateDeliveryManagerResponse;
 import on.logistics.deliverymanagerservice.presentation.dtos.response.GetDeliveryManagerResponse;
+import on.logistics.deliverymanagerservice.presentation.dtos.response.SearchDeliveryManagerResponse;
 import on.logistics.deliverymanagerservice.presentation.dtos.response.UpdateDeliveryManagerResponse;
 import on.logistics.deliverymanagerservice.presentation.dtos.response.ValidDeliveryManagerResponse;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,6 +32,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -41,6 +47,19 @@ public class DeliveryManagerController {
         @PathVariable UUID id,
         HttpServletRequest passportRequest) {
         final var responseDto = deliveryManagerService.getDeliveryManager(id, passportRequest);
+        return ResponseEntity.ok(CommonResponse.success(responseDto));
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<CommonResponse<PageDto<SearchDeliveryManagerResponse>>> searchDeliveryManager(
+        @RequestParam(required = false) String keyword,
+        @RequestParam(required = false) String hubType,
+        @RequestParam(required = false) String deliveryType,
+        @PageableDefault Pageable pageable,
+        HttpServletRequest passportRequest) {
+        final var requestDto = SearchDeliveryManagerRequestDto.of(keyword, hubType, deliveryType,
+            pageable, passportRequest);
+        final var responseDto = deliveryManagerService.searchDeliveryManager(requestDto);
         return ResponseEntity.ok(CommonResponse.success(responseDto));
     }
 
