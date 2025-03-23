@@ -30,7 +30,6 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -94,7 +93,7 @@ public class DeliveryController {
         return ResponseEntity.ok(CommonResponse.success());
     }
 
-    @PatchMapping("/assignManager/{id}")
+    @PutMapping("/assignManager/{id}")
     public ResponseEntity<CommonResponse<UpdateAssignManagerResponse>> updateAssignManager(
         @PathVariable UUID id,
         @Valid @RequestBody UpdateAssignManagerRequest updateAssignManagerRequest,
@@ -105,7 +104,7 @@ public class DeliveryController {
         return ResponseEntity.ok(CommonResponse.success(response));
     }
 
-    @PatchMapping("/status/hubMoving/{id}")
+    @PutMapping("/status/hubMoving/{id}")
     public ResponseEntity<CommonResponse<UpdateDeliveryStatusHubMovingResponse>> updateDeliveryStatusHubMoving(
         @PathVariable UUID id,
         HttpServletRequest httpServletRequest) {
@@ -114,7 +113,7 @@ public class DeliveryController {
         return ResponseEntity.ok(CommonResponse.success(response));
     }
 
-    @PatchMapping("/status/hubArrive/{id}")
+    @PutMapping("/status/hubArrive/{id}")
     public ResponseEntity<CommonResponse<UpdateDeliveryStatusHubArriveResponse>> updateDeliveryStatusHubArrive(
         @PathVariable UUID id,
         HttpServletRequest httpServletRequest) {
@@ -123,7 +122,7 @@ public class DeliveryController {
         return ResponseEntity.ok(CommonResponse.success(response));
     }
 
-    @PatchMapping("/status/companyMoving/{id}")
+    @PutMapping("/status/companyMoving/{id}")
     public ResponseEntity<CommonResponse<UpdateDeliveryStatusCompanyMovingResponse>> updateDeliveryStatusCompanyMoving(
         @PathVariable UUID id,
         HttpServletRequest httpServletRequest) {
@@ -132,7 +131,7 @@ public class DeliveryController {
         return ResponseEntity.ok(CommonResponse.success(response));
     }
 
-    @PatchMapping("/status/companyArrive/{id}")
+    @PutMapping("/status/companyArrive/{id}")
     public ResponseEntity<CommonResponse<UpdateDeliveryStatusCompanyArriveResponse>> updateDeliveryStatusCompanyArrive(
         @PathVariable UUID id,
         HttpServletRequest httpServletRequest) {
@@ -141,7 +140,7 @@ public class DeliveryController {
         return ResponseEntity.ok(CommonResponse.success(response));
     }
 
-    @PatchMapping("/status/cancel/{id}")
+    @PutMapping("/status/cancel/{id}")
     public ResponseEntity<CommonResponse<UpdateDeliveryStatusCancelResponse>> updateDeliveryStatusCancel(
         @PathVariable UUID id,
         HttpServletRequest httpServletRequest) {

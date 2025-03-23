@@ -24,7 +24,6 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -92,7 +91,7 @@ public class DeliveryRecordController {
         return ResponseEntity.ok(CommonResponse.success());
     }
 
-    @PatchMapping("/status/{id}")
+    @PutMapping("/status/{id}")
     public ResponseEntity<CommonResponse<UpdateDeliveryRecordStatusResponse>> updateDeliveryRecordStatus(
         @PathVariable UUID id,
         @Valid @RequestBody UpdateDeliveryRecordStatusRequest updateStatusDeliveryRecordRequest,
