@@ -2,7 +2,6 @@ package on.logistics.hubtransitservice.application;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -54,12 +53,11 @@ public class HubTransitServiceImpl implements HubTransitService {
 
     @Override
     @Transactional
-    public CreateHubTransitResponse createHubTransit(CreateHubTransitRequestDto requestDto,
-        HttpServletRequest servletRequest) {
+    public CreateHubTransitResponse createHubTransit(CreateHubTransitRequestDto requestDto) {
         log.info("허브 이동정보 생성 요청");
 
-        var startHub = getHubInfo(requestDto.startHubId(), servletRequest);
-        var endHub = getHubInfo(requestDto.endHubId(), servletRequest);
+        var startHub = getHubInfo(requestDto.startHubId());
+        var endHub = getHubInfo(requestDto.endHubId());
 
         var route = getRouteByHubNames(startHub.hubName(), endHub.hubName());
         String routeSnapshot = route.getPathJson();
@@ -68,16 +66,14 @@ public class HubTransitServiceImpl implements HubTransitService {
         var currentHubName = startHub.hubName();
 
         String nextHubName = determineNextHubName(routeSnapshot, currentHubName);
-        UUID nextHubId = getNextHubIdByName(nextHubName, servletRequest);
+        UUID nextHubId = getNextHubIdByName(nextHubName);
         DeliveryType deliveryType = getNextDeliveryType(nextHubName);
 
         var deliveryManager = getDeliveryManager(
-            requestDto.deliveryId(), currentHubId, deliveryType, servletRequest
-        );
+            requestDto.deliveryId(), currentHubId, deliveryType);
 
         var deliveryRecord = createDeliveryRecord(
-            requestDto.deliveryId(), currentHubId, nextHubId, deliveryManager, servletRequest
-        );
+            requestDto.deliveryId(), currentHubId, nextHubId, deliveryManager);
 
         CreateHubTransitDto createDto = CreateHubTransitDto.builder()
             .deliveryId(requestDto.deliveryId())
@@ -100,8 +96,7 @@ public class HubTransitServiceImpl implements HubTransitService {
     @Override
     @Transactional
     public void processInboundHubTransit(
-        InboundHubTransitRequestDto requestDto,
-        HttpServletRequest servletRequest
+        InboundHubTransitRequestDto requestDto
     ) {
         log.info("허브 입고 요청, deliveryId: {}, currentHubId: {}", requestDto.deliveryId(),
             requestDto.currentHubId());
@@ -120,19 +115,17 @@ public class HubTransitServiceImpl implements HubTransitService {
             routeSnapshot,
             currentTransit.getNextHubName().getValue()
         );
-        UUID newNextHubId = getNextHubIdByName(newNextHubName, servletRequest);
+        UUID newNextHubId = getNextHubIdByName(newNextHubName);
         DeliveryType newNextDeliveryType = getNextDeliveryType(newNextHubName);
 
         UUID newCurrentHubId = currentTransit.getNextHubId();
         String newCurrentHubName = currentTransit.getNextHubName().getValue();
 
         var deliveryManager = getDeliveryManager(
-            requestDto.deliveryId(), newCurrentHubId, newNextDeliveryType, servletRequest
-        );
+            requestDto.deliveryId(), newCurrentHubId, newNextDeliveryType);
 
         var deliveryRecord = createDeliveryRecord(
-            requestDto.deliveryId(), newCurrentHubId, newNextHubId, deliveryManager, servletRequest
-        );
+            requestDto.deliveryId(), newCurrentHubId, newNextHubId, deliveryManager);
 
         // TODO: 기존 배송 기록 상태 업데이트 추가 필요
         // 7. 기존 transit record의 배송 기록 상태 업데이트: PATCH "/api/v1/delivery/record/status/{id}" with status "HUB_ARRIVE"
@@ -140,7 +133,7 @@ public class HubTransitServiceImpl implements HubTransitService {
         var updateDeliveryRecordRequest = UpdateDeliveryStatusRequest.builder()
             .deliveryRecordStatus("HUB_ARRIVE").build();
         deliveryServiceClient.updateDeliveryRecordStatus(
-            currentTransit.getDeliveryRecordId(), updateDeliveryRecordRequest, servletRequest);
+            currentTransit.getDeliveryRecordId(), updateDeliveryRecordRequest);
 
         CreateHubTransitDto nextTransitDto = CreateHubTransitDto.builder()
             .deliveryId(requestDto.deliveryId())
@@ -205,8 +198,8 @@ public class HubTransitServiceImpl implements HubTransitService {
                 () -> new HubTransitException(HubTransitExceptionCode.HUB_TRANSIT_NOT_FOUND));
     }
 
-    private GetHubResponse getHubInfo(UUID hubId, HttpServletRequest servletRequest) {
-        var hubResponse = hubServiceClient.getHubById(hubId, servletRequest);
+    private GetHubResponse getHubInfo(UUID hubId) {
+        var hubResponse = hubServiceClient.getHubById(hubId);
         if (hubResponse == null) {
             throw new HubTransitException(HubTransitExceptionCode.HUB_NOT_FOUND);
         }
@@ -236,11 +229,11 @@ public class HubTransitServiceImpl implements HubTransitService {
         }
     }
 
-    private UUID getNextHubIdByName(String nextHubName, HttpServletRequest servletRequest) {
+    private UUID getNextHubIdByName(String nextHubName) {
         if ("END_OF_HUB".equals(nextHubName)) {
             return UUID.fromString("00000000-0000-0000-0000-000000000000");
         }
-        var hubResponse = hubServiceClient.getHubByName(nextHubName, servletRequest);
+        var hubResponse = hubServiceClient.getHubByName(nextHubName);
         if (hubResponse == null) {
             throw new HubTransitException(HubTransitExceptionCode.HUB_NOT_FOUND);
         }
@@ -253,8 +246,7 @@ public class HubTransitServiceImpl implements HubTransitService {
     }
 
     private AssignDeliveryManagerResponse getDeliveryManager(
-        UUID requestDto, UUID currentHubId, DeliveryType deliveryType,
-        HttpServletRequest servletRequest
+        UUID requestDto, UUID currentHubId, DeliveryType deliveryType
     ) {
         return deliveryManagerClient.assignDeliveryManager(
             AssignDeliveryManagerRequest.builder()
@@ -262,14 +254,12 @@ public class HubTransitServiceImpl implements HubTransitService {
                 .hubId(currentHubId)
                 .deliveryType(deliveryType)
                 .build()
-            , servletRequest
         );
     }
 
     private CreateDeliveryRecordResponse createDeliveryRecord(
         UUID requestDto, UUID currentHubId, UUID nextHubId,
-        AssignDeliveryManagerResponse deliveryManager,
-        HttpServletRequest servletRequest
+        AssignDeliveryManagerResponse deliveryManager
     ) {
         return deliveryServiceClient.createDeliveryRecord(
             CreateDeliveryRecordRequest.builder()
@@ -278,7 +268,6 @@ public class HubTransitServiceImpl implements HubTransitService {
                 .deliveryRecordEndHubId(nextHubId)
                 .userId(deliveryManager.userId())
                 .build()
-            , servletRequest
         );
     }
 

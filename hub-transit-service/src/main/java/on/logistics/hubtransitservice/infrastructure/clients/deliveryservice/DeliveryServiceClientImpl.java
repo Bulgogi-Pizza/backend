@@ -1,7 +1,6 @@
 package on.logistics.hubtransitservice.infrastructure.clients.deliveryservice;
 
 import feign.Response;
-import jakarta.servlet.http.HttpServletRequest;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,28 +20,21 @@ public class DeliveryServiceClientImpl implements DeliveryServiceClient {
     private final DeliveryServiceFeignClient deliveryServiceFeignClient;
 
     @Override
-    public CreateDeliveryRecordResponse createDeliveryRecord(
-        CreateDeliveryRecordRequest request,
-        HttpServletRequest httpServletRequest
+    public CreateDeliveryRecordResponse createDeliveryRecord(CreateDeliveryRecordRequest request
     ) {
         log.info("배송 기록 생성 요청 전송");
-        Response response = deliveryServiceFeignClient.createDeliveryRecord(
-            request,
-            httpServletRequest
-        );
+        Response response = deliveryServiceFeignClient.createDeliveryRecord(request);
         log.info("배송 기록 생성 성공");
         return FeignClientResponseUtils.getBody(response, CreateDeliveryRecordResponse.class);
     }
 
     @Override
     public UpdateDeliveryStatusResponse updateDeliveryRecordStatus(
-        UUID id, UpdateDeliveryStatusRequest request,
-        HttpServletRequest httpServletRequest
+        UUID id,
+        UpdateDeliveryStatusRequest request
     ) {
         log.info("배송 기록 상태 수정 요청 전송");
-        Response response = deliveryServiceFeignClient.updateDeliveryRecordStatus(
-            id, request, httpServletRequest
-        );
+        Response response = deliveryServiceFeignClient.updateDeliveryRecordStatus(id, request);
         log.info("배송 기록 상태 수정 성공");
         return FeignClientResponseUtils.getBody(response, UpdateDeliveryStatusResponse.class);
     }

@@ -3,7 +3,6 @@ package on.logistics.hubtransitservice.infrastructure.clients.hub;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import feign.Response;
-import jakarta.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.UUID;
@@ -27,13 +26,11 @@ public class HubServiceClientImpl implements HubServiceClient {
     private final ObjectMapper objectMapper;
 
     @Override
-    public GetHubResponse getHubById(
-        UUID hubId, HttpServletRequest httpServletRequest
-    ) {
+    public GetHubResponse getHubById(UUID hubId) {
         log.info("허브 조회 요청, hubId: {}", hubId);
         Response response;
         try {
-            response = hubServiceFeignClient.getHubById(hubId, httpServletRequest);
+            response = hubServiceFeignClient.getHubById(hubId);
         } catch (Exception e) {
             throw new ExternalApiException(ExternalApiExceptionCode.HUB_NOT_FOUND);
         }
@@ -42,9 +39,9 @@ public class HubServiceClientImpl implements HubServiceClient {
     }
 
     @Override
-    public GetHubResponse getHubByName(String hubName, HttpServletRequest httpServletRequest) {
+    public GetHubResponse getHubByName(String hubName) {
         log.info("허브 검색 요청, hubName: {}", hubName);
-        Response response = hubServiceFeignClient.searchHubs(hubName, httpServletRequest);
+        Response response = hubServiceFeignClient.searchHubs(hubName);
         try (InputStream inputStream = response.body().asInputStream()) {
             CommonResponse<PageDto<GetHubResponse>> commonResponse = objectMapper.readValue(
                 inputStream, new TypeReference<>() {

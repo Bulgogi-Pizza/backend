@@ -1,6 +1,5 @@
 package on.logistics.hubtransitservice.application;
 
-import jakarta.servlet.http.HttpServletRequest;
 import java.util.UUID;
 import on.logistics.hubtransitservice.application.dtos.request.CreateHubTransitRequestDto;
 import on.logistics.hubtransitservice.application.dtos.request.GetNextHubRequestDto;
@@ -16,11 +15,9 @@ import org.springframework.data.domain.Pageable;
 
 public interface HubTransitService {
 
-    CreateHubTransitResponse createHubTransit(CreateHubTransitRequestDto requestDto,
-        HttpServletRequest httpServletRequest);
+    CreateHubTransitResponse createHubTransit(CreateHubTransitRequestDto requestDto);
 
-    void processInboundHubTransit(InboundHubTransitRequestDto requestDto,
-        HttpServletRequest httpServletRequest);
+    void processInboundHubTransit(InboundHubTransitRequestDto requestDto);
 
     GetHubTransitResponse getHubTransit(UUID transitId);
 

@@ -1,7 +1,6 @@
 package on.logistics.hubtransitservice.infrastructure.clients.deliveryservice.feign;
 
 import feign.Response;
-import jakarta.servlet.http.HttpServletRequest;
 import java.util.UUID;
 import on.logistics.hubtransitservice.infrastructure.clients.deliveryservice.feign.dtos.CreateDeliveryRecordRequest;
 import on.logistics.hubtransitservice.infrastructure.clients.deliveryservice.feign.dtos.UpdateDeliveryStatusRequest;
@@ -15,14 +14,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 public interface DeliveryServiceFeignClient {
 
     @PostMapping("/api/v1/delivery/record")
-    Response createDeliveryRecord(@RequestBody CreateDeliveryRecordRequest request,
-        HttpServletRequest httpServletRequest);
+    Response createDeliveryRecord(@RequestBody CreateDeliveryRecordRequest request);
 
     @PutMapping("/api/v1/delivery/record/status/{id}")
     Response updateDeliveryRecordStatus(
         @PathVariable("id") UUID id,
-        @RequestBody UpdateDeliveryStatusRequest request,
-        HttpServletRequest httpServletRequest
+        @RequestBody UpdateDeliveryStatusRequest request
     );
 
 }

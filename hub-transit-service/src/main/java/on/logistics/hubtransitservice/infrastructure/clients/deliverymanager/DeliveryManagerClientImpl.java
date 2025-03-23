@@ -1,7 +1,6 @@
 package on.logistics.hubtransitservice.infrastructure.clients.deliverymanager;
 
 import feign.Response;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import on.logistics.hubtransitservice.global.utils.FeignClientResponseUtils;
@@ -19,14 +18,10 @@ public class DeliveryManagerClientImpl implements DeliveryManagerClient {
 
     @Override
     public AssignDeliveryManagerResponse assignDeliveryManager(
-        AssignDeliveryManagerRequest request,
-        HttpServletRequest servletRequest
+        AssignDeliveryManagerRequest request
     ) {
         log.info("배송 담당자 지정 요청, deliveryId: {}", request.deliveryId());
-        Response response = deliveryManagerFeignClient.assignDeliveryManager(
-            request,
-            servletRequest
-        );
+        Response response = deliveryManagerFeignClient.assignDeliveryManager(request);
         log.info("배송 담당자 지정 성공");
         return FeignClientResponseUtils.getBody(response, AssignDeliveryManagerResponse.class);
     }

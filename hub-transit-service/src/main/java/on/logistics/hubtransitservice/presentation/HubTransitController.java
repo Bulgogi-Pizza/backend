@@ -53,7 +53,7 @@ public class HubTransitController {
             throw new HubTransitException(HubTransitExceptionCode.HAS_NO_AUTHORITY);
         }
         final var requestDto = CreateHubTransitRequest.from(request);
-        final var responseDto = hubTransitService.createHubTransit(requestDto, servletRequest);
+        final var responseDto = hubTransitService.createHubTransit(requestDto);
         return ResponseEntity.ok(CommonResponse.success(responseDto));
     }
 
@@ -67,7 +67,7 @@ public class HubTransitController {
             throw new HubTransitException(HubTransitExceptionCode.HAS_NO_AUTHORITY);
         }
         final var requestDto = InboundHubTransitRequest.from(request);
-        hubTransitService.processInboundHubTransit(requestDto, servletRequest);
+        hubTransitService.processInboundHubTransit(requestDto);
         return ResponseEntity.ok(CommonResponse.success());
     }
 
