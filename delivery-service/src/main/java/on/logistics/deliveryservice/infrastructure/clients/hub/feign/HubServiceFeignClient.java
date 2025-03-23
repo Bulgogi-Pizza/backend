@@ -2,6 +2,7 @@ package on.logistics.deliveryservice.infrastructure.clients.hub.feign;
 
 import feign.Response;
 import java.util.UUID;
+import on.logistics.deliveryservice.global.configuration.FeignClientConfig;
 import on.logistics.deliveryservice.infrastructure.clients.hub.feign.dtos.HubManagerBooleanRequest;
 import on.logistics.deliveryservice.infrastructure.clients.hub.feign.dtos.HubType;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -11,7 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
-@FeignClient(name = "hub-service")
+@FeignClient(name = "hub-service", configuration = FeignClientConfig.class)
 public interface HubServiceFeignClient {
 
     @GetMapping("/api/v1/hubs/{hubId}")
