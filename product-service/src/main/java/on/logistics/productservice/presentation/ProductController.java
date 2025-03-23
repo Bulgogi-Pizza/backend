@@ -27,7 +27,6 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -84,7 +83,7 @@ public class ProductController {
         return ResponseEntity.ok(CommonResponse.success());
     }
 
-    @PatchMapping("/reduce/quantity/{id}")
+    @PutMapping("/reduce/quantity/{id}")
     public ResponseEntity<CommonResponse<UpdateReduceProductQuantityResponse>> updateReduceProductQuantity(
         @PathVariable UUID id,
         @Valid @RequestBody UpdateReduceProductQuantityRequest updateReduceProductQuantityRequest,
@@ -96,7 +95,7 @@ public class ProductController {
         return ResponseEntity.ok(CommonResponse.success(response));
     }
 
-    @PatchMapping("/increase/quantity/{id}")
+    @PutMapping("/increase/quantity/{id}")
     public ResponseEntity<CommonResponse<UpdateIncreaseProductQuantityResponse>> updateIncreaseProductQuantity(
         @PathVariable UUID id,
         @Valid @RequestBody UpdateIncreaseProductQuantityRequest updateIncreaseProductQuantityRequest,
