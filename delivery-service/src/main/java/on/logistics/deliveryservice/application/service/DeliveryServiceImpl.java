@@ -337,7 +337,7 @@ public class DeliveryServiceImpl implements DeliveryService {
                 delivery.getStartHubId());
             GetHubManagerBooleanResponse endHubManager = getHubManagerBooleanResponse(passport,
                 delivery.getEndHubId());
-            if (Boolean.FALSE.equals(startHubManager.isExist()) || Boolean.FALSE.equals(
+            if (Boolean.FALSE.equals(startHubManager.isExist()) && Boolean.FALSE.equals(
                 endHubManager.isExist())) {
                 throw new DeliveryException(DeliveryExceptionCode.DELIVERY_ACCESS_DENIED);
             }

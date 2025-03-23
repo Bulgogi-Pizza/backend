@@ -190,7 +190,7 @@ public class DeliveryRecordServiceImpl implements DeliveryRecordService {
                 deliveryRecord.getStartHubId());
             GetHubManagerBooleanResponse endHubManager = getHubManagerBooleanResponse(passport,
                 deliveryRecord.getEndHubId());
-            if (Boolean.FALSE.equals(startHubManager.isExist()) || Boolean.FALSE.equals(
+            if (Boolean.FALSE.equals(startHubManager.isExist()) && Boolean.FALSE.equals(
                 endHubManager.isExist())) {
                 throw new DeliveryException(DeliveryExceptionCode.DELIVERY_ACCESS_DENIED);
             }
