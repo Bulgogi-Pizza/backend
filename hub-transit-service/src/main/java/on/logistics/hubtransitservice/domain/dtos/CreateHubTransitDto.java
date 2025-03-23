@@ -1,30 +1,20 @@
 package on.logistics.hubtransitservice.domain.dtos;
 
 import java.util.UUID;
-import on.logistics.hubtransitservice.application.dtos.create.CreateHubTransitRequestDto;
+import lombok.Builder;
+import on.logistics.hubtransitservice.domain.enums.DeliveryType;
 
+@Builder
 public record CreateHubTransitDto(
     UUID deliveryId,
-    UUID startHubId,
-    String startHubName,
-    UUID endHubId,
-    String endHubName,
+    UUID deliveryRecordId,
+    UUID currentHubId,
+    String currentHubName,
     UUID nextHubId,
     String nextHubName,
-    String nextDestType
+    DeliveryType nextDeliveryType,
+    UUID userId,
+    String routeSnapshot
 ) {
-
-    public static CreateHubTransitDto of(CreateHubTransitRequestDto dto) {
-        return new CreateHubTransitDto(
-            dto.deliveryId(),
-            dto.startHubId(),
-            dto.startHubName(),
-            dto.endHubId(),
-            dto.endHubName(),
-            dto.nextHubId(),
-            dto.nextHubName(),
-            dto.nextDestType()
-        );
-    }
 
 }
