@@ -92,7 +92,7 @@ public class DeliveryManagerService {
             requestDto.deliveryId()
         );
         deliveryAssignmentRepository.save(deliveryAssignment);
-        return AssignDeliveryManagerResponse.of(nextManager.getId());
+        return AssignDeliveryManagerResponse.of(nextManager.getUserId());
     }
 
     @Transactional
