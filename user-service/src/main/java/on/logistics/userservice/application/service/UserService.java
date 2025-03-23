@@ -17,17 +17,23 @@ import on.logistics.userservice.presentation.dtos.UpdateUserResponse;
 
 public interface UserService {
 
-    CreateUserResponse createUser(CreateUserDto requestDto);
+    CreateUserResponse createUser(CreateUserDto requestDto, HttpServletRequest servletRequest);
 
-    FindByIdUserResponse findUserById(UUID id);
+    FindByIdUserResponse findUserById(UUID id, HttpServletRequest servletRequest);
 
     FindMyUserResponse findMyUser(HttpServletRequest request);
 
-    PageDto<SearchUserResponse> searchUser(SearchUserDto requestDto);
+    PageDto<SearchUserResponse> searchUser(SearchUserDto requestDto,
+        HttpServletRequest servletRequest);
 
-    UpdateUserResponse updateUser(HttpServletRequest request, UpdateUserDto requestDto);
+    UpdateUserResponse updateUser(UpdateUserDto requestDto, HttpServletRequest request);
 
     void deleteUser(HttpServletRequest request, HttpServletResponse response);
 
-    UpdateUserAdminResponse updateUserAdmin(UpdateUserAdminDto dto);
+    UpdateUserAdminResponse updateUserAdmin(UpdateUserAdminDto dto,
+        HttpServletRequest servletRequest);
+
+    FindByIdUserResponse findUserByIdInternal(UUID uuid, HttpServletRequest request);
+
+    void withdrawUserByUserId(UUID id, HttpServletRequest request);
 }

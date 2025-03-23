@@ -74,6 +74,8 @@ public class SecurityConfig {
                     "/", "/api/v1/auth/signup", "/api/v1/auth/login"
                 )
                 .permitAll()
+                .requestMatchers("/actuator/prometheus", "/actuator/health", "/actuator/info")
+                .permitAll()
                 .anyRequest()
                 .authenticated()
             )

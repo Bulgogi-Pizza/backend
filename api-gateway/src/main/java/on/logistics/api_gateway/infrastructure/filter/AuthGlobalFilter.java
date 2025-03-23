@@ -1,8 +1,6 @@
 package on.logistics.api_gateway.infrastructure.filter;
 
 import lombok.extern.slf4j.Slf4j;
-import on.logistics.api_gateway.exception.ApiGatewayException;
-import on.logistics.api_gateway.exception.ApiGatewayExceptionCode;
 import on.logistics.api_gateway.global.presentation.dtos.CommonResponse;
 import on.logistics.api_gateway.presentation.dtos.AuthValidateResponse;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,14 +19,15 @@ import reactor.core.publisher.Mono;
 @Slf4j(topic = "AuthGlobalFilter")
 public class AuthGlobalFilter implements GlobalFilter, Ordered {
 
+    private final WebClient webClient;
     @Value("${spring.cloud.gateway.auth.login.endpoint}")
     private String loginUrl;
     @Value("${spring.cloud.gateway.auth.signup.endpoint}")
     private String signupUrl;
     @Value("${spring.cloud.gateway.auth.validate.endpoint}")
     private String validateEndpoint;
-
-    private final WebClient webClient;
+    @Value("${spring.cloud.gateway.auth.secret.key}")
+    private String secretKey;
 
     public AuthGlobalFilter(
         WebClient.Builder webClientBuilder,
@@ -46,6 +45,17 @@ public class AuthGlobalFilter implements GlobalFilter, Ordered {
     ) {
         log.info("Auth Global Filter");
         String path = exchange.getRequest().getURI().getPath();
+        String ipAddress = exchange.getRequest().getRemoteAddress().getAddress().getHostAddress();
+
+        log.info("Auth Requested Ip address: {}, {}", ipAddress, path);
+
+        log.info("Request Data, {}", exchange.getApplicationContext());
+        log.info("Request Data, {}", exchange.getAttributes());
+        log.info("Request Data, {}", exchange.getRequest().getHeaders());
+        log.info("Request Data, {}", exchange.getRequest().getQueryParams());
+        log.info("Request Data, {}", exchange.getRequest().getBody());
+        log.info("Request Data, {}", exchange.getResponse());
+
 
         if (path.equals(loginUrl) || path.equals(signupUrl)) {
             return chain.filter(exchange);
@@ -69,9 +79,11 @@ public class AuthGlobalFilter implements GlobalFilter, Ordered {
         return webClient.get()
             .uri(validateEndpoint)
             .header("Authorization", accessToken)
+            .header("X-Internal-Secret", secretKey)
             .cookie("refreshToken", refreshToken)
             .retrieve()
-            .bodyToMono(new ParameterizedTypeReference<CommonResponse<AuthValidateResponse>>() {})
+            .bodyToMono(new ParameterizedTypeReference<CommonResponse<AuthValidateResponse>>() {
+            })
             .flatMap(commonResponse -> {
                 if (commonResponse.data() == null) {
                     log.error("Common Response Data Is Null");
@@ -89,6 +101,7 @@ public class AuthGlobalFilter implements GlobalFilter, Ordered {
                 return chain.filter(exchange.mutate().request(mutatedRequest).build());
             })
             .onErrorResume(ex -> {
+                log.error(ex.getMessage());
                 log.error("Request URL : {} ", exchange.getRequest().getURI());
                 log.error("WebClientInfo : {} ", validateEndpoint);
                 exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);

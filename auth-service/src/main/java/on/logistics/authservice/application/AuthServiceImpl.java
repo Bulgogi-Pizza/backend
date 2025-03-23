@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import on.logistics.authservice.application.dtos.AuthLoginRequestDto;
 import on.logistics.authservice.application.dtos.AuthSignupRequestDto;
 import on.logistics.authservice.application.dtos.AuthSignupResponseDto;
 import on.logistics.authservice.domain.entity.Auth;
@@ -19,6 +20,7 @@ import on.logistics.authservice.infrastructure.feign.dtos.UserCreateResponse;
 import on.logistics.authservice.infrastructure.security.cookie.CookieUtil;
 import on.logistics.authservice.infrastructure.security.jwt.JwtUtil;
 import on.logistics.authservice.infrastructure.security.passport.Passport;
+import on.logistics.authservice.presentation.dtos.AuthLoginResponse;
 import on.logistics.authservice.presentation.dtos.AuthReissueTokensResponse;
 import on.logistics.authservice.presentation.dtos.AuthSignupResponse;
 import on.logistics.authservice.presentation.dtos.AuthValidateResponse;
@@ -117,6 +119,7 @@ public class AuthServiceImpl implements AuthService {
         passportService.deletePassportByRefreshToken(refreshToken);
     }
 
+    @Override
     public void deleteAuthByPassportId(
         HttpServletRequest request
     ) {
@@ -132,11 +135,59 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public void deleteAuthByUserId(
-        String userId
+        String userId,
+        HttpServletRequest request
     ) {
+        String passportId = request.getHeader("X-Passport-Id");
+        Passport passport = passportService.getPassportByPassportId(passportId);
+        AuthRole role = passport.getRole();
+        if (role.equals(AuthRole.MASTER)){
+            throw new AuthException(AuthExceptionCode.AUTH_IS_NOT_ALLOWED);
+        }
         Auth auth = authRepository.findByUserId(UUID.fromString(userId)).orElseThrow(
             () -> new AuthException(AuthExceptionCode.AUTH_IS_NOT_FOUND)
         );
+
+        authRepository.delete(auth);
+    }
+
+    @Override
+    public void withdrawUserByPassport(
+        HttpServletRequest request
+    ) {
+        String passportId = request.getHeader("X-Passport-Id");
+        Passport passport = passportService.getPassportByPassportId(passportId);
+        UUID userId = passport.getUserId();
+        Auth auth = authRepository.findByUserId(userId).orElseThrow(
+            () -> new AuthException(AuthExceptionCode.AUTH_IS_NOT_FOUND)
+        );
+
+        log.info("withdrawUserByPassport, {}", userId);
+        userClientService.withdrawUserByUserId(passport.getUserId());
+
+        log.info("withdrawPassport, {}", userId);
+        passportService.deletePassportByPassportId(passportId);
+
+        authRepository.delete(auth);
+
+    }
+
+    @Override
+    public void withdrawUserByUserId(
+        String userId,
+        HttpServletRequest request
+    ) {
+        String passportId = request.getHeader("X-Passport-Id");
+        Passport passport = passportService.getPassportByPassportId(passportId);
+        Auth auth = authRepository.findByUserId(UUID.fromString(userId)).orElseThrow(
+            () -> new AuthException(AuthExceptionCode.AUTH_IS_NOT_FOUND)
+        );
+
+        log.info("withdrawUserByUserId, {}", userId);
+        userClientService.withdrawUserByUserId(passport.getUserId());
+
+        log.info("withdrawPassport, {}", userId);
+        passportService.deletePassportByPassportId(passportId);
 
         authRepository.delete(auth);
     }

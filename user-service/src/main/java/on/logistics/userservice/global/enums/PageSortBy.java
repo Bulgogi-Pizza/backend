@@ -5,8 +5,8 @@ import lombok.Getter;
 
 @Getter
 public enum PageSortBy {
-    CREATED_AT("createdAt"),
-    UPDATED_AT("updatedAt"),
+    CREATED_AT("created_at"),
+    UPDATED_AT("updated_at"),
     ID("id");
 
     private final String sortBy;
@@ -15,7 +15,7 @@ public enum PageSortBy {
         this.sortBy = sortBy;
     }
 
-    public static boolean isValidSortBy(String sortBy) {
+    public static boolean isValid(String sortBy) {
         return Arrays.stream(values())
             .anyMatch(e -> e.getSortBy().equals(sortBy));
     }

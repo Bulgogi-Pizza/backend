@@ -9,9 +9,13 @@ import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
 import on.logistics.authservice.application.PassportService;
 import on.logistics.authservice.enums.AuthRole;
+import on.logistics.authservice.exception.AuthException;
+import on.logistics.authservice.exception.AuthExceptionCode;
+import on.logistics.authservice.global.presentation.dtos.CommonResponse;
 import on.logistics.authservice.infrastructure.security.cookie.CookieUtil;
 import on.logistics.authservice.infrastructure.security.details.AuthDetailsImpl;
 import on.logistics.authservice.presentation.dtos.AuthLoginRequest;
+import on.logistics.authservice.presentation.dtos.AuthLoginResponse;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -63,6 +67,8 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                 );
         } catch (IOException e) {
             throw new RuntimeException(e);
+        } catch (AuthenticationException e) {
+            throw new AuthException(AuthExceptionCode.AUTH_IS_NOT_FOUND);
         }
     }
 
@@ -72,7 +78,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         HttpServletResponse response,
         FilterChain chain,
         Authentication auth
-    ) {
+    ) throws IOException {
         log.info("successfulAuthentication, {}", auth.getName());
 
         AuthDetailsImpl authDetails = (AuthDetailsImpl) auth.getPrincipal();
@@ -87,6 +93,13 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
         passportService.createAndStorePassport(jwtUtil.getTokenWithoutBearer(refreshToken),
             authDetails.getUserId());
+
+        AuthLoginResponse loginResponse = new AuthLoginResponse(username);
+        CommonResponse<AuthLoginResponse> commonResponse = CommonResponse.success(loginResponse);
+        response.setStatus(HttpServletResponse.SC_OK);
+        response.setContentType("application/json");
+
+        new ObjectMapper().writeValue(response.getWriter(), commonResponse);
     }
 
     @Override
@@ -94,9 +107,14 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         HttpServletRequest request,
         HttpServletResponse response,
         AuthenticationException failed
-    ) {
-
+    ) throws IOException {
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        response.setContentType("application/json;charset=UTF-8");
+
+        CommonResponse<?> errorResponse =
+            CommonResponse.exception("아이디 또는 비밀번호가 일치하지 않습니다.");
+
+        new ObjectMapper().writeValue(response.getWriter(), errorResponse);
     }
 
 }

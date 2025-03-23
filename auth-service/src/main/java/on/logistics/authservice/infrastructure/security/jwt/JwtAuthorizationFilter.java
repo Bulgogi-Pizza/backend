@@ -15,6 +15,7 @@ import on.logistics.authservice.exception.JwtExceptionCode;
 import on.logistics.authservice.infrastructure.security.cookie.CookieUtil;
 import on.logistics.authservice.infrastructure.security.details.AuthDetails;
 import on.logistics.authservice.infrastructure.security.details.AuthDetailsService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -25,6 +26,8 @@ import org.springframework.web.filter.OncePerRequestFilter;
 @Slf4j(topic = "JwtAuthorizationFilter")
 public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
+    @Value("${spring.cloud.gateway.auth.secret.key}")
+    private String secretKey;
     private final JwtUtil jwtUtil;
     private final CookieUtil cookieUtil;
     private final AuthDetailsService authDetailsService;
@@ -47,10 +50,13 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getServletPath();
         String method = request.getMethod();
-        log.info("request path and method: {}, {}", path, method);
+        String ipAddress = request.getRemoteAddr();
+        log.info("request path and method: {}, {}, {}", path, method, ipAddress);
         return path.equals("/api/v1/auth/signup") ||
             path.equals("/api/v1/auth/login") ||
-            (path.equals("/api/v1/auth/my") && method.equals("DELETE"));
+            (path.equals("/api/v1/auth/my") && method.equals("DELETE")) ||
+            path.equals("/actuator/prometheus") ||
+            path.startsWith("/internal");
     }
 
     @Override
@@ -59,6 +65,20 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         HttpServletResponse response,
         FilterChain filterChain
     ) throws ServletException, IOException {
+        log.info(request.getRequestURI());
+        log.info(request.getQueryString());
+        log.info("request uri: {}", request.getRequestURI());
+        log.info("request method: {}", request.getMethod());
+        log.info("request headers: {}", request.getHeaderNames());
+        log.info("request queryString: {}", request.getQueryString());
+
+        if (request.getRequestURI().equals("/api/v1/auth/validate")) {
+            String headerSecretKey = request.getHeader("X-Internal-Secret");
+            if (secretKey.equals(headerSecretKey)) {
+                filterChain.doFilter(request, response);
+            }
+        }
+
         log.info("doFilterInternal");
         String accessToken = jwtUtil.getAccessTokenFromHeader(request);
         String refreshToken = cookieUtil.getRefreshTokenFromCookie(request);
