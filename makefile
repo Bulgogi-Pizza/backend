@@ -4,11 +4,15 @@
 infra:
 	docker-compose up --build -d redis eureka-server-db eureka-server
 
-# Step 2: 핵심 서비스 빌드 및 실행
+# Step 2: 모니터링 서비스 실행
+monitor:
+	docker-compose up --build -d zipkin grafana prometheus
+
+# Step 3: 핵심 서비스 빌드 및 실행
 core:
 	docker-compose up --build -d auth-service user-service api-gateway
 
-# Step 3: 나머지 서비스 순차 실행
+# Step 4: 나머지 서비스 순차 실행
 rest:
 	docker-compose up --build -d company-service order-service hub-transit-service
 	docker-compose up --build -d delivery-service hub-service map-service

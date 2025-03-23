@@ -3,10 +3,13 @@
 echo "Step 1: Starting infrastructure containers..."
 make infra
 
-echo "Step 2: Starting core services..."
+echo "Step 2: Starting monitoring services..."
+make monitor
+
+echo "Step 3: Starting core services..."
 make core
 
-echo "Step 3: Starting remaining services..."
+echo "Step 4: Starting remaining services..."
 make rest
 
 echo "All services are up and running!"

@@ -14,69 +14,128 @@ spring:
         base:
           url: http://localhost:18081
         validate:
-          endpoint: /api/v1/auth/validate
+          endpoint: /gateway/v1/auth/validate
+        secret:
+          key: ENC(HI4A/uV5RCH/wOUjxaZDApv6DlH9ANhHYK87ojAyzTI=)
       routes:
         - id: auth-service # 인증 서비스
           uri: lb://auth-service
           predicates:
-            - Path=/api/v1/auth/**
+            - Path=/api/v1/auth/**, /springdoc/openapi3-auth-service.json
 
         - id: user-service # 사용자 서비스
           uri: lb://user-service
           predicates:
-            - Path=/api/v1/users/**
+            - Path=/api/v1/users/**, /springdoc/openapi3-user-service.json
 
         - id: delivery-manager-service # 배송 담당자 서비스
           uri: lb://delivery-manager-service
           predicates:
-            - Path=/api/v1/users/**
+            - Path=/api/v1/users/**, /springd #oc/openapi3-delivery-manager-service.json
 
         - id: order-service # 주문 서비스
           uri: lb://order-service
           predicates:
-            - Path=/api/v1/orders/**
+            - Path=/api/v1/orders/** #, /springdoc/openapi3-order-service.json
 
         - id: delivery-service # 배송 서비스
           uri: lb://delivery-service
           predicates:
-            - Path=/api/v1/delivery/**
+            - Path=/api/v1/delivery/** #, /springdoc/openapi3-delivery-service.json
 
         - id: company-service # 업체 서비스
           uri: lb://company-service
           predicates:
-            - Path=/api/v1/company/**
+            - Path=/api/v1/company/** #, /springdoc/openapi3-company-service.json
 
         - id: product-service # 상품 서비스
           uri: lb://product-service
           predicates:
-            - Path=/api/v1/product/**
+            - Path=/api/v1/product/** #, /springdoc/openapi3-product-service.json
 
         - id: hub-service # 허브 서비스
           uri: lb://hub-service
           predicates:
-            - Path=/api/v1/hubs/**
+            - Path=/api/v1/hubs/** #, /springdoc/openapi3-hub-service.json
 
         - id: hub-transit-route-service # 허브 간 이동 정보 서비스
           uri: lb://hub-transit-route-service
           predicates:
-            - Path=/api/v1/hub-transit/route/**
+            - Path=/api/v1/hub-transit/route/** #, /springdoc/openapi3-hub-transit-route-service.json
 
         - id: slack-service # 슬랙 서비스
           uri: lb://slack-service
           predicates:
-            - Path=/api/v1/slack/**
+            - Path=/api/v1/slack/** #, /springdoc/openapi3-slack-service.json
 
         - id: ai-service # AI 서비스
           uri: lb://ai-service
           predicates:
-            - Path=/api/v1/ai/**
-              
+            - Path=/api/v1/ai/** #, /springdoc/openapi3-ai-service.json
+
         - id: map-service # 지도 서비스
           uri: lb://map-service
           predicates:
-            - Path=/api/v1/maps/**
+            - Path=/api/v1/maps/** #, /springdoc/openapi3-map-service.json
+springdoc:
+  swagger-ui:
+    urls[0]:
+      name: auth-service
+      url: /springdoc/openapi3-auth-service.json
+    urls[1]:
+      name: user-service
+      url: /springdoc/openapi3-user-service.json
+      #    urls[2]:
+      #      name: delivery-manager-service
+      #      url: /springdoc/openapi3-delivery-manager-service.json
+      #    urls[3]:
+      #      name: order-service
+      #      url: /springdoc/openapi3-order-service.json
+      #    urls[4]:
+      #      name: delivery-service
+      #      url: /springdoc/openapi3-delivery-service.json
+      #    urls[5]:
+      #      name: company-service
+      #      url: /springdoc/openapi3-company-service.json
+      #    urls[6]:
+      #      name: product-service
+      #      url: /springdoc/openapi3-product-service.json
+      #    urls[7]:
+      #      name: hub-service
+      #      url: /springdoc/openapi3-hub-service.json
+      #    urls[8]:
+      #      name: route-service
+      #      url: /springdoc/openapi3-hub-transit-route-service.json
+      #    urls[9]:
+      #      name: slack-service
+      #      url: /springdoc/openapi3-slack-service.json
+      #    urls[10]:
+      #      name: ai-service
+      #      url: /springdoc/openapi3-ai-service.json
+      #    urls[11]:
+      #      name: map-service
+      #      url: /springdoc/openapi3-map-service.json
+    path: /docs
 
 eureka:
   client:
     service-url:
       defaultZone: http://localhost:8761/eureka
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "prometheus,health,info"
+  tracing:
+    sampling:
+      probability: 0.1  # 10% of the requests will be traced
+    enabled: true  # Enable tracing
+
+  zipkin:
+    tracing:
+      endpoint: http://zipkin:9411/api/v2/spans  # Zipkin server URL for receiving spans
+      connect-timeout: 1s  # Timeout for connecting to Zipkin server
+      encoding: json  # The format of the trace data (you can use json or protobuf)
+      read-timeout: 10s  # Timeout for reading from the Zipkin server
+

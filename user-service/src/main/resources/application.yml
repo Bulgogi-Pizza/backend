@@ -5,6 +5,12 @@ spring:
   application:
     name: user-service
 
+  cloud:
+    gateway:
+      auth:
+        secret:
+          key: ENC(HI4A/uV5RCH/wOUjxaZDApv6DlH9ANhHYK87ojAyzTI=)
+
   datasource:
     url: jdbc:postgresql://localhost:15432/onlogistics
     username: ENC(SzFNDgC//YBbb9TJ7Bne4Cv1KM24A8WX)
