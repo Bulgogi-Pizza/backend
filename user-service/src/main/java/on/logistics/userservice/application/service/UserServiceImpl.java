@@ -6,6 +6,7 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import on.logistics.userservice.application.dtos.CreateUserDto;
+import on.logistics.userservice.application.dtos.GetSlackEmailByIdResponseDto;
 import on.logistics.userservice.application.dtos.SearchUserDto;
 import on.logistics.userservice.application.dtos.UpdateUserAdminDto;
 import on.logistics.userservice.application.dtos.UpdateUserDto;
@@ -15,6 +16,7 @@ import on.logistics.userservice.exception.UserException;
 import on.logistics.userservice.exception.UserExceptionCode;
 import on.logistics.userservice.global.application.dtos.PageDto;
 import on.logistics.userservice.global.domain.Passport;
+import on.logistics.userservice.global.enums.AuthRole;
 import on.logistics.userservice.global.util.PassportUtil;
 import on.logistics.userservice.infrastructure.feign.AuthClientService;
 import on.logistics.userservice.presentation.dtos.CreateUserResponse;
@@ -109,6 +111,15 @@ public class UserServiceImpl implements UserService {
         user.updateSlackEmail(dto.slackEmail());
 
         return UpdateUserAdminResponse.from(user);
+    }
+
+    @Override
+    public GetSlackEmailByIdResponseDto getSlackEmailById(
+        UUID id,
+        HttpServletRequest request
+    ) {
+        User user = findByIdOrElseThrow(id);
+        return GetSlackEmailByIdResponseDto.from(user);
     }
 
     private User findByIdOrElseThrow(UUID id) {

@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.UUID;
 import on.logistics.userservice.application.dtos.CreateUserDto;
+import on.logistics.userservice.application.dtos.GetSlackEmailByIdResponseDto;
 import on.logistics.userservice.application.dtos.SearchUserDto;
 import on.logistics.userservice.application.dtos.UpdateUserAdminDto;
 import on.logistics.userservice.application.dtos.UpdateUserDto;
@@ -30,4 +31,6 @@ public interface UserService {
     void deleteUser(HttpServletRequest request, HttpServletResponse response);
 
     UpdateUserAdminResponse updateUserAdmin(UpdateUserAdminDto dto);
+
+    GetSlackEmailByIdResponseDto getSlackEmailById(UUID id, HttpServletRequest request);
 }
