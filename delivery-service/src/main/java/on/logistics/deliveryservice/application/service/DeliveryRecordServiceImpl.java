@@ -138,6 +138,11 @@ public class DeliveryRecordServiceImpl implements DeliveryRecordService {
             deliveryRecordStatus = DeliveryRecordStatus.HUB_WAITING;
         }
 
+        UUID tmp = UUID.fromString("00000000-0000-0000-0000-000000000000");
+        if (requestDto.deliveryRecordEndHubId().equals(tmp)) {
+            return CreateDeliveryRecordDto.from(requestDto, sequence, deliveryRecordStatus);
+        }
+
         GetEstimateInfo getEstimateInfo = getEstimateInfo(requestDto.deliveryRecordStartHubId(),
             requestDto.deliveryRecordEndHubId());
         return CreateDeliveryRecordDto.from(requestDto, sequence, deliveryRecordStatus,

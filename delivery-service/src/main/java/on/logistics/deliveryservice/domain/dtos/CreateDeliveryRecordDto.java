@@ -16,4 +16,12 @@ public record CreateDeliveryRecordDto(UUID deliveryId, Long sequence, DeliveryRe
             getEstimateInfo.summary().distance(),
             getEstimateInfo.summary().duration(), requestDto.userId());
     }
+
+    public static CreateDeliveryRecordDto from(CreateDeliveryRecordRequestDto requestDto,
+        Long sequence, DeliveryRecordStatus status) {
+        return new CreateDeliveryRecordDto(requestDto.deliveryId(), sequence, status,
+            requestDto.deliveryRecordStartHubId(), requestDto.deliveryRecordEndHubId(),
+            0L,
+            0L, requestDto.userId());
+    }
 }
