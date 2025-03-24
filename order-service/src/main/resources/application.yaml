@@ -3,7 +3,12 @@ server:
 spring:
   application:
     name: order-service
-
+  data:
+    redis:
+      host: ENC(vAUL5Mb7noRjwGjjl3a8Eu+LRLx/6X71wjitqQZ/EJCx2y2+4iFqgzXZJrqbxbVOp0weJ4s+9Ryfvth/XC3K6w==)
+      port: 6379
+      username: ENC(o5rXrS+CoESF7u79a/1yxw==)
+#      password: ENC()
   datasource:
     url: ENC(NPJQVzywseDK5fvzPMms1CWd2dlt84ikWyCIQXKt0qxvvn0wGj+11Wgt4zCuFpmqn9phsKTgSEd+e2gTQPQ9s1M1a9Ct2kWYkOtipZwIU0CCGWZiPv7jOi7fKOhCUvZWXPfx1pF0b6M=)
     username: ENC(R806XDgVl0uvipypT5G88k3P/C3yp4sW)

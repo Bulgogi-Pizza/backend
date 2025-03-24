@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import on.logistics.userservice.application.dtos.CreateUserDto;
+import on.logistics.userservice.application.dtos.GetSlackEmailByIdResponseDto;
 import on.logistics.userservice.application.dtos.SearchUserDto;
 import on.logistics.userservice.application.dtos.UpdateUserAdminDto;
 import on.logistics.userservice.application.dtos.UpdateUserDto;
@@ -83,6 +84,15 @@ public class UserController {
     ) {
         SearchUserDto dto = SearchUserDto.from(nickname, slackEmail, pageable);
         PageDto<SearchUserResponse> response = userService.searchUser(dto);
+        return ResponseEntity.ok(CommonResponse.success(response));
+    }
+
+    @GetMapping("/{id}/slack-email")
+    public ResponseEntity<CommonResponse<GetSlackEmailByIdResponseDto>> getSlackEmailById(
+        @PathVariable UUID id,
+        HttpServletRequest request
+    ) {
+        GetSlackEmailByIdResponseDto response = userService.getSlackEmailById(id, request);
         return ResponseEntity.ok(CommonResponse.success(response));
     }
 

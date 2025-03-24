@@ -1,5 +1,6 @@
 package on.logistics.orderservice.presentation;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -22,8 +23,9 @@ import on.logistics.orderservice.application.service.dtos.returns.request.Return
 import on.logistics.orderservice.application.service.dtos.update.UpdateOrderRequestDto;
 import on.logistics.orderservice.application.service.dtos.update.UpdateOrderResponseDto;
 import on.logistics.orderservice.global.application.dtos.PageDto;
-import on.logistics.orderservice.global.enums.AuthRole;
+import on.logistics.orderservice.global.domain.Passport;
 import on.logistics.orderservice.global.presentation.dtos.CommonResponse;
+import on.logistics.orderservice.global.utils.PassportUtil;
 import on.logistics.orderservice.presentation.dtos.create.CreateOrderRequest;
 import on.logistics.orderservice.presentation.dtos.delete.DeleteOrderRequestDto;
 import on.logistics.orderservice.presentation.dtos.update.UpdateOrderRequest;
@@ -46,16 +48,16 @@ import org.springframework.web.bind.annotation.RestController;
 public class OrderController {
 
     private final OrderService orderService;
+    private final PassportUtil passportUtil;
 
     @PostMapping
     public ResponseEntity<CommonResponse<CreateOrderResponseDto>> createOrder(
-        @RequestBody @Valid final CreateOrderRequest request
+        @RequestBody @Valid final CreateOrderRequest request,
+        final HttpServletRequest servletRequest
     ) {
-        log.warn("패스포트 토큰을 사용하도록 해야합니다!!");
-        final UUID ordererUserId = UUID.fromString("29547e69-f33a-430d-b9a6-75e2b265585c");
-        final String ordererUserNickname = "userNickname";
-        final var requestDto = CreateOrderRequestDto.of(request, ordererUserId,
-            ordererUserNickname);
+        final Passport passport = passportUtil.getPassportBy(servletRequest);
+        final var requestDto = CreateOrderRequestDto.of(
+            request, passport.getUserId(), passport.getNickname());
         final var responseDto = orderService.createOrder(requestDto);
         return ResponseEntity.ok(CommonResponse.success(responseDto));
     }
@@ -68,13 +70,12 @@ public class OrderController {
         @RequestParam(required = false) final String ordererCompanyName,
         @RequestParam(required = false) final UUID vendorCompanyId,
         @RequestParam(required = false) final String vendorCompanyName,
-        final Pageable pageable
+        final Pageable pageable,
+        final HttpServletRequest servletRequest
     ) {
-        log.warn("패스포트 토큰을 사용하도록 해야합니다!!");
-        final UUID userId = UUID.fromString("29547e69-f33a-430d-b9a6-75e2b265585c");
-        final AuthRole userRole = AuthRole.MASTER;
+        final Passport passport = passportUtil.getPassportBy(servletRequest);
         final var requestDto = SearchOrderPageRequestDto.of(
-            pageable, userId, userRole, ordererUserId, userNickname,
+            pageable, passport.getUserId(), passport.getRole(), ordererUserId, userNickname,
             ordererCompanyId, ordererCompanyName, vendorCompanyId, vendorCompanyName
         );
         final var responseDto = orderService.searchOrderPage(requestDto);
@@ -83,9 +84,12 @@ public class OrderController {
 
     @GetMapping("/{orderId}")
     public ResponseEntity<CommonResponse<GetOrderDetailResponseDto>> getOrderDetail(
-        @PathVariable final UUID orderId
+        @PathVariable final UUID orderId,
+        final HttpServletRequest servletRequest
     ) {
-        final var requestDto = GetOrderDetailRequestDto.from(orderId);
+        final Passport passport = passportUtil.getPassportBy(servletRequest);
+        final var requestDto = GetOrderDetailRequestDto.of(
+            orderId, passport.getUserId(), passport.getRole());
         final var responseDto = orderService.getOrderDetail(requestDto);
         return ResponseEntity.ok(CommonResponse.success(responseDto));
     }
@@ -93,9 +97,12 @@ public class OrderController {
     @PatchMapping("/{orderId}")
     public ResponseEntity<CommonResponse<UpdateOrderResponseDto>> updateOrder(
         @PathVariable final UUID orderId,
-        @RequestBody @Valid final UpdateOrderRequest request
+        @RequestBody @Valid final UpdateOrderRequest request,
+        final HttpServletRequest servletRequest
     ) {
-        final var requestDto = UpdateOrderRequestDto.of(request, orderId);
+        final Passport passport = passportUtil.getPassportBy(servletRequest);
+        final var requestDto = UpdateOrderRequestDto.of(
+            request, orderId, passport.getUserId(), passport.getRole());
         final var responseDto = orderService.updateOrder(requestDto);
         return ResponseEntity.ok(CommonResponse.success(responseDto));
     }
@@ -103,9 +110,12 @@ public class OrderController {
     @PatchMapping("/{orderId}/cancel/{vendorOrderId}")
     public ResponseEntity<CommonResponse<CancelOrderResponseDto>> cancelVendorOrder(
         @PathVariable final UUID orderId,
-        @PathVariable final UUID vendorOrderId
+        @PathVariable final UUID vendorOrderId,
+        final HttpServletRequest servletRequest
     ) {
-        final var requestDto = CancelOrderRequestDto.of(orderId, vendorOrderId);
+        final Passport passport = passportUtil.getPassportBy(servletRequest);
+        final var requestDto = CancelOrderRequestDto.of(
+            orderId, vendorOrderId, passport.getUserId(), passport.getRole());
         final var responseDto = orderService.cancelVendorOrder(requestDto);
         return ResponseEntity.ok(CommonResponse.success(responseDto));
     }
@@ -113,9 +123,12 @@ public class OrderController {
     @DeleteMapping("/{orderId}/{vendorOrderId}")
     public ResponseEntity<CommonResponse<Void>> deleteVendorOrder(
         @PathVariable final UUID orderId,
-        @PathVariable final UUID vendorOrderId
+        @PathVariable final UUID vendorOrderId,
+        final HttpServletRequest servletRequest
     ) {
-        final DeleteOrderRequestDto requestDto = DeleteOrderRequestDto.of(orderId, vendorOrderId);
+        final Passport passport = passportUtil.getPassportBy(servletRequest);
+        final DeleteOrderRequestDto requestDto = DeleteOrderRequestDto.of(
+            orderId, vendorOrderId, passport.getUserId(), passport.getRole());
         orderService.deleteVendorOrder(requestDto);
         return ResponseEntity.ok(CommonResponse.success());
     }
@@ -123,9 +136,12 @@ public class OrderController {
     @PatchMapping("/{orderId}/return/request/{vendorOrderId}")
     public ResponseEntity<CommonResponse<ReturnRequestResponseDto>> requestReturn(
         @PathVariable final UUID orderId,
-        @PathVariable final UUID vendorOrderId
+        @PathVariable final UUID vendorOrderId,
+        final HttpServletRequest servletRequest
     ) {
-        final var requestDto = ReturnRequestRequestDto.of(orderId, vendorOrderId);
+        final Passport passport = passportUtil.getPassportBy(servletRequest);
+        final var requestDto = ReturnRequestRequestDto.of(
+            orderId, vendorOrderId, passport.getUserId(), passport.getRole());
         final var responseDto = orderService.requestReturn(requestDto);
         return ResponseEntity.ok(CommonResponse.success(responseDto));
     }
@@ -133,9 +149,12 @@ public class OrderController {
     @PatchMapping("/{orderId}/return/denied/{vendorOrderId}")
     public ResponseEntity<CommonResponse<ReturnRequestDeniedResponseDto>> denyReturnRequest(
         @PathVariable final UUID orderId,
-        @PathVariable final UUID vendorOrderId
+        @PathVariable final UUID vendorOrderId,
+        final HttpServletRequest servletRequest
     ) {
-        final var requestDto = ReturnRequestDeniedRequestDto.of(orderId, vendorOrderId);
+        final Passport passport = passportUtil.getPassportBy(servletRequest);
+        final var requestDto = ReturnRequestDeniedRequestDto.of(
+            orderId, vendorOrderId, passport.getUserId(), passport.getRole());
         final var responseDto = orderService.denyReturnRequest(requestDto);
         return ResponseEntity.ok(CommonResponse.success(responseDto));
     }
@@ -143,9 +162,12 @@ public class OrderController {
     @PatchMapping("/{orderId}/return/{vendorOrderId}")
     public ResponseEntity<CommonResponse<ReturnOrderResponseDto>> returnOrder(
         @PathVariable final UUID orderId,
-        @PathVariable final UUID vendorOrderId
+        @PathVariable final UUID vendorOrderId,
+        final HttpServletRequest servletRequest
     ) {
-        final var requestDto = ReturnOrderRequestDto.of(orderId, vendorOrderId);
+        final Passport passport = passportUtil.getPassportBy(servletRequest);
+        final var requestDto = ReturnOrderRequestDto.of(
+            orderId, vendorOrderId, passport.getUserId(), passport.getRole());
         final var responseDto = orderService.returnOrder(requestDto);
         return ResponseEntity.ok(CommonResponse.success(responseDto));
     }

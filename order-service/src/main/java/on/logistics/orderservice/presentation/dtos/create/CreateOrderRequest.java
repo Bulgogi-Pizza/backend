@@ -11,8 +11,6 @@ import java.util.UUID;
 public record CreateOrderRequest(
     @NotNull UUID ordererId,
     @NotBlank String ordererName,
-    @NotNull UUID ordererHubId,
-    @NotBlank String ordererHubName,
     @NotBlank String destination,
     @NotNull @PositiveOrZero Long totalAmount,
     @NotNull List<OrdersByVendor> ordersByVendor
@@ -21,8 +19,6 @@ public record CreateOrderRequest(
     public record OrdersByVendor(
         @NotNull UUID vendorId,
         @NotBlank String vendorName,
-        @NotNull UUID vendorHubId,
-        @NotBlank String vendorHubName,
         @NotNull @PositiveOrZero Long totalAmount,
         @NotNull @Future LocalDateTime arrivalDeadline,
         @NotNull List<OrderedProduct> orderedProducts

@@ -11,4 +11,6 @@ public interface HubManagerRepository {
     HubManager save(HubManager hubManager);
 
     Optional<HubManager> findByUserIdAndHubId(UUID userId, UUID hubId);
+
+    Optional<HubManager> findByHubId(UUID hubId);
 }

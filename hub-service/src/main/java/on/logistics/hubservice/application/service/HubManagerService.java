@@ -1,10 +1,13 @@
 package on.logistics.hubservice.application.service;
 
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import on.logistics.hubservice.application.dtos.GetHubManagerIdResponseDto;
 import on.logistics.hubservice.application.dtos.request.CreateHubManagerRequestDto;
 import on.logistics.hubservice.application.dtos.request.ValidHubManagerRequestDto;
 import on.logistics.hubservice.domain.entity.HubManager;
 import on.logistics.hubservice.domain.repository.HubManagerRepository;
+import on.logistics.hubservice.exception.HubManagerException.HubManagerNotFoundException;
 import on.logistics.hubservice.global.util.PassportUtil;
 import on.logistics.hubservice.presentation.dtos.response.CreateHubManagerResponse;
 import on.logistics.hubservice.presentation.dtos.response.ValidHubManagerResponse;
@@ -31,5 +34,11 @@ public class HubManagerService {
         boolean isExistHubManager = hubManagerRepository.findByUserIdAndHubId(requestDto.userId(),
             requestDto.hubId()).isPresent();
         return ValidHubManagerResponse.of(isExistHubManager);
+    }
+
+    public GetHubManagerIdResponseDto getHubManagerId(UUID hubId) {
+        HubManager hubManager = hubManagerRepository.findByHubId(hubId)
+            .orElseThrow(HubManagerNotFoundException::new);
+        return new GetHubManagerIdResponseDto(hubManager.getId());
     }
 }
