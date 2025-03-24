@@ -8,7 +8,6 @@ import on.logistics.authservice.exception.PassportException;
 import on.logistics.authservice.exception.PassportExceptionCode;
 import on.logistics.authservice.infrastructure.security.passport.Passport;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.web.bind.annotation.RequestBody;
 
 @RequiredArgsConstructor
 @Slf4j(topic = "PassportUtil")

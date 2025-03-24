@@ -43,10 +43,11 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<CommonResponse<CreateUserResponse>> createUser(
-        @RequestBody CreateUserRequest request
+        @RequestBody CreateUserRequest request,
+        HttpServletRequest servletRequest
     ) {
         CreateUserDto dto = CreateUserDto.from(request);
-        CreateUserResponse response = userService.createUser(dto);
+        CreateUserResponse response = userService.createUser(dto, servletRequest);
         return ResponseEntity.ok(CommonResponse.success(response));
     }
 
@@ -56,7 +57,7 @@ public class UserController {
         @RequestBody UpdateUserRequest updateUserRequest
     ) {
         UpdateUserDto dto = UpdateUserDto.from(updateUserRequest);
-        UpdateUserResponse response = userService.updateUser(request, dto);
+        UpdateUserResponse response = userService.updateUser(dto, request);
         return ResponseEntity.ok(CommonResponse.success(response));
     }
 
@@ -70,9 +71,10 @@ public class UserController {
 
     @GetMapping("/{id}")
     public ResponseEntity<CommonResponse<FindByIdUserResponse>> findUserById(
-        @PathVariable("id") String id
+        @PathVariable("id") String id,
+        HttpServletRequest request
     ) {
-        FindByIdUserResponse response = userService.findUserById(UUID.fromString(id));
+        FindByIdUserResponse response = userService.findUserById(UUID.fromString(id), request);
         return ResponseEntity.ok(CommonResponse.success(response));
     }
 
@@ -80,10 +82,11 @@ public class UserController {
     public ResponseEntity<CommonResponse<PageDto<SearchUserResponse>>> getUser(
         @RequestParam(required = false) String nickname,
         @RequestParam(required = false) String slackEmail,
-        @PageableDefault Pageable pageable
+        @PageableDefault Pageable pageable,
+        HttpServletRequest request
     ) {
         SearchUserDto dto = SearchUserDto.from(nickname, slackEmail, pageable);
-        PageDto<SearchUserResponse> response = userService.searchUser(dto);
+        PageDto<SearchUserResponse> response = userService.searchUser(dto, request);
         return ResponseEntity.ok(CommonResponse.success(response));
     }
 
@@ -96,24 +99,15 @@ public class UserController {
         return ResponseEntity.ok(CommonResponse.success(response));
     }
 
-    // TODO: 사용자 ID 암호화 필요
     @PatchMapping("/{id}")
     public ResponseEntity<CommonResponse<UpdateUserAdminResponse>> updateUserAdmin(
         @PathVariable UUID id,
-        @RequestBody UpdateUserAdminRequest updateUserAdminRequest
+        @RequestBody UpdateUserAdminRequest updateUserAdminRequest,
+        HttpServletRequest request
     ) {
         UpdateUserAdminDto dto = UpdateUserAdminDto.from(id, updateUserAdminRequest);
-        UpdateUserAdminResponse response = userService.updateUserAdmin(dto);
+        UpdateUserAdminResponse response = userService.updateUserAdmin(dto, request);
         return ResponseEntity.ok(CommonResponse.success(response));
     }
 
-    // TODO: FeignClient 연결은 확인, auth에서 SpringSecurity에 걸림
-    @DeleteMapping("/my")
-    public ResponseEntity<CommonResponse<Void>> deleteUser(
-        HttpServletRequest request,
-        HttpServletResponse response
-    ) {
-        userService.deleteUser(request, response);
-        return ResponseEntity.ok(CommonResponse.success());
-    }
 }

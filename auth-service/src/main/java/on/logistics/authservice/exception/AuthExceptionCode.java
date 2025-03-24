@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 @RequiredArgsConstructor
 public enum AuthExceptionCode implements ExceptionCode {
     AUTH_IS_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 인증 정보입니다."),
+    AUTH_IS_NOT_ALLOWED(HttpStatus.BAD_REQUEST, "유효하지 않은 인증 정보입니다."),
     AUTH_USERNAME_MIN_LENGTH(HttpStatus.BAD_REQUEST, "아이디는 최소 4자 이상이어야 합니다."),
     AUTH_USERNAME_MAX_LENGTH(HttpStatus.BAD_REQUEST, "아이디는 최대 10자 이하이어야 합니다."),
     AUTH_USERNAME_IS_NULL(HttpStatus.BAD_REQUEST, "아이디는 필수 입력 값입니다."),

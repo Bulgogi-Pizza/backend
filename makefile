@@ -15,7 +15,7 @@ core:
 # Step 4: 나머지 서비스 순차 실행
 rest:
 	docker-compose up --build -d company-service order-service hub-transit-service
-	docker-compose up --build -d delivery-service hub-service map-service
+	docker-compose up --build -d delivery-service hub-service map-service slack-service
 	docker-compose up --build -d product-service ai-service delivery-manager-service
 
 # 전체 빌드 & 실행 (비추천: 너무 무거움)

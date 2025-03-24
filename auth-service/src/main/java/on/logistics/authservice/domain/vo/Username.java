@@ -29,13 +29,13 @@ public class Username {
 
     private void validate(final String username) {
         if (Objects.isNull(username)) {
-            throw new AuthException(AuthExceptionCode.AUTH_PASSWORD_IS_NULL);
+            throw new AuthException(AuthExceptionCode.AUTH_USERNAME_IS_NULL);
         }
         if (username.length() < MIN_LENGTH) {
-            throw new AuthException(AuthExceptionCode.AUTH_PASSWORD_MIN_LENGTH);
+            throw new AuthException(AuthExceptionCode.AUTH_USERNAME_MIN_LENGTH);
         }
         if (username.length() > MAX_LENGTH) {
-            throw new AuthException(AuthExceptionCode.AUTH_PASSWORD_MAX_LENGTH);
+            throw new AuthException(AuthExceptionCode.AUTH_USERNAME_MAX_LENGTH);
         }
         if (!username.matches("^[a-z0-9]+$")) {
             throw new AuthException(AuthExceptionCode.AUTH_USERNAME_INVALID_FORMAT);

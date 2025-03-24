@@ -25,6 +25,7 @@ import on.logistics.userservice.presentation.dtos.FindMyUserResponse;
 import on.logistics.userservice.presentation.dtos.SearchUserResponse;
 import on.logistics.userservice.presentation.dtos.UpdateUserAdminResponse;
 import on.logistics.userservice.presentation.dtos.UpdateUserResponse;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,10 +38,19 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final PassportUtil passportUtil;
     private final AuthClientService authClientService;
+    @Value("${spring.cloud.gateway.auth.secret.key}")
+    private String secretKey;
 
     @Override
     @Transactional
-    public CreateUserResponse createUser(CreateUserDto dto) {
+    public CreateUserResponse createUser(
+        CreateUserDto dto,
+        HttpServletRequest servletRequest
+    ) {
+        String headerSecretKey = servletRequest.getHeader("X-Internal-Secret");
+        if (!headerSecretKey.equals(secretKey)) {
+            throw new UserException(UserExceptionCode.USER_IS_NOT_ALLOWED);
+        }
 
         User user = User.create(dto);
 
@@ -51,9 +61,38 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public FindByIdUserResponse findUserById(UUID id) {
+    public FindByIdUserResponse findUserById(
+        UUID id,
+        HttpServletRequest servletRequest
+    ) {
+        String PassportId = servletRequest.getHeader("X-Passport-Id");
+        Passport passport = passportUtil.getPassportByKey(PassportId);
+        AuthRole role = AuthRole.valueOf(passport.getRole());
+        if (!role.equals(AuthRole.MASTER)) {
+            throw new UserException(UserExceptionCode.USER_IS_NOT_ALLOWED);
+        }
+
         User user = findByIdOrElseThrow(id);
         return FindByIdUserResponse.from(user);
+    }
+
+    @Override
+    public FindByIdUserResponse findUserByIdInternal(UUID id, HttpServletRequest request) {
+        String headerSecretKey = request.getHeader("X-Internal-Secret");
+        if (!headerSecretKey.equals(secretKey)) {
+            throw new UserException(UserExceptionCode.USER_IS_NOT_ALLOWED);
+        }
+
+        User user = findByIdOrElseThrow(id);
+        return FindByIdUserResponse.from(user);
+    }
+
+    @Override
+    public void withdrawUserByUserId(UUID id, HttpServletRequest request) {
+        log.info("withdrawUserByUserId, {}", id.toString());
+        User user = findByIdOrElseThrow(id);
+
+        userRepository.delete(user);
     }
 
     @Override
@@ -66,7 +105,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public PageDto<SearchUserResponse> searchUser(SearchUserDto dto) {
+    public PageDto<SearchUserResponse> searchUser(SearchUserDto dto,
+        HttpServletRequest servletRequest) {
+        String PassportId = servletRequest.getHeader("X-Passport-Id");
+        Passport passport = passportUtil.getPassportByKey(PassportId);
+        AuthRole role = AuthRole.valueOf(passport.getRole());
+        if (!role.equals(AuthRole.MASTER)) {
+            throw new UserException(UserExceptionCode.USER_IS_NOT_ALLOWED);
+        }
+
         Page<User> users = userRepository.searchUser(dto);
         Page<SearchUserResponse> responsePage = users.map(SearchUserResponse::from);
         return PageDto.from(responsePage);
@@ -74,7 +121,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public UpdateUserResponse updateUser(HttpServletRequest request, UpdateUserDto dto) {
+    public UpdateUserResponse updateUser(UpdateUserDto dto, HttpServletRequest request) {
         Passport passport = passportUtil.getPassportByHttpServletRequest(request);
         UUID id = passport.getUserId();
 
@@ -87,16 +134,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public void deleteUser(
         HttpServletRequest request,
         HttpServletResponse response
     ) {
-        // TODO: deletedBy, deletedAt 해결 필
         Passport passport = passportUtil.getPassportByHttpServletRequest(request);
         String passportId = request.getParameter("X-Passport-Id");
 
-        // TODO: feignClient 해결 필
-//        authClientService.deleteAuthByPassport(passportId);
+        authClientService.deleteAuthByPassport(passportId);
 
         User user = findByIdOrElseThrow(passport.getUserId());
         userRepository.delete(user);
@@ -104,7 +150,17 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public UpdateUserAdminResponse updateUserAdmin(UpdateUserAdminDto dto) {
+    public UpdateUserAdminResponse updateUserAdmin(
+        UpdateUserAdminDto dto,
+        HttpServletRequest servletRequest
+    ) {
+        String PassportId = servletRequest.getHeader("X-Passport-Id");
+        Passport passport = passportUtil.getPassportByKey(PassportId);
+        AuthRole role = AuthRole.valueOf(passport.getRole());
+        if (!role.equals(AuthRole.MASTER)) {
+            throw new UserException(UserExceptionCode.USER_IS_NOT_ALLOWED);
+        }
+
         User user = findByIdOrElseThrow(dto.userId());
 
         user.updateNickname(dto.nickname());
@@ -112,6 +168,7 @@ public class UserServiceImpl implements UserService {
 
         return UpdateUserAdminResponse.from(user);
     }
+
 
     @Override
     public GetSlackEmailByIdResponseDto getSlackEmailById(

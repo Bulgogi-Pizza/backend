@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -39,16 +40,6 @@ public class AuthController {
         return ResponseEntity.ok(CommonResponse.success(response));
     }
 
-    @GetMapping("/validate")
-    public ResponseEntity<CommonResponse<AuthValidateResponse>> validate(
-        HttpServletRequest request
-    ) {
-        log.info("validate request: {}", request);
-
-        AuthValidateResponse response = authService.validate(request);
-        return ResponseEntity.ok(CommonResponse.success(response));
-    }
-
     @PostMapping("/logout")
     public ResponseEntity<CommonResponse<Void>> logout(
         HttpServletRequest request
@@ -59,17 +50,6 @@ public class AuthController {
         return ResponseEntity.ok(CommonResponse.success());
     }
 
-    @PostMapping("/refresh")
-    public ResponseEntity<CommonResponse<AuthReissueTokensResponse>> reissueRefreshToken(
-        HttpServletRequest servletRequest,
-        HttpServletResponse servletResponse
-    ) {
-        log.info("reissue refresh token request: {}", servletRequest);
-
-        AuthReissueTokensResponse response = authService.reIssueTokens(servletRequest,
-            servletResponse);
-        return ResponseEntity.ok(CommonResponse.success(response));
-    }
 
     @DeleteMapping("/my")
     public ResponseEntity<CommonResponse<Void>> deleteAuthByPassport(
@@ -83,11 +63,34 @@ public class AuthController {
 
     @DeleteMapping("/{userId}")
     public ResponseEntity<CommonResponse<Void>> deleteAuthByUserId(
-        @PathVariable String userId
+        @PathVariable String userId,
+        HttpServletRequest request
     ) {
         log.info("delete auth by Id: {}", userId);
 
-        authService.deleteAuthByUserId(userId);
+        authService.deleteAuthByUserId(userId, request);
         return ResponseEntity.ok(CommonResponse.success());
     }
+
+    @DeleteMapping("/withdraw/my")
+    public ResponseEntity<CommonResponse<Void>> withdrawUserByPassport(
+        HttpServletRequest request
+    ) {
+        log.info("withdraw user by request: {}", request);
+
+        authService.withdrawUserByPassport(request);
+        return ResponseEntity.ok(CommonResponse.success());
+    }
+
+    @DeleteMapping("/withdraw/{userId}")
+    public ResponseEntity<CommonResponse<Void>> withdrawUserByUserId(
+        @PathVariable String userId,
+        HttpServletRequest request
+    ) {
+        log.info("withdraw user by Id: {}", userId);
+
+        authService.withdrawUserByUserId(userId, request);
+        return ResponseEntity.ok(CommonResponse.success());
+    }
+
 }
