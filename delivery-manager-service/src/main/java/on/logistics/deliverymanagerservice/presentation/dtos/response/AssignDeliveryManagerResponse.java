@@ -5,11 +5,12 @@ import lombok.Builder;
 
 @Builder
 public record AssignDeliveryManagerResponse(
-    UUID deliveryManagerId
+    UUID userId
 ) {
-    public static AssignDeliveryManagerResponse of(UUID deliveryManagerId) {
+
+    public static AssignDeliveryManagerResponse of(UUID userId) {
         return AssignDeliveryManagerResponse.builder()
-            .deliveryManagerId(deliveryManagerId)
+            .userId(userId)
             .build();
     }
 }

@@ -3,10 +3,13 @@ package on.logistics.deliverymanagerservice.domain.entity.repository;
 import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import on.logistics.deliverymanagerservice.application.dtos.SearchDeliveryManagerRequestDto;
 import on.logistics.deliverymanagerservice.domain.entity.DeliveryManager;
 import on.logistics.deliverymanagerservice.domain.entity.DeliveryType;
+import on.logistics.deliverymanagerservice.global.application.dtos.PageDto;
 import on.logistics.deliverymanagerservice.infrastructure.jpa.DeliveryManagerJpaRepository;
 import on.logistics.deliverymanagerservice.infrastructure.jpa.querydsl.DeliveryManagerRepositoryCustom;
+import on.logistics.deliverymanagerservice.presentation.dtos.response.SearchDeliveryManagerResponse;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -54,5 +57,11 @@ public class DeliveryManagerRepositoryImpl implements DeliveryManagerRepository 
     public Optional<DeliveryManager> findByIdAndUserId(UUID deliveryManagerId,
         UUID userId) {
         return deliveryManagerJpaRepository.findByIdAndUserId(deliveryManagerId, userId);
+    }
+
+    @Override
+    public PageDto<SearchDeliveryManagerResponse> searchDeliveryManager(
+        SearchDeliveryManagerRequestDto requestDto) {
+        return deliveryManagerRepositoryCustom.searchDeliveryManager(requestDto);
     }
 }

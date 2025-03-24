@@ -1,14 +1,27 @@
 package on.logistics.deliverymanagerservice.infrastructure.jpa.querydsl;
 
 import static on.logistics.deliverymanagerservice.domain.entity.QDeliveryManager.deliveryManager;
+import static on.logistics.deliverymanagerservice.domain.entity.QHubSummary.hubSummary;
+import static on.logistics.deliverymanagerservice.domain.entity.QUserSummary.userSummary;
 
+import com.querydsl.core.types.Order;
+import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import on.logistics.deliverymanagerservice.application.dtos.SearchDeliveryManagerRequestDto;
 import on.logistics.deliverymanagerservice.domain.entity.DeliveryManager;
 import on.logistics.deliverymanagerservice.domain.entity.DeliveryType;
+import on.logistics.deliverymanagerservice.global.application.dtos.PageDto;
+import on.logistics.deliverymanagerservice.global.enums.PageSortBy;
+import on.logistics.deliverymanagerservice.presentation.dtos.response.QSearchDeliveryManagerResponse;
+import on.logistics.deliverymanagerservice.presentation.dtos.response.SearchDeliveryManagerResponse;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.StringUtils;
 
 @Repository
 @RequiredArgsConstructor
@@ -71,5 +84,86 @@ public class DeliveryManagerRepositoryCustomImpl implements DeliveryManagerRepos
                 .orderBy(deliveryManager.sequence.asc())
                 .fetchFirst()
         );
+    }
+
+    @Override
+    public PageDto<SearchDeliveryManagerResponse> searchDeliveryManager(
+        SearchDeliveryManagerRequestDto requestDto) {
+        List<SearchDeliveryManagerResponse> content = getDeliveryManagers(requestDto);
+        boolean last = true;
+        long totalElement = getTotalElement(requestDto);
+        int totalPages = getTotalPages(totalElement, requestDto);
+
+        return new PageDto<>(content, last, totalPages, totalElement);
+    }
+
+    private List<SearchDeliveryManagerResponse> getDeliveryManagers(
+        SearchDeliveryManagerRequestDto requestDto) {
+        return jpaQueryFactory
+            .select(new QSearchDeliveryManagerResponse(
+                deliveryManager.id,
+                userSummary.nickname,
+                hubSummary.name,
+                userSummary.slackEmail,
+                deliveryManager.type.stringValue(),
+                deliveryManager.sequence
+            ))
+            .from(deliveryManager)
+            .join(hubSummary).on(deliveryManager.hubId.eq(hubSummary.id))
+            .join(userSummary).on(deliveryManager.userId.eq(userSummary.id))
+            .where(
+                keywordContains(requestDto.keyword()),
+                typeEquals(requestDto.hubType())
+            )
+            .orderBy(getOrderConditions(requestDto.pageable().getSort()))
+            .offset(requestDto.pageable().getOffset())
+            .limit(requestDto.pageable().getPageSize())
+            .fetch();
+    }
+
+    private int getTotalPages(long totalElement, SearchDeliveryManagerRequestDto requestDto) {
+        return (int) Math.ceil((double) totalElement / requestDto.pageable().getPageSize());
+    }
+
+    private long getTotalElement(SearchDeliveryManagerRequestDto requestDto) {
+        return Optional.ofNullable(
+                jpaQueryFactory
+                    .select(deliveryManager.count())
+                    .from(deliveryManager)
+                    .join(hubSummary).on(deliveryManager.hubId.eq(hubSummary.id))
+                    .join(userSummary).on(deliveryManager.userId.eq(userSummary.id))
+                    .where(
+                        keywordContains(requestDto.keyword()),
+                        typeEquals(requestDto.hubType())
+                    )
+                    .fetchOne())
+            .orElse(0L);
+    }
+
+    private OrderSpecifier<?>[] getOrderConditions(Sort sort) {
+        return sort.stream()
+            .map(order -> {
+                String sortBy = order.getProperty();
+                Order direction = order.isAscending() ? Order.ASC : Order.DESC;
+
+                return switch (PageSortBy.valueOf(sortBy.toUpperCase())) {
+                    case CREATED_AT -> new OrderSpecifier<>(direction, deliveryManager.createdAt);
+                    case UPDATED_AT -> new OrderSpecifier<>(direction, deliveryManager.updatedAt);
+                    case ID -> new OrderSpecifier<>(direction, deliveryManager.id);
+                };
+            })
+            .toArray(OrderSpecifier[]::new);
+    }
+
+    private BooleanExpression keywordContains(String keyword) {
+        if (!StringUtils.hasText(keyword)) {
+            return null;
+        }
+        return userSummary.nickname.containsIgnoreCase(keyword)
+            .or(hubSummary.type.containsIgnoreCase(keyword));
+    }
+
+    private BooleanExpression typeEquals(String hubType) {
+        return hubType != null ? hubSummary.type.eq(hubType) : null;
     }
 }

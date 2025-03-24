@@ -1,5 +1,6 @@
 package on.logistics.deliverymanagerservice.application.dtos;
 
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.UUID;
 import lombok.Builder;
 import on.logistics.deliverymanagerservice.domain.entity.DeliveryType;
@@ -9,14 +10,17 @@ import on.logistics.deliverymanagerservice.presentation.dtos.request.CreateDeliv
 public record CreateDeliveryManagerRequestDto(
     UUID userId,
     UUID hubId,
-    DeliveryType deliveryType
+    DeliveryType deliveryType,
+    HttpServletRequest passportRequest
 ) {
 
-    public static CreateDeliveryManagerRequestDto of(CreateDeliveryManagerRequest request) {
+    public static CreateDeliveryManagerRequestDto of(CreateDeliveryManagerRequest request,
+        HttpServletRequest passportRequest) {
         return CreateDeliveryManagerRequestDto.builder()
             .userId(UUID.fromString(request.userId()))
             .hubId(UUID.fromString(request.hubId()))
             .deliveryType(DeliveryType.valueOf(request.deliveryType()))
+            .passportRequest(passportRequest)
             .build();
     }
 }

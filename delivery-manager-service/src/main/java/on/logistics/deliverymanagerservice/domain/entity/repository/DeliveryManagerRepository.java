@@ -2,8 +2,11 @@ package on.logistics.deliverymanagerservice.domain.entity.repository;
 
 import java.util.Optional;
 import java.util.UUID;
+import on.logistics.deliverymanagerservice.application.dtos.SearchDeliveryManagerRequestDto;
 import on.logistics.deliverymanagerservice.domain.entity.DeliveryManager;
 import on.logistics.deliverymanagerservice.domain.entity.DeliveryType;
+import on.logistics.deliverymanagerservice.global.application.dtos.PageDto;
+import on.logistics.deliverymanagerservice.presentation.dtos.response.SearchDeliveryManagerResponse;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -22,4 +25,7 @@ public interface DeliveryManagerRepository {
     Optional<DeliveryManager> findFirstByHubIdOrderBySequenceAsc(UUID hubId, DeliveryType type);
 
     Optional<DeliveryManager> findByIdAndUserId(UUID deliveryManagerId, UUID userId);
+
+    PageDto<SearchDeliveryManagerResponse> searchDeliveryManager(
+        SearchDeliveryManagerRequestDto requestDto);
 }

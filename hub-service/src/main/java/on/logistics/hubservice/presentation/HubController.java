@@ -1,5 +1,6 @@
 package on.logistics.hubservice.presentation;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import java.util.List;
 import java.util.UUID;
@@ -56,23 +57,27 @@ public class HubController {
 
     @PostMapping
     public ResponseEntity<CommonResponse<CreateHubResponse>> createHub(
-        @RequestBody @Valid CreateHubRequest createHubRequest) {
-        final var requestDto = CreateHubRequestDto.of(createHubRequest);
+        @RequestBody @Valid CreateHubRequest createHubRequest,
+        HttpServletRequest passportRequest) {
+        final var requestDto = CreateHubRequestDto.of(createHubRequest, passportRequest);
         final var responseDto = hubService.createHub(requestDto);
         return ResponseEntity.ok(CommonResponse.success(responseDto));
     }
 
     @PutMapping("/{id}")
-    ResponseEntity<CommonResponse<UpdateHubResponse>> updateHub(@PathVariable UUID id,
-        @RequestBody @Valid UpdateHubRequest updateHubRequest) {
-        final var requestDto = UpdateHubRequestDto.of(id, updateHubRequest);
+    ResponseEntity<CommonResponse<UpdateHubResponse>> updateHub(
+        @PathVariable UUID id,
+        @RequestBody @Valid UpdateHubRequest updateHubRequest,
+        HttpServletRequest passportRequest) {
+        final var requestDto = UpdateHubRequestDto.of(id, updateHubRequest, passportRequest);
         final var responseDto = hubService.updateHub(requestDto);
         return ResponseEntity.ok(CommonResponse.success(responseDto));
     }
 
     @DeleteMapping("/{id}")
-    ResponseEntity<CommonResponse<Void>> deleteHub(@PathVariable UUID id) {
-        hubService.deleteHub(id);
+    ResponseEntity<CommonResponse<Void>> deleteHub(@PathVariable UUID id,
+        HttpServletRequest passportRequest) {
+        hubService.deleteHub(id, passportRequest);
         return ResponseEntity.ok(CommonResponse.success());
     }
 
