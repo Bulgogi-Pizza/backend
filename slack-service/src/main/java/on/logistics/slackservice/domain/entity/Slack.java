@@ -15,7 +15,6 @@ import lombok.NoArgsConstructor;
 import on.logistics.slackservice.application.dtos.UpdateSlackMessageRequestDto;
 import on.logistics.slackservice.domain.dtos.CreateSlackMessageDto;
 import on.logistics.slackservice.global.domain.BaseEntity;
-import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
 @Entity
@@ -25,7 +24,6 @@ import org.hibernate.annotations.SQLRestriction;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @SQLRestriction("is_deleted = false")
-@SQLDelete(sql = "UPDATE p_slack SET is_deleted = true WHERE id = ?")
 public class Slack extends BaseEntity {
 
     @Id

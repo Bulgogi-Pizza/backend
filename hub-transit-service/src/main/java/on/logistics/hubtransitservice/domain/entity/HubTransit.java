@@ -21,7 +21,6 @@ import on.logistics.hubtransitservice.domain.enums.DeliveryType;
 import on.logistics.hubtransitservice.domain.vo.CurrentHubName;
 import on.logistics.hubtransitservice.domain.vo.NextHubName;
 import on.logistics.hubtransitservice.global.domain.BaseEntity;
-import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 import org.hibernate.annotations.Type;
 
@@ -32,7 +31,6 @@ import org.hibernate.annotations.Type;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @SQLRestriction("is_deleted = false")
-@SQLDelete(sql = "UPDATE p_hub_transit SET is_deleted = true WHERE id = ?")
 public class HubTransit extends BaseEntity {
 
     @Id
