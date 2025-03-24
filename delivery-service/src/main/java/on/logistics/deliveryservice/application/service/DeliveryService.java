@@ -51,4 +51,7 @@ public interface DeliveryService {
 
     Delivery getOrElseThrow(UUID deliveryId);
 
+    CreateDeliveryResponse createApiDelivery(CreateDeliveryRequestDto requestDto);
+
+
 }

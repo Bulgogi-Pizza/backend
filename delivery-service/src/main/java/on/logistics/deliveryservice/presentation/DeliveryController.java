@@ -51,7 +51,7 @@ public class DeliveryController {
         HttpServletRequest httpServletRequest) {
         final CreateDeliveryRequestDto requestDto = CreateDeliveryRequestDto.from(
             createDeliveryRequest, httpServletRequest);
-        CreateDeliveryResponse response = deliveryService.createDelivery(requestDto);
+        CreateDeliveryResponse response = deliveryService.createApiDelivery(requestDto);
         return ResponseEntity.ok(CommonResponse.success(response));
     }
 

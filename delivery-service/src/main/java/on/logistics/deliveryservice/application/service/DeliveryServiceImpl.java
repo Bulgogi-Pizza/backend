@@ -83,6 +83,26 @@ public class DeliveryServiceImpl implements DeliveryService {
         return CreateDeliveryResponse.of(saved.getId());
     }
 
+    // 권한 해제 임시 분리
+    @Transactional
+    public CreateDeliveryResponse createApiDelivery(CreateDeliveryRequestDto requestDto) {
+        Passport passport = getPassport(requestDto.httpServletRequest());
+
+        GetHubInfo startHubInfo = hubServiceClient.getHubInfo(requestDto.startHubId());
+        if (startHubInfo == null) {
+            throw new DeliveryException(DeliveryExceptionCode.DELIVERY_START_HUB_NOT_FOUND);
+        }
+
+        DeliveryHubInfoDto hubInfo = deliveryHubInfo(requestDto.destination());
+        DeliveryUserInfoDto userInfo = deliveryUserInfo(passport);
+        CreateDeliveryDto entityRequestDto = CreateDeliveryDto.from(requestDto, hubInfo, userInfo);
+        Delivery saved = Delivery.create(entityRequestDto);
+        deliveryRepository.save(saved);
+        // todo : 비동기 고민
+        createHubTransitRouteRequest(requestDto, hubInfo, saved);
+        return CreateDeliveryResponse.of(saved.getId());
+    }
+
     @Override
     public PageDto<SearchDeliveryResponse> searchDelivery(SearchDeliveryRequestDto requestDto) {
         Page<Delivery> deliveryPage = deliveryRepository.searchDelivery(requestDto);
