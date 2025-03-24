@@ -27,9 +27,9 @@ public class HubServiceImpl implements HubService {
     }
 
     @Override
-    public ValidateHubManagerResponseDto validateHubManager(UUID companyId, UUID hubId) {
-        log.info("Validating hub manager: companyId={}, hubId={}", companyId, hubId);
-        ValidateHubManagerRequest request = ValidateHubManagerRequest.of(companyId, hubId);
+    public ValidateHubManagerResponseDto validateHubManager(UUID userId, UUID hubId) {
+        log.info("Validating hub manager: companyId={}, hubId={}", userId, hubId);
+        ValidateHubManagerRequest request = ValidateHubManagerRequest.of(userId, hubId);
         Response response = hubServiceFeignClient.validateHubManager(request);
         return FeignClientResponseUtils.getBody(response, ValidateHubManagerResponseDto.class);
     }
