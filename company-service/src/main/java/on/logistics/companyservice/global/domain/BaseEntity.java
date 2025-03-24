@@ -3,18 +3,19 @@ package on.logistics.companyservice.global.domain;
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
-import jakarta.persistence.PreRemove;
 import java.time.LocalDateTime;
 import java.util.UUID;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+@Slf4j
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
 @SuperBuilder
@@ -47,9 +48,8 @@ public abstract class BaseEntity {
     @Column(name = "is_deleted")
     private Boolean isDeleted = false;
 
-    @PreRemove
-    protected void deleteSoftly() {
-        if (isDeleted != null && !isDeleted) {
+    public void deleteSoftly() {
+        if (Boolean.FALSE.equals(isDeleted)) {
             if (deletedAt == null) {
                 deletedAt = LocalDateTime.now();
             }

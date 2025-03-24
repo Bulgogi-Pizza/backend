@@ -19,7 +19,6 @@ import on.logistics.productservice.domain.vo.Name;
 import on.logistics.productservice.domain.vo.Price;
 import on.logistics.productservice.domain.vo.Quantity;
 import on.logistics.productservice.global.domain.BaseEntity;
-import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
 @Getter
@@ -28,7 +27,6 @@ import org.hibernate.annotations.SQLRestriction;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @SQLRestriction("is_deleted = false")
-@SQLDelete(sql = "UPDATE p_product SET is_deleted = true WHERE id = ?")
 public class Product extends BaseEntity {
 
     @Id

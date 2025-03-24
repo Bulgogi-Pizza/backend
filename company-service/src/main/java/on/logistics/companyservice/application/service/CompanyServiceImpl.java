@@ -114,8 +114,7 @@ public class CompanyServiceImpl implements CompanyService {
         Company company = getOrElseThrow(id);
 
         validHubManagerHub(passport, company.getManagedHubId());
-
-        companyRepository.delete(company);
+        company.deleteSoftly();
     }
 
     @Override
