@@ -16,7 +16,7 @@ public enum HubTransitExceptionCode implements ExceptionCode {
     ROUTE_INVALID(HttpStatus.BAD_REQUEST, "유효하지 않은 경로입니다"),
     ROUTE_JSON_PARSE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "경로 파싱 도중 오류가 발생했습니다."),
     HAS_NO_AUTHORITY(HttpStatus.UNAUTHORIZED, "권한이 없습니다."),
-    NO_FURTHER_HUB(HttpStatus.BAD_REQUEST, ""),
+    NO_FURTHER_HUB(HttpStatus.BAD_REQUEST, "마지막 허브입니다."),
     ;
 
     private final HttpStatus httpStatus;
