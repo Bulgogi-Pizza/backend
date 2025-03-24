@@ -17,6 +17,6 @@ public interface HubServiceFeignClient {
     @GetMapping("/api/v1/hubs/manager/valid")
     Response validateHubManager(@RequestBody ValidateHubManagerRequest request);
 
-    @GetMapping("/api/v1/hubs/{hubId}/manager")
+    @GetMapping("/api/v1/hubs/manager/{hubId}/manager")
     Response getHubManagerId(@PathVariable UUID hubId);
 }

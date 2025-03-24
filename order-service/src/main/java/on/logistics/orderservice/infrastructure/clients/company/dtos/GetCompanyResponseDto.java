@@ -12,11 +12,11 @@ public record GetCompanyResponseDto(
     String companyAddress
 ) {
 
-    private enum CompanyType {
+    public enum CompanyType {
         PRODUCTION, RECEIVING
     }
 
-    private enum CompanyStatus {
+    public enum CompanyStatus {
         PENDING, APPROVED, REJECTED
     }
 }
