@@ -10,7 +10,8 @@ import org.springframework.http.HttpStatus;
 public enum DeliveryManagerExceptionCode implements ExceptionCode {
 
     DELIVERY_MANAGER_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 배송 담당자를 찾을 수 없습니다"),
-    SAME_DELIVERY_TYPE(HttpStatus.BAD_REQUEST, "이미 설정된 배송 타입입니다");
+    SAME_DELIVERY_TYPE(HttpStatus.BAD_REQUEST, "이미 설정된 배송 타입입니다"),
+    DELIVERY_MANGER_ACCESS_DENIED(HttpStatus.FORBIDDEN, "배송 담당자 접근 권한이 없습니다");
 
     private final HttpStatus httpStatus;
     private final String message;

@@ -3,6 +3,7 @@ package on.logistics.orderservice.domain.entity.dtos;
 import java.util.UUID;
 import on.logistics.orderservice.application.service.dtos.create.CreateOrderRequestDto;
 import on.logistics.orderservice.domain.entity.Order;
+import on.logistics.orderservice.infrastructure.clients.hub.dtos.GetHubByIdResponseDto;
 
 public record CreateOrdererDto(
     UUID companyId,
@@ -16,15 +17,16 @@ public record CreateOrdererDto(
 
     public static CreateOrdererDto of(
         CreateOrderRequestDto requestDto,
-        Order order
+        Order order,
+        GetHubByIdResponseDto hubManagerByUserId
     ) {
         return new CreateOrdererDto(
             requestDto.OrdererId(),
             requestDto.ordererName(),
             requestDto.ordererUserId(),
             requestDto.ordererUserNickname(),
-            requestDto.ordererHubId(),
-            requestDto.ordererHubName(),
+            hubManagerByUserId.id(),
+            hubManagerByUserId.hubName(),
             order
         );
     }

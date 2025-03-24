@@ -11,4 +11,16 @@ public enum AuthRole {
         return role != null
             && (role.equals(MASTER) || role.equals(HUB_MANAGER) || role.equals(DELIVERY_MANAGER));
     }
+
+    public boolean isHubManager() {
+        return this.equals(HUB_MANAGER);
+    }
+
+    public boolean isCompanyManager() {
+        return this.equals(COMPANY_MANAGER);
+    }
+
+    public boolean isDeliveryManager() {
+        return this.equals(DELIVERY_MANAGER);
+    }
 }

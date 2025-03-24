@@ -19,7 +19,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import on.logistics.orderservice.domain.entity.dtos.CreateOrderDto;
 import on.logistics.orderservice.global.domain.BaseEntity;
-import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
 @Entity
@@ -29,7 +28,6 @@ import org.hibernate.annotations.SQLRestriction;
 @Builder(access = AccessLevel.PRIVATE)
 @Getter
 @SQLRestriction("is_deleted = false")
-@SQLDelete(sql = "UPDATE p_orders SET is_deleted = true WHERE id = ?")
 public class Order extends BaseEntity {
 
     @Id

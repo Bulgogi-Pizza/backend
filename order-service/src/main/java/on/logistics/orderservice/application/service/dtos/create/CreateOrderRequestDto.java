@@ -10,8 +10,6 @@ public record CreateOrderRequestDto(
     String ordererName,
     UUID ordererUserId,
     String ordererUserNickname,
-    UUID ordererHubId,
-    String ordererHubName,
     String destination,
     Long totalAmount,
     List<OrdersByVendor> ordersByVendor
@@ -20,8 +18,6 @@ public record CreateOrderRequestDto(
     public record OrdersByVendor(
         UUID vendorId,
         String vendorName,
-        UUID vendorHubId,
-        String vendorHubName,
         Long totalAmount,
         LocalDateTime arrivalDeadline,
         List<OrderedProduct> orderItems
@@ -39,24 +35,20 @@ public record CreateOrderRequestDto(
 
     public static CreateOrderRequestDto of(
         CreateOrderRequest createOrderRequest,
-        UUID ordererUserId,
-        String ordererUserNickname
+        UUID userId,
+        String nickname
     ) {
         return new CreateOrderRequestDto(
             createOrderRequest.ordererId(),
             createOrderRequest.ordererName(),
-            ordererUserId,
-            ordererUserNickname,
-            createOrderRequest.ordererHubId(),
-            createOrderRequest.ordererHubName(),
+            userId,
+            nickname,
             createOrderRequest.destination(),
             createOrderRequest.totalAmount(),
             createOrderRequest.ordersByVendor().stream()
                 .map(ordersByVendor -> new OrdersByVendor(
                     ordersByVendor.vendorId(),
                     ordersByVendor.vendorName(),
-                    ordersByVendor.vendorHubId(),
-                    ordersByVendor.vendorHubName(),
                     ordersByVendor.totalAmount(),
                     ordersByVendor.arrivalDeadline(),
                     ordersByVendor.orderedProducts().stream()

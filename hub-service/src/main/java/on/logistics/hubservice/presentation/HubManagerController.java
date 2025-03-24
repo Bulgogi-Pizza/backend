@@ -1,7 +1,9 @@
 package on.logistics.hubservice.presentation;
 
 import jakarta.validation.Valid;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import on.logistics.hubservice.application.dtos.GetHubManagerIdResponseDto;
 import on.logistics.hubservice.application.dtos.request.CreateHubManagerRequestDto;
 import on.logistics.hubservice.application.dtos.request.ValidHubManagerRequestDto;
 import on.logistics.hubservice.application.service.HubManagerService;
@@ -11,6 +13,8 @@ import on.logistics.hubservice.presentation.dtos.request.ValidHubManagerRequest;
 import on.logistics.hubservice.presentation.dtos.response.CreateHubManagerResponse;
 import on.logistics.hubservice.presentation.dtos.response.ValidHubManagerResponse;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,6 +40,14 @@ public class HubManagerController {
         @RequestBody @Valid ValidHubManagerRequest validHubManagerRequest) {
         final var requestDto = ValidHubManagerRequestDto.of(validHubManagerRequest);
         final var responseDto = hubManagerService.validHubManager(requestDto);
+        return ResponseEntity.ok(CommonResponse.success(responseDto));
+    }
+
+    @GetMapping("/{hubId}/manager")
+    public ResponseEntity<CommonResponse<GetHubManagerIdResponseDto>> getHubManagerId(
+        @PathVariable UUID hubId
+    ) {
+        final var responseDto = hubManagerService.getHubManagerId(hubId);
         return ResponseEntity.ok(CommonResponse.success(responseDto));
     }
 }

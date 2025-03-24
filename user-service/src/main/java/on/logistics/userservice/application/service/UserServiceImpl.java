@@ -6,6 +6,7 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import on.logistics.userservice.application.dtos.CreateUserDto;
+import on.logistics.userservice.application.dtos.GetSlackEmailByIdResponseDto;
 import on.logistics.userservice.application.dtos.SearchUserDto;
 import on.logistics.userservice.application.dtos.UpdateUserAdminDto;
 import on.logistics.userservice.application.dtos.UpdateUserDto;
@@ -168,6 +169,15 @@ public class UserServiceImpl implements UserService {
         return UpdateUserAdminResponse.from(user);
     }
 
+
+    @Override
+    public GetSlackEmailByIdResponseDto getSlackEmailById(
+        UUID id,
+        HttpServletRequest request
+    ) {
+        User user = findByIdOrElseThrow(id);
+        return GetSlackEmailByIdResponseDto.from(user);
+    }
 
     private User findByIdOrElseThrow(UUID id) {
         return userRepository.findById(id).orElseThrow(
