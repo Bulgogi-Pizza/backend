@@ -29,11 +29,11 @@ public class HubTransitRepositoryImpl implements HubTransitRepository {
     }
 
     @Override
-    public Optional<HubTransit> findByDeliveryIdAndCurrentHubId(
+    public Optional<HubTransit> findByDeliveryIdAndNextHubId(
         UUID deliveryId,
-        UUID currentHubId
+        UUID hubId
     ) {
-        return hubTransitJpaRepository.findByDeliveryIdAndCurrentHubId(deliveryId, currentHubId);
+        return hubTransitJpaRepository.findByDeliveryIdAndNextHubId(deliveryId, hubId);
     }
 
     @Override
