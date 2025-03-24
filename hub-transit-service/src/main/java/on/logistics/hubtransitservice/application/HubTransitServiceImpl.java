@@ -102,7 +102,7 @@ public class HubTransitServiceImpl implements HubTransitService {
             requestDto.currentHubId());
 
         HubTransit currentTransit = hubTransitRepository
-            .findByDeliveryIdAndCurrentHubId(requestDto.deliveryId(), requestDto.currentHubId())
+            .findByDeliveryIdAndNextHubId(requestDto.deliveryId(), requestDto.currentHubId())
             .orElseThrow(
                 () -> new HubTransitException(HubTransitExceptionCode.HUB_TRANSIT_NOT_FOUND));
 
@@ -115,6 +115,7 @@ public class HubTransitServiceImpl implements HubTransitService {
             routeSnapshot,
             currentTransit.getNextHubName().getValue()
         );
+
         UUID newNextHubId = getNextHubIdByName(newNextHubName);
         DeliveryType newNextDeliveryType = getNextDeliveryType(newNextHubName);
 
@@ -127,9 +128,6 @@ public class HubTransitServiceImpl implements HubTransitService {
         var deliveryRecord = createDeliveryRecord(
             requestDto.deliveryId(), newCurrentHubId, newNextHubId, deliveryManager);
 
-        // TODO: 기존 배송 기록 상태 업데이트 추가 필요
-        // 7. 기존 transit record의 배송 기록 상태 업데이트: PATCH "/api/v1/delivery/record/status/{id}" with status "HUB_ARRIVE"
-        // deliveryService.updateDeliveryRecordStatus(currentTransit.getDeliveryRecordId(), "HUB_ARRIVE");
         var updateDeliveryRecordRequest = UpdateDeliveryStatusRequest.builder()
             .deliveryRecordStatus("HUB_ARRIVE").build();
         deliveryServiceClient.updateDeliveryRecordStatus(
@@ -246,24 +244,24 @@ public class HubTransitServiceImpl implements HubTransitService {
     }
 
     private AssignDeliveryManagerResponse getDeliveryManager(
-        UUID requestDto, UUID currentHubId, DeliveryType deliveryType
+        UUID deliveryId, UUID currentHubId, DeliveryType deliveryType
     ) {
         return deliveryManagerClient.assignDeliveryManager(
             AssignDeliveryManagerRequest.builder()
-                .deliveryId(requestDto)
+                .deliveryId(deliveryId)
                 .hubId(currentHubId)
-                .deliveryType(deliveryType)
+                .deliveryType(String.valueOf(deliveryType))
                 .build()
         );
     }
 
     private CreateDeliveryRecordResponse createDeliveryRecord(
-        UUID requestDto, UUID currentHubId, UUID nextHubId,
+        UUID deliveryId, UUID currentHubId, UUID nextHubId,
         AssignDeliveryManagerResponse deliveryManager
     ) {
         return deliveryServiceClient.createDeliveryRecord(
             CreateDeliveryRecordRequest.builder()
-                .deliveryId(requestDto)
+                .deliveryId(deliveryId)
                 .deliveryRecordStartHubId(currentHubId)
                 .deliveryRecordEndHubId(nextHubId)
                 .userId(deliveryManager.userId())
