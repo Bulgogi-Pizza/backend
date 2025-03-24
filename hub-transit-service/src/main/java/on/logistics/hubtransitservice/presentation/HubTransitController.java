@@ -10,6 +10,7 @@ import on.logistics.hubtransitservice.application.dtos.request.GetNextHubRequest
 import on.logistics.hubtransitservice.application.dtos.request.UpdateHubTransitRequestDto;
 import on.logistics.hubtransitservice.exception.HubTransitException;
 import on.logistics.hubtransitservice.exception.HubTransitExceptionCode;
+import on.logistics.hubtransitservice.global.domain.Passport;
 import on.logistics.hubtransitservice.global.presentation.dtos.CommonResponse;
 import on.logistics.hubtransitservice.global.presentation.dtos.PageDto;
 import on.logistics.hubtransitservice.global.utils.PassportUtil;
@@ -48,8 +49,8 @@ public class HubTransitController {
         @RequestBody @Valid final CreateHubTransitRequest request,
         HttpServletRequest servletRequest
     ) {
-        String role = passportUtil.getPassportByHttpServletRequest(servletRequest).getRole();
-        if (!role.equals("MASTER")) {
+        Passport passport = passportUtil.getPassportByHttpServletRequest(servletRequest);
+        if (passport == null) {
             throw new HubTransitException(HubTransitExceptionCode.HAS_NO_AUTHORITY);
         }
         final var requestDto = CreateHubTransitRequest.from(request);
@@ -62,8 +63,8 @@ public class HubTransitController {
         @RequestBody @Valid final InboundHubTransitRequest request,
         HttpServletRequest servletRequest
     ) {
-        String role = passportUtil.getPassportByHttpServletRequest(servletRequest).getRole();
-        if (!role.equals("MASTER")) {
+        Passport passport = passportUtil.getPassportByHttpServletRequest(servletRequest);
+        if (passport == null) {
             throw new HubTransitException(HubTransitExceptionCode.HAS_NO_AUTHORITY);
         }
         final var requestDto = InboundHubTransitRequest.from(request);
@@ -75,9 +76,8 @@ public class HubTransitController {
     public ResponseEntity<CommonResponse<GetHubTransitResponse>> getHubTransit(
         @PathVariable UUID transitId, HttpServletRequest servletRequest
     ) {
-        String role = passportUtil.getPassportByHttpServletRequest(servletRequest).getRole();
-        if (!("MASTER".equals(role) || "HUB_MANAGER".equals(role)
-            || "DELIVERY_MANAGER".equals(role) || "COMPANY_MANAGER".equals(role))) {
+        Passport passport = passportUtil.getPassportByHttpServletRequest(servletRequest);
+        if (passport == null) {
             throw new HubTransitException(HubTransitExceptionCode.HAS_NO_AUTHORITY);
         }
         final var responseDto = hubTransitService.getHubTransit(transitId);
@@ -89,9 +89,8 @@ public class HubTransitController {
         @RequestParam(required = false) String keyword, @PageableDefault Pageable pageable,
         HttpServletRequest servletRequest
     ) {
-        String role = passportUtil.getPassportByHttpServletRequest(servletRequest).getRole();
-        if (!("MASTER".equals(role) || "HUB_MANAGER".equals(role)
-            || "DELIVERY_MANAGER".equals(role) || "COMPANY_MANAGER".equals(role))) {
+        Passport passport = passportUtil.getPassportByHttpServletRequest(servletRequest);
+        if (passport == null) {
             throw new HubTransitException(HubTransitExceptionCode.HAS_NO_AUTHORITY);
         }
         final var resultPage = hubTransitService.searchHubTransit(keyword, pageable);
@@ -104,9 +103,8 @@ public class HubTransitController {
         @RequestParam("transitId") UUID transitId, @RequestParam("currentHubId") UUID currentHubId,
         HttpServletRequest servletRequest
     ) {
-        String role = passportUtil.getPassportByHttpServletRequest(servletRequest).getRole();
-        if (!("MASTER".equals(role) || "HUB_MANAGER".equals(role)
-            || "DELIVERY_MANAGER".equals(role) || "COMPANY_MANAGER".equals(role))) {
+        Passport passport = passportUtil.getPassportByHttpServletRequest(servletRequest);
+        if (passport == null) {
             throw new HubTransitException(HubTransitExceptionCode.HAS_NO_AUTHORITY);
         }
         final var requestDto = GetNextHubRequestDto.of(transitId, currentHubId);
@@ -120,8 +118,8 @@ public class HubTransitController {
         @RequestBody @Valid UpdateHubTransitRequest request,
         HttpServletRequest servletRequest
     ) {
-        String role = passportUtil.getPassportByHttpServletRequest(servletRequest).getRole();
-        if (!("MASTER".equals(role))) {
+        Passport passport = passportUtil.getPassportByHttpServletRequest(servletRequest);
+        if (passport == null) {
             throw new HubTransitException(HubTransitExceptionCode.HAS_NO_AUTHORITY);
         }
         final var requestDto = UpdateHubTransitRequestDto.of(transitId, request);
@@ -134,8 +132,8 @@ public class HubTransitController {
         @PathVariable UUID transitId,
         HttpServletRequest servletRequest
     ) {
-        String role = passportUtil.getPassportByHttpServletRequest(servletRequest).getRole();
-        if (!("MASTER".equals(role))) {
+        Passport passport = passportUtil.getPassportByHttpServletRequest(servletRequest);
+        if (passport == null) {
             throw new HubTransitException(HubTransitExceptionCode.HAS_NO_AUTHORITY);
         }
         hubTransitService.deleteHubTransit(transitId);
