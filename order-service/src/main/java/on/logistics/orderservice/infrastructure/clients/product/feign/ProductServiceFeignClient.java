@@ -16,13 +16,13 @@ public interface ProductServiceFeignClient {
     @GetMapping("/api/v1/product/{productId}")
     Response getProductById(@PathVariable UUID productId);
 
-    @PostMapping("/api/v1/product/quantity/{productId}")
+    @PostMapping("/api/v1/product/reduce/quantity/{productId}")
     Response decreaseProductStock(
         @PathVariable UUID productId,
         @RequestBody DecreaseProductStockRequest request
     );
 
-    @PostMapping("/api/v1/product/quantity/{productId}/rollback")
+    @PostMapping("/api/v1/product/increase/quantity/{productId}")
     Response increaseProductStock(
         @PathVariable UUID productId,
         @RequestBody IncreaseProductStockRequest request
