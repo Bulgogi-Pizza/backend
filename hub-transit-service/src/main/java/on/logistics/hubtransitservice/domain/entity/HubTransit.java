@@ -1,5 +1,6 @@
 package on.logistics.hubtransitservice.domain.entity;
 
+import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
@@ -20,8 +21,8 @@ import on.logistics.hubtransitservice.domain.enums.DeliveryType;
 import on.logistics.hubtransitservice.domain.vo.CurrentHubName;
 import on.logistics.hubtransitservice.domain.vo.NextHubName;
 import on.logistics.hubtransitservice.global.domain.BaseEntity;
-import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
+import org.hibernate.annotations.Type;
 
 @Entity
 @Table(name = "p_hub_transit")
@@ -30,7 +31,6 @@ import org.hibernate.annotations.SQLRestriction;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @SQLRestriction("is_deleted = false")
-@SQLDelete(sql = "UPDATE p_hub_transit SET is_deleted = true WHERE id = ?")
 public class HubTransit extends BaseEntity {
 
     @Id
@@ -63,6 +63,7 @@ public class HubTransit extends BaseEntity {
     private UUID userId;
 
     @Column(name = "route_snapshot", nullable = false, columnDefinition = "jsonb")
+    @Type(JsonBinaryType.class)
     private String routeSnapshot;
 
 

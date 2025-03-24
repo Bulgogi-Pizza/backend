@@ -6,10 +6,10 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-@FeignClient(name = "delivery-manager-service", url = "delivery-manager-service:8080")
+@FeignClient(name = "delivery-manager-service")
 public interface DeliveryManagerFeignClient {
 
-    @PostMapping("/api/v1/delivery-manager/assign")
+    @PostMapping("/api/v1/delivery-managers/assign")
     Response assignDeliveryManager(@RequestBody AssignDeliveryManagerRequest request);
 
 }

@@ -3,7 +3,6 @@ package on.logistics.hubtransitservice.global.domain;
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
-import jakarta.persistence.PreRemove;
 import java.time.LocalDateTime;
 import java.util.UUID;
 import lombok.Builder;
@@ -49,7 +48,6 @@ public abstract class BaseEntity {
     @Column(name = "is_deleted")
     private Boolean isDeleted = false;
 
-    @PreRemove
     protected void deleteSoftly() {
         if (isDeleted != null && !isDeleted) {
             if (deletedAt == null) {

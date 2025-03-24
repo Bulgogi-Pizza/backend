@@ -7,5 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface HubTransitJpaRepository extends JpaRepository<HubTransit, UUID> {
 
-    Optional<HubTransit> findByDeliveryIdAndCurrentHubId(UUID deliveryId, UUID currentHubId);
+    Optional<HubTransit> findByDeliveryIdAndNextHubId(UUID deliveryId, UUID hubId);
 }

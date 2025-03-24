@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-@FeignClient(name = "delivery-service", url = "delivery-service:8080")
+@FeignClient(name = "delivery-service")
 public interface DeliveryServiceFeignClient {
 
     @PostMapping("/api/v1/delivery/record")
