@@ -13,6 +13,17 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 @Configuration
 @EnableJpaAuditing
+@RequiredArgsConstructor
 public class JpaAuditingConfig {
 
+    private final HttpServletRequest httpServletRequest;
+    private final PassportUtil passportUtil;
+
+    @Bean
+    public AuditorAware<UUID> loginUserAuditorAware() {
+        return () -> {
+            Passport passport = passportUtil.getPassportByHttpServletRequest(httpServletRequest);
+            return Optional.of(passport.getUserId());
+        };
+    }
 }
