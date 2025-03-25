@@ -39,6 +39,6 @@ public class HubManagerService {
     public GetHubManagerIdResponseDto getHubManagerId(UUID hubId) {
         HubManager hubManager = hubManagerRepository.findByHubId(hubId)
             .orElseThrow(HubManagerNotFoundException::new);
-        return new GetHubManagerIdResponseDto(hubManager.getId());
+        return new GetHubManagerIdResponseDto(hubManager.getUserId());
     }
 }
